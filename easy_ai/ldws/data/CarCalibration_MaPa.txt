@@ -1,0 +1,12 @@
+CarWidth 180
+LeftDeviation 0
+CameraHigh 130
+RightDeviation 0
+RoadWidth 370
+VehicleWarning 4
+CameraPosx 186
+FirstLineY 430
+SecondLineY 627
+VerticalLineX 480
+HorizontalLineY 370
+FCWSD_th 6
