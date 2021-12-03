@@ -1,6 +1,5 @@
 #include <iostream>
 #include <unistd.h>
-#include <signal.h>
 
 #include "fairmot/tracker.h"
 #include "common/data_struct.h"

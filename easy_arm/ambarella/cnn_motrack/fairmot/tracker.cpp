@@ -1,5 +1,8 @@
 #include "tracker.h"
 #include "../postprocess/calculate_trajectory.h"
+#include "../network/network_transmission.h"
+
+static NetWorkTransmission network_transmission;
 
 
 int amba_cv_env_init(track_ctx_t *track_ctx)
@@ -136,6 +139,8 @@ int amba_track_init(track_ctx_t *track_ctx, track_params_t *params)
 		mot_params.verbose = params->mot_verbose;
 		RVAL_OK(mot_init(&track_ctx->mot, &mot_params));
 
+		RVAL_OK(network_transmission.socket_init());
+
         RVAL_OK(pthread_create(&track_ctx->det_tidp, NULL,
             det_thread_func, track_ctx));
 	} while (0);
@@ -253,7 +258,6 @@ int amba_track_run_loop(track_ctx_t *track_ctx, TrackOutPut *track_output, std::
 	float fps;
 	mot_input_t mot_input;
 	// size_t read_num;
-	int i;
     // EA_MEASURE_TIME_DECLARE();
 
 	memset(&calc_fps_ctx, 0, sizeof(ea_calc_fps_ctx_t));
@@ -274,7 +278,7 @@ int amba_track_run_loop(track_ctx_t *track_ctx, TrackOutPut *track_output, std::
         memset(&mot_input, 0, sizeof(mot_input_t));
         RVAL_ASSERT(track_ctx->net_result.reid_dim == MOT_REID_DIM);
         mot_input.valid_det_count = track_ctx->net_result.valid_det_count;
-        for (i = 0; i < track_ctx->net_result.valid_det_count; i++) {
+        for (int i = 0; i < track_ctx->net_result.valid_det_count; i++) {
             mot_input.detections[i].class_id = track_ctx->net_result.detections[i].id;
             mot_input.detections[i].score = track_ctx->net_result.detections[i].score;
             mot_input.detections[i].x_start = track_ctx->net_result.detections[i].x_start;
@@ -295,7 +299,7 @@ int amba_track_run_loop(track_ctx_t *track_ctx, TrackOutPut *track_output, std::
 		if (track_ctx->mot_result.valid_track_count > 0) {
 			track_output->nframe_index = track_ctx->mot_result.frame_id;
 			track_output->nvalid_track_count = track_ctx->mot_result.valid_track_count;
-			for (i = 0; i < track_ctx->mot_result.valid_track_count; i++) {
+			for (int i = 0; i < track_ctx->mot_result.valid_track_count; i++) {
 				track_output->track_attri[i].ncls = track_ctx->mot_result.tracks[i].class_id;
 				track_output->track_attri[i].ntrack_id = track_ctx->mot_result.tracks[i].track_id;
 				track_output->track_attri[i].fobject_loc[0] = track_ctx->mot_result.tracks[i].x_start;
@@ -310,6 +314,28 @@ int amba_track_run_loop(track_ctx_t *track_ctx, TrackOutPut *track_output, std::
 		// draw result
 #ifdef IS_SHOW
 		amba_draw_detection(track_idx_map, track_ctx, track_ctx->img_data[track_ctx->head].dsp_pts);
+#endif
+
+#ifdef IS_SEND_DATA
+    char send_data[100];
+	std::stringstream send_data_;
+
+	if (track_ctx->mot_result.valid_track_count > 0) {
+		track_output->nframe_index = track_ctx->mot_result.frame_id;
+		track_output->nvalid_track_count = track_ctx->mot_result.valid_track_count;
+		for (int i = 0; i < track_ctx->mot_result.valid_track_count; i++) {
+			send_data_.str("");
+			send_data_ << track_output->nframe_index << "|" \
+			           << track_output->track_attri[i].ntrack_id << "|" \
+					   << track_output->track_attri[i].fobject_loc[0] << "|" \
+					   << track_idx_map[track_output->track_attri[i].ntrack_id].mean_velocity << "\n";
+		}
+
+		snprintf(send_data, sizeof(send_data), "%s", \
+                send_data_.str().c_str());
+	}
+
+    network_transmission.send_data(send_data, sizeof(send_data));
 #endif
 
         ea_img_resource_drop_data(track_ctx->img_resource, &track_ctx->img_data[track_ctx->head]);
