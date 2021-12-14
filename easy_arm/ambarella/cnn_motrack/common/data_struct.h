@@ -48,6 +48,8 @@ struct TrajectoryParams {
 	std::vector<float> velocity_vector;
 	std::vector<float> pedestrian_x_start;
 	std::vector<float> pedestrian_y_start;
+	std::vector<float> pedestrian_x_end;
+	std::vector<float> pedestrian_y_end;
 	std::vector<cv::Point2f> trajectory_position;
 };
 

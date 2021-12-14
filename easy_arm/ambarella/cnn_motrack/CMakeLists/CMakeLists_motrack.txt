@@ -6,7 +6,8 @@ project(cnn_motrack)
 
 set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})
 
-add_definitions(-DIS_SHOW)
+#add_definitions(-DIS_SHOW)
+add_definitions(-DIS_SEND_DATA)
 
 #include amba_arm directories
 include(${PROJECT_SOURCE_DIR}/../cmake/ambacv25_3_dependencies.cmake)
@@ -14,6 +15,7 @@ include(${PROJECT_SOURCE_DIR}/../cmake/ambacv25_3_dependencies.cmake)
 #include MOT headers
 include_directories(${PROJECT_SOURCE_DIR}/fairmot)
 include_directories(${PROJECT_SOURCE_DIR}/common)
+include_directories(${PROJECT_SOURCE_DIR}/network)
 include_directories(${PROJECT_SOURCE_DIR}/postprocess)
 
 add_executable(test_motrack "")
@@ -29,6 +31,10 @@ file(GLOB MOT_SRCS
     "${PROJECT_SOURCE_DIR}/fairmot/*.c"
 	)
 
+file(GLOB NETWORK_SRCS
+    "${PROJECT_SOURCE_DIR}/network/*.cpp"
+    )
+
 file(GLOB POSTPROCESS_SRCS
     "${PROJECT_SOURCE_DIR}/postprocess/*.cpp"
     )
@@ -38,6 +44,7 @@ target_sources(test_motrack
         "${PROJECT_SOURCE_DIR}/test_motrack.cpp"
         ${MOT_SRCS}
         ${POSTPROCESS_SRCS}
+        ${NETWORK_SRCS}
 #        ${IMA_SRCS}
         )
 
