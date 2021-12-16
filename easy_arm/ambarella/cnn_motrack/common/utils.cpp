@@ -9,7 +9,7 @@ void tensor2mat(ea_tensor_t *input_tensor, cv::Mat output_mat, int channel_conve
     int input_height = ea_tensor_shape(input_tensor)[2];
     int input_width = ea_tensor_shape(input_tensor)[3];
     int input_pitch = ea_tensor_pitch(input_tensor);
-    printf("Tensor shape: %d, %d, %d, %d, %d\n", batch_n, input_channel, input_height, input_width, input_pitch);
+    LOG(INFO) << ("Tensor shape: %d, %d, %d, %d, %d\n", batch_n, input_channel, input_height, input_width, input_pitch);
 
     // sync vp to cpu
     uint8_t *c1_data = NULL;
@@ -35,7 +35,7 @@ void tensor2mat(ea_tensor_t *input_tensor, cv::Mat output_mat, int channel_conve
         channels.push_back(c3);
     }
     else {
-        printf("channel number %lu is not 1 or 3 for saving to jpeg\n", input_channel);
+        LOG(ERROR) << ("channel number %lu is not 1 or 3 for saving to jpeg\n", input_channel);
         // rval = -1;
         // break;
     }
@@ -46,3 +46,10 @@ void tensor2mat(ea_tensor_t *input_tensor, cv::Mat output_mat, int channel_conve
 // void mat2tensor() {
 
 // }
+
+unsigned long get_current_time(void)
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (tv.tv_sec*1000000 + tv.tv_usec);
+}

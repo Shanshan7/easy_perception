@@ -18,6 +18,7 @@
 #include <pthread.h>
 #include <vector>
 #include <map>
+#include <glog/logging.h>
 #include <opencv2/core.hpp>
 
 #include <eazyai.h>
@@ -51,6 +52,27 @@ struct TrajectoryParams {
 	std::vector<float> pedestrian_x_end;
 	std::vector<float> pedestrian_y_end;
 	std::vector<cv::Point2f> trajectory_position;
+};
+
+struct GlobalControlParam {
+	// cmd line param
+	uint8_t channel_id;
+	uint8_t stream_id;
+	uint32_t state_buf_num;
+	float overlay_text_width_ratio;
+	float overlay_x_offset;
+	uint16_t overlay_highlight_sec;
+	uint16_t overlay_clear_sec;
+	uint32_t verbose; /* network print time */
+	uint32_t debug_en; /* 0: disable; 1: time measure,2: log; 3: run once & save picture */
+	uint32_t abort_if_preempted;
+	ea_img_resource_t *img_resource;
+
+	// run time control
+	// state_buffer_param_t ssd_result_buf;
+	// pthread_mutex_t access_buffer_mutex;
+	// sem_t sem_readable_buf;
+	// pthread_mutex_t vp_access_lock;
 };
 
 

@@ -31,7 +31,7 @@ cv::Mat get_perspective_mat()
 void to_top(const cv::Mat &src, cv::Mat &top, cv::Mat & top2)
 {
 
-//    相机内参
+// 相机内参
     cv::Mat K       = (cv::Mat_<double>(3,3) <<
                        1681.52901998965,    0,  667.945786496189,
                         0,  1510.91314479132,   375.142239238734,
@@ -42,22 +42,22 @@ void to_top(const cv::Mat &src, cv::Mat &top, cv::Mat & top2)
                  0, 1, 0, 0,
                  0, 0, -1, 0,
                  0, 0, 0, 1);
-// 外参
+// 外参旋转
     cv::Mat extrinsic = (cv::Mat_<double>(4, 4) <<
              -0.003859404269123161, -0.9999420008273281, -0.01005484858798479, -0.11,
              0.01403883800665975, 0.009999753335606716, -0.9998514469463201, 1.51,
              0.999894002395309, -0.003999989333341806, 0.01399943067495647, 0.59,
              0, 0, 0, 1) * Rot;
 // 添加平移
-    cv::Mat T      = (cv::Mat_<double>(3,1) << -15, 0, 15);
+    cv::Mat T = (cv::Mat_<double>(3,1) << -15, 0, 15);
 // 目标顶视图相机虚拟内存那
-    cv::Mat K_top   = (cv::Mat_<double>(3,3) <<
+    cv::Mat K_top = (cv::Mat_<double>(3,3) <<
                        320,  0,   320,
                        0,    320, 320,
                        0,    0,   1);
 // 原始相机在地平面里的高度
     double d        = 1.51;
-    double invd     = 1.0/d;
+    double invd     = 1.0 / d;
 // 原始相机坐标系中，地平面的法向量
     cv::Mat n       = extrinsic(cv::Rect(0, 0, 3, 3)) * (cv::Mat_<double>(3,1) << 0, 0, 1);
     std::cout << "n = " << std::endl << n << std::endl;

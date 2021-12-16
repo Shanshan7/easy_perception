@@ -2,6 +2,7 @@
 #define _TRACKER_H_
 
 #include "../common/data_struct.h"
+#include "../common/utils.h"
 
 #include "fairmot.h"
 #include "mot.h"
@@ -18,7 +19,7 @@
 #define MAX_LABEL_LEN				128
 #define HIGH_RESOLUTION_BEGIN		800
 
-#define FAIRMOT_MODEL_FILE_NAME		"onnx_fairmot_cavalry.bin"
+// #define FAIRMOT_MODEL_FILE_NAME		"onnx_fairmot_cavalry.bin"
 #define FAIRMOT_MODEL_PATH          "/tmp/onnx_fairmot_cavalry.bin"
 EA_LOG_DECLARE_LOCAL(EA_LOG_LEVEL_NOTICE);
 
@@ -76,7 +77,7 @@ typedef struct track_ctx_s {
 	track_params_t params;
 
 	int sig_flag;
-	// int loop_count;
+	int loop_count;
 
 	ea_img_resource_t *img_resource;
 	fairmot_t fairmot;
@@ -97,11 +98,10 @@ typedef struct track_ctx_s {
 
 int amba_cv_env_init(track_ctx_t *track_ctx);
 int amba_track_init(track_ctx_t *track_ctx, track_params_t *params);
-int amba_track_run_loop(track_ctx_t *track_ctx, TrackOutPut *track_output, std::map<int, TrajectoryParams> &track_idx_map);  // track_params_t *params
+int amba_track_run_loop(track_ctx_t *track_ctx, std::map<int, TrajectoryParams> &track_idx_map);  // track_params_t *params
 int amba_draw_detection(std::map<int, TrajectoryParams> track_idx_map, track_ctx_t *track_ctx, uint32_t dsp_pts);
 void *det_thread_func(void *arg);
 void amba_cv_env_deinit(track_ctx_t *track_ctx);
 void amba_track_deinit(track_ctx_t *track_ctx);
-// void edge_get_mot_result(void *pHandler, std::vector<TrackOutPut>& MotResult);
 
 #endif // _TRACKER_H_

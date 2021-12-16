@@ -1,23 +1,21 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <ctype.h>
-#include <unistd.h>
-#include <getopt.h>
-#include <fcntl.h>
-#include <string>
-#include <sstream>
+#include "data_struct.h"
 
-#include <eazyai.h>
-#include <opencv2/core.hpp>
-EA_LOG_DECLARE_LOCAL(EA_LOG_LEVEL_VERBOSE);
+#define TIME_DECLARE() \
+	static unsigned long ea_mt_start
 
+#define TIME_START() ea_mt_start = get_current_time()
+#define TIME_END(s) \
+	LOG(INFO) << s << " " << (get_current_time() - ea_mt_start) / 1000 << " ms";
+#define TIME_END_AVG(s, loop) \
+    LOG(INFO) << s << " " << (get_current_time() - ea_mt_start) / 1000 / loop << " ms";
 
-void tensor2mat(ea_tensor_t *input_tensor, cv::Mat output_mat, int channel_convert) ;
+#define SAVE_LOG_PROCESS(rval, s) \
+    LOG_IF(ERROR, rval < 0) << s << " failed, return " << rval;
+
+void tensor2mat(ea_tensor_t *input_tensor, cv::Mat output_mat, int channel_convert);
+unsigned long get_current_time(void);
 
 #endif // _UTILS_H_
