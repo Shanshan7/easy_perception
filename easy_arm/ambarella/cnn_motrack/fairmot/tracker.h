@@ -98,7 +98,7 @@ typedef struct track_ctx_s {
 
 int amba_cv_env_init(track_ctx_t *track_ctx);
 int amba_track_init(track_ctx_t *track_ctx, track_params_t *params);
-int amba_track_run_loop(track_ctx_t *track_ctx, std::map<int, TrajectoryParams> &track_idx_map);  // track_params_t *params
+int amba_track_run(track_ctx_t *track_ctx, std::map<int, TrajectoryParams> &track_idx_map);  // track_params_t *params
 int amba_draw_detection(std::map<int, TrajectoryParams> track_idx_map, track_ctx_t *track_ctx, uint32_t dsp_pts);
 void *det_thread_func(void *arg);
 void amba_cv_env_deinit(track_ctx_t *track_ctx);
