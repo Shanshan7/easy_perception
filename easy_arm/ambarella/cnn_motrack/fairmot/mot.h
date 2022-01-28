@@ -42,7 +42,7 @@ extern "C" {
 #endif
 
 #define MOT_MAX_TRACK_NUM	100
-#define MOT_REID_DIM		128
+#define MOT_REID_DIM		64
 
 class multi_tracker;
 

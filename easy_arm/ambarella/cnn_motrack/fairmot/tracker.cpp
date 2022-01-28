@@ -1,7 +1,6 @@
 #include "tracker.h"
 #include "../postprocess/calculate_trajectory.h"
 
-
 int amba_cv_env_init(track_ctx_t *track_ctx)
 {
     int rval = 0;
@@ -158,7 +157,7 @@ void *det_thread_func(void *arg)
 
 	do {
 		RVAL_OK(ea_img_resource_hold_data(ctx->img_resource, &data));
-		// LOG(INFO) << "[AMBA Track] AMBA hold image data success!";
+		LOG(INFO) << "[AMBA Track] AMBA hold image data success!";
 
         RVAL_ASSERT(data.tensor_group != NULL);
         RVAL_ASSERT(data.tensor_num >= 1);
@@ -285,7 +284,7 @@ int amba_track_run(track_ctx_t *track_ctx, std::map<int, TrajectoryParams> &trac
             memcpy(mot_input.detections[i].reid, track_ctx->net_result.detections[i].reid, sizeof(mot_input.detections[i]));
         }
 
-        RVAL_OK(mot_process(&track_ctx->mot, &mot_input, &track_ctx->mot_result))
+        RVAL_OK(mot_process(&track_ctx->mot, &mot_input, &track_ctx->mot_result));
 
         // fps = ea_calc_fps(&calc_fps_ctx);
         // if (fps > 0) {
@@ -297,31 +296,9 @@ int amba_track_run(track_ctx_t *track_ctx, std::map<int, TrajectoryParams> &trac
 		SAVE_LOG_PROCESS(calculate_tracking_trajectory(&track_ctx->mot_result, track_idx_map), "[Postprocess] Calculate Tracking trajectory");
 
 		// draw result
-// #ifdef IS_SHOW
-// 		amba_draw_detection(track_idx_map, track_ctx, track_ctx->img_data[track_ctx->head].dsp_pts);
-// #endif
-
-// #ifdef IS_SEND_DATA
-// 		char send_data[100];
-// 		std::stringstream send_data_;
-
-// 		if (track_ctx->mot_result.valid_track_count > 0) {
-// 			track_output->nframe_index = track_ctx->mot_result.frame_id;
-// 			track_output->nvalid_track_count = track_ctx->mot_result.valid_track_count;
-// 			for (int i = 0; i < track_ctx->mot_result.valid_track_count; i++) {
-// 				send_data_.str("");
-// 				send_data_ << track_output->nframe_index << "|" \
-// 						<< track_output->track_attri[i].ntrack_id << "|" \
-// 						<< track_output->track_attri[i].fobject_loc[0] << "|" \
-// 						<< track_idx_map[track_output->track_attri[i].ntrack_id].mean_velocity << "\n";
-// 			}
-
-// 			snprintf(send_data, sizeof(send_data), "%s", \
-// 					send_data_.str().c_str());
-// 		}
-
-// 		SAVE_LOG_PROCESS(network_transmission.send_data(send_data, sizeof(send_data)), "[net_trans] Network Transmission send data");
-// #endif
+#ifdef IS_SHOW
+		amba_draw_detection(track_idx_map, track_ctx, track_ctx->img_data[track_ctx->head].dsp_pts);
+#endif
 
         ea_img_resource_drop_data(track_ctx->img_resource, &track_ctx->img_data[track_ctx->head]);
         track_ctx->head++;

@@ -6,7 +6,7 @@ project(cnn_motrack)
 
 set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})
 
-#add_definitions(-DIS_SHOW)
+add_definitions(-DIS_SHOW)
 add_definitions(-DIS_SEND_DATA)
 
 #include amba_arm directories
