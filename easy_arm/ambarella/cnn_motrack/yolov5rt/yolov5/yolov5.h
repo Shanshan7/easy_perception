@@ -1,78 +1,55 @@
-#ifndef YOLOV5_H
-#define YOLOV5_H
+#ifndef _YOLOV5_H_
+#define _YOLOV5_H_
 
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <opencv2/dnn.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
+#include "../../common/data_struct.h"
+#include "../../common/utils.h"
 
-#include <datatype.h>
 
-// using namespace cv;
-// using namespace dnn;
-using namespace std;
+#define YOLOV5_FEATURE_MAP_NUM			3
 
-#define MOT_REID_DIM    128
-#define g_classificationCnt 80
+EA_LOG_DECLARE_LOCAL(EA_LOG_LEVEL_NOTICE);
 
 #define IDX(o) (entry_index(o,anchor,j,i,grid_x,grid_y))
 
-struct Net_config
-{
-	float confThreshold; // class Confidence threshold
-	float nmsThreshold;  // Non-maximum suppression threshold
-	float objThreshold;  //Object Confidence threshold
-	string netname;
+struct yolov5_s {
+	ea_net_t *net;
+	ea_tensor_t *input_tensor;
+	ea_tensor_t *feature_map_tensors[YOLOV5_FEATURE_MAP_NUM];
+	std::vector<cv::Mat> outputs;
+	float obj_thresh;
+	float nms_threshold;
+	float conf_threshold;
+
+	const float anchors[3][6] = {{10.0, 13.0, 16.0, 30.0, 33.0, 23.0}, {30.0, 61.0, 62.0, 45.0, 59.0, 119.0},{116.0, 90.0, 156.0, 198.0, 373.0, 326.0}};
+	const float stride[3] = { 8.0, 16.0, 32.0 };
+	const int inpWidth = 576;
+	const int inpHeight = 352;
+	int src_width;
+	int src_height;
+	std::vector<std::string> classes;
 };
+typedef struct yolov5_s yolov5_t;
 
-// struct DetResults {
-// 	int class_id; // detection class id
-// 	float confidence;// detection confidence
-// 	cv::Rect box; // detection box(x,y,w,h)
-// 	float reid[MOT_REID_DIM]; //REID information
-// };
+typedef struct yolov5_params_s {
+	// int log_level;
 
-class YOLO
-{
-	public:
-		YOLO(string model_path);
-		void run(cv::Mat& frame, std::vector<DetectBox> &det_results);
-	private:
-		const float anchors[3][6] = {{10.0, 13.0, 16.0, 30.0, 33.0, 23.0}, {30.0, 61.0, 62.0, 45.0, 59.0, 119.0},{116.0, 90.0, 156.0, 198.0, 373.0, 326.0}};
-		const float stride[3] = { 8.0, 16.0, 32.0 };
-		const string classesFile = "coco.names";
-		const int inpWidth = 640;
-		const int inpHeight = 640;
-		float confThreshold = 0.45;
-		float nmsThreshold = 0.45;
-		float objThreshold = 0.45;
-		int src_width;
-		int src_height;
-		
-		char netname[20];
-		std::vector<string> classes;
-		cv::dnn::Net net;
-		int postprocess(std::vector<cv::Mat> &outputs, std::vector<DetectBox> &det_results);
-		void sigmoid(cv::Mat* out, int length);
-};
+	const char *model_path;
+	const char *label_path;
+	const char *input_name;
+	const char *feature_map_names[YOLOV5_FEATURE_MAP_NUM];
 
-static inline float sigmoid_x(float x)
-{
-	return static_cast<float>(1.f / (1.f + exp(-x)));
-}
+	float conf_threshold;	/*!< the threshold for filter_bboxes */
+	int keep_top_k;			/*!< Keep the maximum number of objects */
+	float nms_threshold;	/*!< the threshold for nms */
+	int use_multi_cls;		/*!< use multi class or best class in post process. 0=best class, 1=multi class */
+} yolov5_params_t;
 
-static int entry_index(int loc, int anchorC, int w, int h, int lWidth, int lHeight)
-{
-    return ((anchorC *(g_classificationCnt+5) + loc) * lHeight * lWidth + h * lWidth + w);
-}
+int yolov5_init(yolov5_t *yolov5, const yolov5_params_t *params);
+void yolov5_deinit(yolov5_t *yolov5);
+ea_tensor_t *yolov5_input(yolov5_t *yolov5);
+int entry_index(int loc, int anchorC, int w, int h, int lWidth, int lHeight);
+int yolov5_vp_forward(yolov5_t *yolov5);
+int yolov5_postprocess(yolov5_t *yolov5, std::vector<DetectBox> &det_results);
 
-// Net_config yolo_nets[4] = {
-// 	{0.25, 0.45, 0.25, "yolov5s"},
-// 	{0.5, 0.5, 0.5,  "yolov5m"},
-// 	{0.5, 0.5, 0.5, "yolov5l"},
-// 	{0.5, 0.5, 0.5, "yolov5x"}
-// };
 
-#endif // YOLOV5_H
+#endif // _YOLOV5_H_

@@ -16,6 +16,11 @@
     LOG_IF(ERROR, rval < 0) << s << " failed, return " << rval;
 
 void tensor2mat(ea_tensor_t *input_tensor, cv::Mat output_mat, int channel_convert);
+std::vector<std::vector<float>> applyNMS(std::vector<std::vector<float>>& boxes,
+	                                    const float thres);
+float overlap(float x1, float w1, float x2, float w2);
+float cal_iou(std::vector<float> box, std::vector<float>truth);
+float sigmoid_x(float x);
 unsigned long get_current_time(void);
 
 #endif // _UTILS_H_

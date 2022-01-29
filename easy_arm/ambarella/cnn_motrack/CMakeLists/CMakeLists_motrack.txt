@@ -6,7 +6,7 @@ project(cnn_motrack)
 
 set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})
 
-#add_definitions(-DIS_SHOW)
+add_definitions(-DIS_SHOW)
 add_definitions(-DIS_SEND_DATA)
 
 #include amba_arm directories
@@ -39,13 +39,17 @@ file(GLOB POSTPROCESS_SRCS
     "${PROJECT_SOURCE_DIR}/postprocess/*.cpp"
     )
 
+file(GLOB UTILS_SRCS
+    "${PROJECT_SOURCE_DIR}/common/*.cpp"
+    )
+
 target_sources(test_motrack
         PRIVATE
         "${PROJECT_SOURCE_DIR}/test_motrack.cpp"
         ${MOT_SRCS}
         ${POSTPROCESS_SRCS}
         ${NETWORK_SRCS}
-#        ${IMA_SRCS}
+        ${UTILS_SRCS}
         )
 
 # link libraries
