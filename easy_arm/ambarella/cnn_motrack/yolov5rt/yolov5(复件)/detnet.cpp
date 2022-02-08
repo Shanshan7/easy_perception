@@ -39,7 +39,9 @@ int DetNet::init(const std::string &modelPath, const std::vector<std::string> &i
 		// net_params.keep_top_k = top_k;
 		// net_params.use_multi_cls = use_multi_cls;
 		RVAL_OK(yolov5_init(&yolov5_ctx, &net_params));
-		// std::cout << "yolov5 size:" << ea_tensor_shape(yolov5_ctx.input_tensor)[0] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[1] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[2] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[3] << std::endl;
+		std::cout << "yolov5 size:" << ea_tensor_shape(yolov5_ctx.input_tensor)[0] << " " << \
+		ea_tensor_shape(yolov5_ctx.input_tensor)[1] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[2] \
+		 << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[3] << std::endl;
 	} while (0);
 
     this->classNumber = classNumber;
@@ -50,17 +52,15 @@ int DetNet::init(const std::string &modelPath, const std::vector<std::string> &i
 void DetNet::run(ea_tensor_t *img_tensor)
 {
 	int rval = 0;
-	// std::vector<std::vector<float>> results;
-	// yolov5_result_t  ;
-	int width = ea_tensor_shape(img_tensor)[3];
-	int height = ea_tensor_shape(img_tensor)[2];
+	int origin_width = ea_tensor_shape(img_tensor)[3];
+	int origin_height = ea_tensor_shape(img_tensor)[2];
 	float box_width = 0;
 	float box_height = 0;
 	this->det_results.clear();
 	do {
-		// memset(&det_results, 0, sizeof(det_results));
-		// RVAL_OK(ea_cvt_color_resize(img_tensor, yolov5_input(&yolov5_ctx), EA_COLOR_YUV2RGB_NV12, EA_VP));
+		// RVAL_OK(ea_tensor_to_jpeg(img_tensor, EA_TENSOR_COLOR_MODE_BGR, "./out/image_get.jpg"));
         RVAL_OK(ea_cvt_color_resize(img_tensor, yolov5_input(&yolov5_ctx), EA_COLOR_BGR2RGB, EA_VP));
+		// RVAL_OK(ea_tensor_to_jpeg(yolov5_input(&yolov5_ctx), EA_TENSOR_COLOR_MODE_RGB, "./out/image_input.jpg"));
 		RVAL_OK(yolov5_vp_forward(&yolov5_ctx));
 		RVAL_OK(yolov5_postprocess(&yolov5_ctx, this->det_results));
 	} while (0);

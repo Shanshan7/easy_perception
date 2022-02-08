@@ -32,7 +32,10 @@ void DeepSort::init() {
     //featureExtractor = new FeatureTensor(batchSize, imgShape, featureDim, gpuID, gLogger);
     featureExtractor = new FeatureTensor(batchSize, imgShape, featureDim, gpuID);
 
+#ifdef FEATURE_MATCH_EN
     featureExtractor->loadOnnx(enginePath);
+#endif
+
 }
 
 DeepSort::~DeepSort() {
@@ -75,7 +78,11 @@ void DeepSort::sort(cv::Mat& frame, vector<DetectBox>& dets) {
 
 
 void DeepSort::sort(cv::Mat& frame, DETECTIONS& detections) {
+#ifdef FEATURE_MATCH_EN
     bool flag = featureExtractor->getRectsFeature(frame, detections);
+#else
+    bool flag = featureExtractor->getRectsFeature(detections);
+#endif
     if (flag) {
         objTracker->predict();
         objTracker->update(detections);
@@ -94,7 +101,7 @@ void DeepSort::sort(cv::Mat& frame, DETECTIONSV2& detectionsv2) {
 #ifdef FEATURE_MATCH_EN
     bool flag = featureExtractor->getRectsFeature(frame, detections);
 #else
-    bool flag = 1;
+    bool flag = featureExtractor->getRectsFeature(detections);
 #endif
     LOG(INFO) << "[deepsort] Extract REID feature!";
     if (flag) {

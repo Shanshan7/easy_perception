@@ -1,7 +1,7 @@
 #ifndef KALMANFILTER_H
 #define KALMANFILTER_H
 
-#include "datatype.h"
+#include "../../common/datatype.h"
 
 class KalmanFilter {
 public:

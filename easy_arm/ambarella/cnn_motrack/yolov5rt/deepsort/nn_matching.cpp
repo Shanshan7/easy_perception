@@ -37,7 +37,7 @@ NearNeighborDisMetric::distance(
 void
  NearNeighborDisMetric::partial_fit(
      std::vector <TRACKER_DATA > &tid_feats,
-    std::vector < int >&active_targets)
+     std::vector < int >&active_targets)
 {
     /*python code:
      * let feature(target_id) append to samples;

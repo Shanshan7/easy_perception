@@ -2,7 +2,7 @@
 #define HUNGARIANOPER_H
 
 #include "munkres.h"
-#include "datatype.h"
+#include "../../common/datatype.h"
 
 
 class HungarianOper {

@@ -7,7 +7,7 @@
 //#include <NvInfer.h>
 //#include <NvOnnxParser.h>
 #include "model.hpp"
-#include "datatype.h"
+#include "../../common/datatype.h"
 //#include "cuda_runtime_api.h"
 
 using std::vector;
@@ -35,7 +35,9 @@ private:
     //nvinfer1::IRuntime* runtime;
     //nvinfer1::ICudaEngine* engine;
     //nvinfer1::IExecutionContext* context;
+#ifdef FEATURE_MATCH_EN
     cv::dnn::Net dnn_engine;
+#endif
     const int maxBatchSize;
     const cv::Size imgShape;
     const int featureDim;

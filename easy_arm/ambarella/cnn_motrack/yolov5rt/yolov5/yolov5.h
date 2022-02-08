@@ -1,37 +1,37 @@
 #ifndef _YOLOV5_H_
 #define _YOLOV5_H_
 
-#include "../../common/data_struct.h"
-#include "../../common/utils.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+#define YOLOV5_MAX_LABEL_NUM		183
+#define YOLOV5_MAX_LABEL_LEN		48
+#define YOLOV5_MAX_OUT_NUM			200
 
 #define YOLOV5_FEATURE_MAP_NUM			3
+#define YOLOV5_ANCHOR_NUM				3
+#define YOLOV5_MIN_WH					2
+#define YOLOV5_MAX_WH					4096
 
-EA_LOG_DECLARE_LOCAL(EA_LOG_LEVEL_NOTICE);
-
-#define IDX(o) (entry_index(o,anchor,j,i,grid_x,grid_y))
+typedef struct ea_tensor_s ea_tensor_t;
 
 struct yolov5_s {
+	char labels[YOLOV5_MAX_LABEL_NUM][YOLOV5_MAX_LABEL_LEN];
+	int valid_label_count;
+
 	ea_net_t *net;
 	ea_tensor_t *input_tensor;
 	ea_tensor_t *feature_map_tensors[YOLOV5_FEATURE_MAP_NUM];
-	std::vector<cv::Mat> outputs;
-	float obj_thresh;
+	int top_k;
 	float nms_threshold;
 	float conf_threshold;
-
-	const float anchors[3][6] = {{10.0, 13.0, 16.0, 30.0, 33.0, 23.0}, {30.0, 61.0, 62.0, 45.0, 59.0, 119.0},{116.0, 90.0, 156.0, 198.0, 373.0, 326.0}};
-	const float stride[3] = { 8.0, 16.0, 32.0 };
-	const int inpWidth = 576;
-	const int inpHeight = 352;
-	int src_width;
-	int src_height;
-	std::vector<std::string> classes;
+	int use_multi_cls;
 };
 typedef struct yolov5_s yolov5_t;
 
 typedef struct yolov5_params_s {
-	// int log_level;
+	int log_level;
 
 	const char *model_path;
 	const char *label_path;
@@ -47,9 +47,27 @@ typedef struct yolov5_params_s {
 int yolov5_init(yolov5_t *yolov5, const yolov5_params_t *params);
 void yolov5_deinit(yolov5_t *yolov5);
 ea_tensor_t *yolov5_input(yolov5_t *yolov5);
-int entry_index(int loc, int anchorC, int w, int h, int lWidth, int lHeight);
 int yolov5_vp_forward(yolov5_t *yolov5);
-int yolov5_postprocess(yolov5_t *yolov5, std::vector<DetectBox> &det_results);
 
+typedef struct yolov5_det_s {
+	float score;
+	int id;
+	char label[YOLOV5_MAX_LABEL_LEN];
+	float x_start; // normalized value
+	float y_start;
+	float x_end;
+	float y_end;
+} yolov5_det_t;
 
-#endif // _YOLOV5_H_
+typedef struct  yolov5_result_s {
+	yolov5_det_t detections[YOLOV5_MAX_OUT_NUM];
+	int valid_det_count;
+} yolov5_result_t;
+
+int yolov5_arm_post_process(yolov5_t *yolov5, yolov5_result_t *result);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

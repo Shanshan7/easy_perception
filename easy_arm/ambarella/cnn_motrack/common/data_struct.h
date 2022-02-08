@@ -25,7 +25,7 @@
 #include <eazyai.h>
 
 #define MOT_MAX_TRACK_NUM	        100
-
+EA_LOG_DECLARE_LOCAL(EA_LOG_LEVEL_NOTICE);
 
 // track struct
 struct TrackAttribute {
@@ -42,16 +42,26 @@ struct TrackOutPut {
 };
 
 struct TrajectoryParams {
-	int latest_frame_id=-1;      // the latest frame the target has captured recently
+	int latest_frame_id=-1;                         // the latest frame the target has captured recently
 	int draw_flag;
-    int npedestrian_direction;
+
+	// Pedestrian param
+	// PedestrianParams pedestrian_params;
+
+	// Track param
+	int num_pedestrian;
+	int pedestrian_direction;
+	float relative_distance;
+	float head_location[4];
 	float mean_velocity;
 	std::vector<float> velocity_vector;
 	std::vector<float> pedestrian_x_start;
 	std::vector<float> pedestrian_y_start;
 	std::vector<float> pedestrian_x_end;
 	std::vector<float> pedestrian_y_end;
+	float pedestrian_location[4];
 	std::vector<cv::Point2f> trajectory_position;
+	std::vector<cv::Point2f> trajectory_bird_position;
 };
 
 typedef struct DetectBox {

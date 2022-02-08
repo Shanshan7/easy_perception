@@ -3,7 +3,7 @@
 
 
 #include "kalmanfilter.h"
-#include "datatype.h"
+#include "../../common/datatype.h"
 #include "model.hpp"
 
 class Track

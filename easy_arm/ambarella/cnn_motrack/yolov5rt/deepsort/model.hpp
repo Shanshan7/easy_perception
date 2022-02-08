@@ -2,7 +2,7 @@
 #define MODEL_HPP
 
 #include <algorithm>
-#include "datatype.h"
+#include "../../common/datatype.h"
 
 
 // * Each rect's data structure.

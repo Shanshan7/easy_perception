@@ -1,7 +1,98 @@
 #include "calculate_trajectory.h"
 
 
-int calculate_tracking_trajectory(mot_result_t *mot_result, std::map<int, TrajectoryParams> &track_idx_map) {
+CalculateTraj::CalculateTraj()
+{
+	run_flag = 0;
+	dTs = 1.0 / 25.0;
+	pixel2world_distance = 3.0 / 40.0;
+	save_txt_dir = "/home/edge/traj/h3c_result/"; // "/sdcard/traj/h3c_result/";
+	camera_calibration_file = "/sdcard/traj/";
+	track_idx_map.clear();
+
+    point_image[0].x = 0;
+    point_image[0].y = 0;
+    point_image[1].x = 960;
+    point_image[1].y = 0;
+    point_image[2].x = 0;
+    point_image[2].y = 540;
+    point_image[3].x = 960;
+    point_image[3].y = 540;
+
+    // bird point
+    point_bird[0].x = 180;
+    point_bird[0].y = 162;
+    point_bird[1].x = 618;
+    point_bird[1].y = 0;
+    point_bird[2].x = 552;
+    point_bird[2].y = 540;
+    point_bird[3].x = 682;
+    point_bird[3].y = 464;
+    
+    transferI2B = cv::Mat(3, 3, CV_32F, cv::Scalar::all(0));
+}
+
+CalculateTraj::~CalculateTraj()
+{
+	// if(point_image != NULL)
+    // {
+    //     delete[] point_image;
+    //     point_image = NULL;
+    // }
+	// if(point_bird != NULL)
+    // {
+    //     delete[] point_bird;
+    //     point_bird = NULL;
+    // }
+}
+
+int CalculateTraj::init_save_dir()
+{
+	int rval = 0;
+
+    std::string command;
+    command = "mkdir -p " + this->save_txt_dir;
+    system(command.c_str());
+
+	this->det_txt_path.str("");
+
+	struct timeval tv;
+	char time_str[64];
+    gettimeofday(&tv, NULL); 
+	strftime(time_str, sizeof(time_str)-1, "%Y_%m_%d_%H_%M_%S", localtime(&tv.tv_sec)); 
+	det_txt_path << this->save_txt_dir << time_str << ".txt";
+
+    return 0;
+}
+
+int CalculateTraj::bird_view_matrix_calculate()
+{
+    this->transferI2B = cv::getPerspectiveTransform(this->point_image, this->point_bird);
+    return 0;
+}
+
+int CalculateTraj::projection_on_bird(cv::Point2f &point_image, cv::Point2f &point_bird)
+{
+    point_bird.x = (this->transferI2B.at<float>(0,0) * point_image.x + this->transferI2B.at<float>(0,1) * point_image.y \
+                     + this->transferI2B.at<float>(0,2)) / (this->transferI2B.at<float>(2,0) * point_image.x \
+                     + this->transferI2B.at<float>(2,1) * point_image.y + this->transferI2B.at<float>(2,2));
+
+    point_bird.y = (this->transferI2B.at<float>(1,0) * point_image.x + this->transferI2B.at<float>(1,1) * point_image.y \
+                     + this->transferI2B.at<float>(1,2)) / (this->transferI2B.at<float>(2,0) * point_image.x \
+                     + this->transferI2B.at<float>(2,1) * point_image.y + this->transferI2B.at<float>(2,2));
+
+    return 0;
+}
+
+// int CalculateTraj::bird_view_transform(DetectResultInfo &det_result_info)
+// {
+//     int width;
+//     int height;
+//     cv::warpPerspective(this->input_img_bgr, this->input_img_bird_eye, this->transferI2B, cv::Size(width, height));
+//     return 0;
+// }
+
+int CalculateTraj::calculate_tracking_trajectory(mot_result_t *mot_result, std::map<int, TrajectoryParams> &track_idx_map) {
 	int rval = 0;
 	// read lost_frame_count
     for (std::map<int, TrajectoryParams>::iterator it = track_idx_map.begin(); it != track_idx_map.end();)
@@ -72,13 +163,13 @@ int calculate_tracking_trajectory(mot_result_t *mot_result, std::map<int, Trajec
 	return rval;
 }
 
-int calculate_tracking_trajectory(std::vector<DetectBox>& boxes, int frame_id, int data_height)
+int CalculateTraj::calculate_tracking_trajectory(std::vector<DetectBox>& boxes, int frame_id, int data_height)
 {
 	int rval = 0;
     int current_frame = frame_id;
 
 	// calculate bird view matrix
-	this->bird_view_matrix_calculate();
+	// this->bird_view_matrix_calculate();
 
 	// read lost_frame_count
     for (std::map<int, TrajectoryParams>::iterator it = this->track_idx_map.begin(); it != this->track_idx_map.end();)

@@ -30,6 +30,7 @@ FeatureTensor::~FeatureTensor() {
     }
 }
 
+#ifdef FEATURE_MATCH_EN
 bool FeatureTensor::getRectsFeature(const cv::Mat& img, DETECTIONS& det) {
     std::vector<cv::Mat> mats;
     for (auto& dbox : det) {
@@ -50,11 +51,13 @@ bool FeatureTensor::getRectsFeature(const cv::Mat& img, DETECTIONS& det) {
     stream2det(out, det);
     return true;
 }
+#endif
 
 bool FeatureTensor::getRectsFeature(DETECTIONS& det) {
     return true;
 }
 
+#ifdef FEATURE_MATCH_EN
 void FeatureTensor::loadOnnx(std::string onnxPath) {
     //dnn_engine = new cv::dnn::Net();
 
@@ -63,6 +66,7 @@ void FeatureTensor::loadOnnx(std::string onnxPath) {
     //static auto _engine = cv::dnn::readNetFromONNX(onnxPath);
     dnn_engine = cv::dnn::readNetFromONNX(onnxPath);
 }
+#endif
 
 //int FeatureTensor::getResult(float*& buffer) {
 //    if (buffer != nullptr)
@@ -75,6 +79,7 @@ void FeatureTensor::loadOnnx(std::string onnxPath) {
 //    return curStreamSize;
 //}
 
+#ifdef FEATURE_MATCH_EN
 cv::Mat FeatureTensor::doInference(vector<cv::Mat>& imgMats) {
     cv::Mat out;
     int mat_size = imgMats.size();
@@ -89,7 +94,6 @@ cv::Mat FeatureTensor::doInference(vector<cv::Mat>& imgMats) {
 
     return out;
 }
-
 
 cv::Mat FeatureTensor::doInference_run(vector<cv::Mat> imgMats) {
     //cudaMemcpyAsync(buffers[inputIndex], inputBuffer, inputStreamSize * sizeof(float), cudaMemcpyHostToDevice, cudaStream);
@@ -106,6 +110,7 @@ cv::Mat FeatureTensor::doInference_run(vector<cv::Mat> imgMats) {
 
     return out;
 }
+#endif
 
 void FeatureTensor::stream2det(cv::Mat stream, DETECTIONS& det) {
     int i = 0;

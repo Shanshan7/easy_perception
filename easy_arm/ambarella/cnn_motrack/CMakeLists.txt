@@ -8,24 +8,43 @@ set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})
 
 #add_definitions(-DIS_SHOW)
 #add_definitions(-DIS_SEND_DATA)
+#add_definitions(-DFEATURE_MATCH_EN)
 
 #include amba_arm directories
 include(${PROJECT_SOURCE_DIR}/../cmake/ambacv25_3_dependencies.cmake)
 
 #include MOT headers
 include_directories(${PROJECT_SOURCE_DIR}/common)
+include_directories(${PROJECT_SOURCE_DIR}/yolov5rt)
 include_directories(${PROJECT_SOURCE_DIR}/yolov5rt/yolov5)
+include_directories(${PROJECT_SOURCE_DIR}/yolov5rt/deepsort)
+include_directories(${PROJECT_SOURCE_DIR}/postprocess)
+
+#collect amba cv files
+file(GLOB AMBA_SRCS
+    "${PROJECT_SOURCE_DIR}/yolov5rt/*.cpp"
+	)
 
 #collect yolov5 files
 file(GLOB YOLOV5_SRCS
     "${PROJECT_SOURCE_DIR}/yolov5rt/yolov5/*.cpp"
+    "${PROJECT_SOURCE_DIR}/yolov5rt/yolov5/*.c"
 	)
+
+#collect deepsort files
+file(GLOB DEEPSORT_SRCS
+    "${PROJECT_SOURCE_DIR}/yolov5rt/deepsort/*.cpp"
+	)
+
+#collect postprocess files
+file(GLOB POSTPROCESS_SRCS
+    "${PROJECT_SOURCE_DIR}/postprocess/*.cpp"
+    )
 
 #collect UTILS files
 file(GLOB UTILS_SRCS
     "${PROJECT_SOURCE_DIR}/common/*.cpp"
 	)
-
 
 add_executable(test_yolov5rt "")
 
@@ -33,10 +52,12 @@ target_sources(test_yolov5rt
         PRIVATE
         "${PROJECT_SOURCE_DIR}/test_yolov5rt.cpp"
         ${YOLOV5_SRCS}
+        ${DEEPSORT_SRCS}
+        ${POSTPROCESS_SRCS}
+        ${AMBA_SRCS}
         ${UTILS_SRCS}
         )
 
-# link libraries
 # link libraries
 target_link_libraries(test_yolov5rt
                       opencv_core
