@@ -57,28 +57,30 @@ int amba_draw_detection(sde_track_ctx_t *track_ctx, std::vector<DetectBox> &det_
 {
 	int rval = 0;
     char text[MAX_LABEL_LEN];
-	int border_thickness;
+
+	int width = ea_tensor_shape(img_tensor)[3];
+    int height = ea_tensor_shape(img_tensor)[2];
 
 	ea_display_obj_params(track_ctx->display)->obj_win_w = 1.0;
 	ea_display_obj_params(track_ctx->display)->obj_win_h = 1.0;
-    ea_display_obj_params(track_ctx->display)->border_thickness = 2;
-    ea_display_obj_params(track_ctx->display)->font_size = 18;
 
 	ea_display_obj_params(track_ctx->display)->text_color = EA_16_COLORS_YELLOW;
 
 	do {
 		// draw person box
 		ea_display_obj_params(track_ctx->display)->border_thickness = 2;
-		ea_display_obj_params(track_ctx->display)->font_size = 8;
+		ea_display_obj_params(track_ctx->display)->font_size = 1/3;
 		for (int i = 0; i < det_results.size(); i++) {
-			snprintf(text, MAX_LABEL_LEN, "");
+			snprintf(text, MAX_LABEL_LEN, "ID %d V %.02f", (int)det_results[i].trackID, det_results[i].confidence);
 			// track_idx_map[track_ctx->mot_result.tracks[i].track_id].mean_velocity); // track_ctx->mot_result.tracks[i].x_start
 
 			ea_display_obj_params(track_ctx->display)->box_color = EA_16_COLORS_YELLOW;
+			float xmin = (det_results[i].x1 / width < 0.0)? 1 / width:det_results[i].x1 / width;
+			float ymin = (det_results[i].y1 / height < 0.0)? 1 / height:det_results[i].y1 / height;
+			float box_width = (det_results[i].x2 / width > 1.0)? 1.0 - xmin:det_results[i].x2 / width - xmin;
+			float box_height = (det_results[i].y2 / height > 1.0)? 1.0 - ymin:det_results[i].y2 / height - ymin;
 			ea_display_set_bbox(track_ctx->display, text,
-				det_results[i].x1 / 960, det_results[i].y1 / 540,
-				(det_results[i].x2 - det_results[i].x1) / 960,
-				(det_results[i].y2 - det_results[i].y1) / 540);
+				xmin, ymin, box_width, box_height);
 		}
 
 		// draw ID trajectory
@@ -86,15 +88,15 @@ int amba_draw_detection(sde_track_ctx_t *track_ctx, std::vector<DetectBox> &det_
 		{
 			if(it->second.draw_flag == 1) {
 				ea_display_obj_params(track_ctx->display)->border_thickness = 2;
-				ea_display_obj_params(track_ctx->display)->box_color = (ea_16_colors_t)(it->first % EA_16_COLORS_MAX_NUM);
+				ea_display_obj_params(track_ctx->display)->box_color = EA_16_COLORS_RED;
 				snprintf(text, MAX_LABEL_LEN, "");
 				for (int j = 0; j < it->second.trajectory_position.size(); j++) {
-					if (it->second.trajectory_position[j].x / 960 <= 1.0 - 2 / 960 && 
-						it->second.trajectory_position[j].y / 540 <= 1.0 - 2 / 540) {
+					if (it->second.trajectory_position[j].x / width <= 1.0 - 2 / width && 
+						it->second.trajectory_position[j].y / height <= 1.0 - 2 / height) {
 						ea_display_set_bbox(track_ctx->display, text,
-						it->second.trajectory_position[j].x  / 960, it->second.trajectory_position[j].y / 540,
-						2 / 960,
-						2 / 540);
+						it->second.trajectory_position[j].x  / width, it->second.trajectory_position[j].y / height,
+						2 / width,
+						2 / height);
 					}
 				}
 			}

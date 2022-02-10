@@ -20,7 +20,7 @@ int yolov5_init(yolov5_t *yolov5, const yolov5_params_t *params)
 		yolov5->obj_thresh = 0.8;
 		// yolov5->anchors = {{10.0, 13.0, 16.0, 30.0, 33.0, 23.0}, {30.0, 61.0, 62.0, 45.0, 59.0, 119.0},{116.0, 90.0, 156.0, 198.0, 373.0, 326.0}};
 		// yolov5->stride = {8.0, 16.0, 32.0};
-		yolov5->classes = {"car"};
+		yolov5->classes = {"car", "bus", "truck"};
 		yolov5->inpWidth = 416;
 		yolov5->inpHeight = 416;
 		yolov5->src_width = 960;

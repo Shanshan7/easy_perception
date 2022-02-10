@@ -57,13 +57,13 @@ EA_LOG_DECLARE_LOCAL(EA_LOG_LEVEL_NOTICE);
 
 static float const yolov5_anchors[YOLOV5_FEATURE_MAP_NUM][YOLOV5_ANCHOR_NUM][2] = {
 	{
-		{116, 90}, {156, 198}, {373, 326}	// anchor box of feature map 1
+		{10, 13}, {16, 30}, {33, 23}	// anchor box of feature map 1
 	},
 	{
 		{30, 61}, {62, 45}, {59, 119}		// anchor box of feature map 2
 	},
 	{
-		{10, 13}, {16, 30}, {33, 23}		// anchor box of feature map 3
+		{116, 90}, {156, 198}, {373, 326}		// anchor box of feature map 3 # 
 	}
 };
 
@@ -103,48 +103,10 @@ int yolov5_init(yolov5_t *yolov5, const yolov5_params_t *params)
 			yolov5->feature_map_tensors[i] = ea_net_output(yolov5->net, params->feature_map_names[i]);
 		}
 
-		// // load label from file
-		// fp_label = fopen(params->label_path, "r");
-		// if (fp_label == NULL) {
-		// 	EA_LOG_ERROR("can't open file %s\n", params->label_path);
-		// 	rval = -1;
-		// 	break;
-		// }
-
-		// yolov5->valid_label_count = 0;
-		// for (i = 0; i < YOLOV5_MAX_LABEL_NUM; i++) {
-		// 	if (fgets(yolov5->labels[i], YOLOV5_MAX_LABEL_LEN, fp_label) == NULL) {
-		// 		break;
-		// 	}
-
-		// 	if (strlen(yolov5->labels[i]) >= YOLOV5_MAX_LABEL_LEN - 1) {
-		// 		EA_LOG_ERROR("YOLOV5_MAX_LABEL_LEN %d is too small\n", YOLOV5_MAX_LABEL_LEN);
-		// 		rval = -1;
-		// 		break;
-		// 	}
-
-		// 	endl = strchr(yolov5->labels[i], '\n');
-		// 	if (endl) {
-		// 		endl[0] = '\0';
-		// 	}
-
-		// 	yolov5->valid_label_count++;
-		// }
-
 		RVAL_BREAK();
-
-		// fclose(fp_label);
-		// fp_label = NULL;
-
-		// EA_LOG_NOTICE("label num: %d\n", yolov5->valid_label_count);
 	} while (0);
 
 	if (rval < 0) {
-		// if (fp_label) {
-		// 	fclose(fp_label);
-		// 	fp_label = NULL;
-		// }
-
 		if (yolov5) {
 			if (yolov5->net) {
 				ea_net_free(yolov5->net);

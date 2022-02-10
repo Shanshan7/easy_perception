@@ -2,6 +2,7 @@
 #define _SDE_TRACKER_H_
 
 #include "../common/data_struct.h"
+#include "yolov5/yolov5.h"
 #include <eazyai.h>
 
 #define MAX_PATH_STRLEN			    256

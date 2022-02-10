@@ -7,7 +7,7 @@
 #include "common/data_struct.h"
 #include "postprocess/calculate_trajectory.h"
 
-#define CLASS_NUMBER (1)
+#define CLASS_NUMBER (3)
 
 static sde_track_ctx_t track_ctx;
 
@@ -20,19 +20,10 @@ static void sig_stop(int a)
 int main(int argc, char** argv)
 {
     int rval = 0;
-	// const std::string model_path = "./detnet.bin";
-	// const std::vector<std::string> input_name = {"images"};
-	// const std::vector<std::string> output_name = {"611", "670", "729"};
-	const std::string model_path = "./denet.bin";
+	const std::string model_path = "./detnet.bin";
 	const std::vector<std::string> input_name = {"images"};
 	const std::vector<std::string> output_name = {"326", "385", "444"};
-	// const std::string model_path = "./onnx_yolov5s_cavalry.bin";
-	// const std::vector<std::string> input_name = {"images"};
-	// const std::vector<std::string> output_name = {"1017", "1037", "997"};
-	// const std::string model_path = "./onnx_yolov5plate_cavalry.bin";
-	// const std::vector<std::string> input_name = {"data"};
-	// const std::vector<std::string> output_name = {"949", "969", "989"};
-	const char* class_name[CLASS_NUMBER] = {"car"}; // {"car", "truck", "bus"};
+	const char* class_name[CLASS_NUMBER] = {"car", "truck", "bus"};
     std::string input_dir = "./in";
     std::string output_dir = "./out/";
     snprintf(track_ctx.input_dir, sizeof(track_ctx.input_dir), "%s", \
@@ -76,12 +67,15 @@ int main(int argc, char** argv)
     do {
         unsigned long start_time = get_current_time();
         RVAL_OK(ea_img_resource_hold_data(track_ctx.img_resource, &data));
+        if (data.tensor_group == NULL)
+        {
+            break;
+        }
         RVAL_ASSERT(data.tensor_group[0] != NULL);
         img_tensor = data.tensor_group[0];
         dsp_pts = data.dsp_pts;
         width = ea_tensor_shape(img_tensor)[3];
         height = ea_tensor_shape(img_tensor)[2];
-        std::cout << "width: " << width << " height: " << height << std::endl;
         denet_process.run(img_tensor);
         
         // ea_display_refresh(track_ctx.display, (void *)data.tensor_group[0]);
@@ -92,9 +86,6 @@ int main(int argc, char** argv)
         tensor2mat(img_tensor, input_src, 3);
         DS->sort(input_src, denet_process.det_results);
         std::cout << "[deepsort cost time: " <<  (get_current_time() - time_start_sort) / 1000.0  << " ms]" << std::endl;
-        // LOG(INFO) << "[deepsort] Deepsort process Done!!!";
-        // showDetection(frame, det_results);
-        // frame_id = index;
         ++loop_count;
 
         unsigned long time_start_calculate_tracking_trajectory = get_current_time();
@@ -112,6 +103,7 @@ int main(int argc, char** argv)
         }
     } while(1);
 
+    denet_process.deinit();
     amba_cv_env_deinit(&track_ctx);
 
     return rval;

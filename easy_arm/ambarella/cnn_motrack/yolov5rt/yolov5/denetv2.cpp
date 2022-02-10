@@ -3,22 +3,22 @@
 
 DetNet::DetNet()
 {
-    threshold = 0;
-    nms_threshold = 0.3f;
+    threshold = 0.4f;
+    nms_threshold = 0.45f;
     top_k = 100;
-	use_multi_cls = 0;
+	use_multi_cls = 1;
 
 	log_level = 0;
 }
 
 DetNet::~DetNet()
 {
-    yolov5_deinit(&yolov5_ctx);
+    // yolov5_deinit(&yolov5_ctx);
 }
 
 int DetNet::init(const std::string &modelPath, const std::vector<std::string> &inputName, 
                   const std::vector<std::string> &outputName, 
-                  const int classNumber, const float threshold)
+                  const int classNumber)
 {
     int rval = 0;
 	yolov5_params_t net_params;
@@ -38,7 +38,7 @@ int DetNet::init(const std::string &modelPath, const std::vector<std::string> &i
 		net_params.keep_top_k = top_k;
 		net_params.use_multi_cls = use_multi_cls;
 		RVAL_OK(yolov5_init(&yolov5_ctx, &net_params));
-		std::cout << "yolov5 size:" << ea_tensor_shape(yolov5_ctx.input_tensor)[0] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[1] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[2] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[3] << std::endl;
+		// std::cout << "yolov5 size:" << ea_tensor_shape(yolov5_ctx.input_tensor)[0] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[1] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[2] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[3] << std::endl;
 	} while (0);
 
     this->classNumber = classNumber;
@@ -47,7 +47,7 @@ int DetNet::init(const std::string &modelPath, const std::vector<std::string> &i
     return rval;
 }
 
-std::vector<std::vector<float>> DetNet::run(ea_tensor_t *img_tensor)
+int DetNet::run(ea_tensor_t *img_tensor)
 {
 	int rval = 0;
 	std::vector<std::vector<float>> results;
@@ -56,7 +56,6 @@ std::vector<std::vector<float>> DetNet::run(ea_tensor_t *img_tensor)
 	int height = ea_tensor_shape(img_tensor)[2];
 	float box_width = 0;
 	float box_height = 0;
-	results.clear();
 	det_results.clear();
 	do {
 		memset(&yolov5_net_result, 0, sizeof(yolov5_result_t));
@@ -72,7 +71,6 @@ std::vector<std::vector<float>> DetNet::run(ea_tensor_t *img_tensor)
 		float ymin = yolov5_net_result.detections[i].y_start * height;
 		float xmax = yolov5_net_result.detections[i].x_end * width;
 		float ymax = yolov5_net_result.detections[i].y_end * height;
-		std::cout << xmin << " " << ymin << " " << xmax << " " << ymax << std::endl;
 		if(xmin < 0)
 			xmin = 1;
 		if(ymin < 0)
@@ -94,5 +92,10 @@ std::vector<std::vector<float>> DetNet::run(ea_tensor_t *img_tensor)
 		result.y2 = ymax;
 		det_results.push_back(result);
 	}
-	return results;
+	return rval;
+}
+
+void DetNet::deinit()
+{
+	yolov5_deinit(&yolov5_ctx);
 }
