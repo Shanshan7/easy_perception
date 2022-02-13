@@ -13,7 +13,9 @@ typedef struct sde_track_ctx_s {
 	ea_display_t *display;
 
 	int canvas_id;
+    int stream_id;
     int sig_flag;
+    int run_write_video_file;
 
     char input_dir[MAX_PATH_STRLEN + 1];
     char output_dir[MAX_PATH_STRLEN + 1];

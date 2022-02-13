@@ -19,6 +19,7 @@ include_directories(${PROJECT_SOURCE_DIR}/yolov5rt)
 include_directories(${PROJECT_SOURCE_DIR}/yolov5rt/yolov5)
 include_directories(${PROJECT_SOURCE_DIR}/yolov5rt/deepsort)
 include_directories(${PROJECT_SOURCE_DIR}/postprocess)
+include_directories(${PROJECT_SOURCE_DIR}/image_acquisition)
 
 #collect amba cv files
 file(GLOB AMBA_SRCS
@@ -46,6 +47,11 @@ file(GLOB UTILS_SRCS
     "${PROJECT_SOURCE_DIR}/common/*.cpp"
 	)
 
+#collect image files
+file(GLOB IMAGE_SRCS
+    "${PROJECT_SOURCE_DIR}/image_acquisition/*.cpp"
+	)
+
 add_executable(test_yolov5rt "")
 
 target_sources(test_yolov5rt
@@ -56,6 +62,7 @@ target_sources(test_yolov5rt
         ${POSTPROCESS_SRCS}
         ${AMBA_SRCS}
         ${UTILS_SRCS}
+        ${IMAGE_SRCS}
         )
 
 # link libraries

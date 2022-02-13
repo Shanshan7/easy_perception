@@ -233,7 +233,6 @@ int CalculateTraj::calculate_tracking_trajectory(std::vector<DetectBox>& boxes, 
             }
 		}
 		else {
-            LOG(INFO) << "No track id find!!!";
             TrajectoryParams trajector_param;
             trajector_param.draw_flag = 1;
             trajector_param.latest_frame_id = current_frame;

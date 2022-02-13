@@ -20,11 +20,13 @@ int amba_cv_env_init(sde_track_ctx_t *track_ctx)
 
 		RVAL_OK(ea_env_open(features));
 
-		// track_ctx->img_resource = ea_img_resource_new(EA_CANVAS, (void *)(unsigned long)track_ctx->params.canvas_id);
-        track_ctx->img_resource = ea_img_resource_new(EA_JPEG_FOLDER, (void *)track_ctx->input_dir);
+		track_ctx->img_resource = ea_img_resource_new(EA_CANVAS, (void *)(unsigned long)track_ctx->canvas_id);
+        // track_ctx->img_resource = ea_img_resource_new(EA_JPEG_FOLDER, (void *)track_ctx->input_dir);
 		RVAL_ASSERT(track_ctx->img_resource != NULL);
 
-        track_ctx->display = ea_display_new(EA_DISPLAY_JPEG, EA_TENSOR_COLOR_MODE_BGR, EA_DISPLAY_BBOX_TEXTBOX, (void *)track_ctx->output_dir);
+        // track_ctx->display = ea_display_new(EA_DISPLAY_JPEG, EA_TENSOR_COLOR_MODE_BGR, EA_DISPLAY_BBOX_TEXTBOX, (void *)track_ctx->output_dir);
+		// track_ctx->display = ea_display_new(EA_DISPLAY_STREAM, track_ctx->stream_id, EA_DISPLAY_BBOX_TEXTBOX, NULL);
+		track_ctx->display = ea_display_new(EA_DISPLAY_VOUT, EA_DISPLAY_ANALOG_VOUT, EA_DISPLAY_BBOX_TEXTBOX, NULL);
 		RVAL_ASSERT(track_ctx->display != NULL);
 	} while(0);
 
@@ -69,7 +71,7 @@ int amba_draw_detection(sde_track_ctx_t *track_ctx, std::vector<DetectBox> &det_
 	do {
 		// draw person box
 		ea_display_obj_params(track_ctx->display)->border_thickness = 2;
-		ea_display_obj_params(track_ctx->display)->font_size = 1/3;
+		ea_display_obj_params(track_ctx->display)->font_size = 8;
 		for (int i = 0; i < det_results.size(); i++) {
 			snprintf(text, MAX_LABEL_LEN, "ID %d V %.02f", (int)det_results[i].trackID, det_results[i].confidence);
 			// track_idx_map[track_ctx->mot_result.tracks[i].track_id].mean_velocity); // track_ctx->mot_result.tracks[i].x_start
@@ -91,12 +93,11 @@ int amba_draw_detection(sde_track_ctx_t *track_ctx, std::vector<DetectBox> &det_
 				ea_display_obj_params(track_ctx->display)->box_color = EA_16_COLORS_RED;
 				snprintf(text, MAX_LABEL_LEN, "");
 				for (int j = 0; j < it->second.trajectory_position.size(); j++) {
-					if (it->second.trajectory_position[j].x / width <= 1.0 - 2 / width && 
-						it->second.trajectory_position[j].y / height <= 1.0 - 2 / height) {
+					if (it->second.trajectory_position[j].x / width <= 1.0 - 2.0 / width && 
+						it->second.trajectory_position[j].y / height <= 1.0 - 2.0 / height) {
 						ea_display_set_bbox(track_ctx->display, text,
 						it->second.trajectory_position[j].x  / width, it->second.trajectory_position[j].y / height,
-						2 / width,
-						2 / height);
+						2.0 / width, 2.0 / height);
 					}
 				}
 			}

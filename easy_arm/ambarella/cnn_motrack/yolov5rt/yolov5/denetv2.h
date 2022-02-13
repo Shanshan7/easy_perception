@@ -11,8 +11,7 @@ public:
     DetNet();
     ~DetNet();
     int init(const std::string &modelPath, const std::vector<std::string> &inputName, 
-             const std::vector<std::string> &outputName, 
-             const int classNumber);
+             const std::vector<std::string> &outputName);
     int run(ea_tensor_t *img_tensor);
     void deinit();
     std::vector<DetectBox> det_results;
@@ -22,7 +21,6 @@ private:
     float nms_threshold;
     int top_k;
 	int use_multi_cls;
-    int classNumber;
 
     int log_level;
     yolov5_t yolov5_ctx;

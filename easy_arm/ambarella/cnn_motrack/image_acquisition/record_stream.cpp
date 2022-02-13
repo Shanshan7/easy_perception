@@ -1,164 +1,10 @@
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <errno.h>
-#include <getopt.h>
-#include <sched.h>
+#include "record_stream.h"
 
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <sys/select.h>
-#include <time.h>
-#include <assert.h>
-#include <arpa/inet.h>
-
-#include <signal.h>
-#include <basetypes.h>
-#include <iav_ioctl.h>
-
-#include <sys/statfs.h>
-
-#include <pthread.h>
-
-#ifndef AM_IOCTL
-#define AM_IOCTL(_filp, _cmd, _arg)       \
-	do                                    \
-	{                                     \
-		if (ioctl(_filp, _cmd, _arg) < 0) \
-		{                                 \
-			perror(#_cmd);                \
-			return -1;                    \
-		}                                 \
-	} while (0)
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#define SVCT_PORT_OFFSET (16)
-#define FAST_SEEK_PORT_OFFSET (20)
-#define MAX_SVCT_LAYERS (4)
-
-#define DISK_DIRECTORY ("/sdcard/")
-#define TEN_MINUTE_TO_MISECOND (600000)
-#define ENCODEN_VIDEO_STREAM_ID (1)
-
-// total frames we need to capture
-static int md5_idr_number = -1;
-
-// debug options
-#undef DEBUG_PRINT_FRAME_INFO
-
-// the device file handle
-int fd_iav;
-
-// the bitstream buffer
-u8 *bsb_mem;
-u32 bsb_size;
-struct timeval pre;
-
-static int nofile_flag = 0;
-static int frame_info_flag = 0;
-static int show_bsb_stats_flag = 0;
-static int file_size_flag = 0;
-static int file_size_mega_byte = 100;
-static int remove_time_string_flag = 0;
-static int split_svct_layer_flag = 0;
-static int split_fast_seek_flag = 0;
-
-// bitstream filename base
-static char filename[512] = "/sdcard/encoded_stream_record_10min_0.h264";
-const char *default_filename = "/sdcard/encoded_stream_record_10min";
-static int record_file_index = 0;
-
-// verbose
-static int verbose_mode = 0;
-
-// check stream cfg for dram test
-static u32 stream_mask = 0;	  // indicate stream status
-static u8 enable_hp_fps = 0;
-
-typedef struct
-{
-	int session_id;	  // stream encoding session
-	u64 total_frames; // count how many frames encoded, help to divide for session before session id is implemented
-	u64 total_bytes;  // count how many bytes encoded
-	int pic_type;	  // picture type,  non changed during encoding, help to validate encoding state.
-	u64 monotonic_pts;
-	u64 enc_done_ts;
-	u64 enc_done_ts_diff_sum;
-	u64 i_num; // record i frame's number
-	u64 total_frames_i;
-	u64 total_frames_p;
-	u64 total_frames_b;
-	u64 total_bytes_i;
-	u64 total_bytes_p;
-	u64 total_bytes_b;
-	u64 hw_pts;
-
-	u64 total_frames2;	  // for fps measured every fps_statistics_interval frames
-	struct timeval time2; // for fps measured every fps_statistics_interval frames
-
-	u64 total_bytes_gop;	 // for bitrate measured within the scope of one gop
-	struct timeval time_gop; // for bitrate measured within the scope of one gop
-
-} stream_encoding_state_t;
-
-typedef struct stream_files_s
-{
-	int session_id;				  // stream encoding session
-	u64 total_bytes;			  // count how many bytes encoded
-	int fd;						  // stream write file handle
-	int fd_info;				  // info write file handle
-	int fd_svct[MAX_SVCT_LAYERS]; // file descriptor for svct streams
-	int fd_fast_seek;			  // file descriptor for fast seek streams
-	int gop_structure;			  // store gop structure
-	int fast_seek_intvl;		  // store fast seek intvl
-} stream_files_t;
-
-typedef struct frame_info_s
-{
-	u32 pic_type : 3;
-	u32 reserved : 29;
-	u32 data_addr_offset;
-	u32 frame_cnt;
-	u32 size;
-	u64 dsp_pts;
-	u64 arm_pts;
-} frame_info_t;
-
-struct stream_info
-{
-	enum iav_stream_type type;	 // encode type
-	enum iav_stream_state state; // encode state
-	int canvas;					 // source canvas
-	int abs_fps;				 // abs fps
-
-	int hflip;
-	int vflip;
-	int rotate_cw;
-};
-
-static frame_info_t frame_info;							 ///[MAX_ENCODE_STREAM_NUM];
-static stream_files_t stream_files;						 ///[MAX_ENCODE_STREAM_NUM];
-
-static int write_video_file_run = 1;
-
-long long get_disk_space_free(void)
-{
-	struct statfs spaceInfo;
-	statfs(DISK_DIRECTORY, &spaceInfo);
-	unsigned long long totalBlocks = spaceInfo.f_bsize;
-	unsigned long long freeSpace = spaceInfo.f_bfree * totalBlocks;
-	return freeSpace;
-	//*free = freeDisk;
-	// return 0;
-}
-
-static int init_stream_files(void)
+ int RecordStream::init_stream_files(void)
 {
 	int i, j;
 
@@ -178,7 +24,7 @@ static int init_stream_files(void)
 	return 0;
 }
 
-static int close_stream_files()
+ int RecordStream::close_stream_files()
 {
 	int i;
 
@@ -220,7 +66,7 @@ static int close_stream_files()
 	return 0;
 }
 
-static int deinit_stream_files()
+ int RecordStream::deinit_stream_files()
 {
 	int i;
 
@@ -228,18 +74,8 @@ static int deinit_stream_files()
 	return 0;
 }
 
-static int deinit_data()
-{
-	close_stream_files();
-	
-	// if (fd_iav)
-	// 	close(fd_iav);
-	// fd_iav = -1;
-	return 0;
-}
-
 // return 0 if it's not new session,  return 1 if it is new session
-static int is_new_session(struct iav_framedesc *framedesc)
+ int RecordStream::is_new_session(struct iav_framedesc *framedesc)
 {
 	int new_session = 0;
 	if (framedesc->session_id != stream_files.session_id)
@@ -256,7 +92,7 @@ static int is_new_session(struct iav_framedesc *framedesc)
 	return new_session;
 }
 
-static u8 is_new_frame(struct iav_framedesc *framedesc)
+ u8 RecordStream::is_new_frame(struct iav_framedesc *framedesc)
 {
 	u8 new_frame = 0;
 	struct iav_stream_cfg streamcfg;
@@ -301,7 +137,7 @@ static u8 is_new_frame(struct iav_framedesc *framedesc)
 	return new_frame;
 }
 
-static u8 is_last_framedesc(struct iav_framedesc *framedesc)
+u8 RecordStream::is_last_framedesc(struct iav_framedesc *framedesc)
 {
 	u8 is_lastdesc = 0;
 
@@ -321,9 +157,7 @@ static u8 is_last_framedesc(struct iav_framedesc *framedesc)
 	return is_lastdesc;
 }
 
-#include <time.h>
-
-static int get_time_string(char *time_str, int len)
+ int RecordStream::get_time_string(char *time_str, int len)
 {
 	time_t t;
 	struct tm *tmp;
@@ -339,9 +173,8 @@ static int get_time_string(char *time_str, int len)
 	return 0;
 }
 
-#define VERSION 0x00000005
-#define PTS_IN_ONE_SECOND (90000)
-static int write_frame_info_header()
+
+ int RecordStream::write_frame_info_header()
 {
 	char dummy_config[36];
 	int version = VERSION;
@@ -361,7 +194,7 @@ static int write_frame_info_header()
 	return 0;
 }
 
-static int write_frame_info(struct iav_framedesc *framedesc)
+ int RecordStream::write_frame_info(struct iav_framedesc *framedesc)
 {
 	typedef struct video_frame_s
 	{
@@ -385,7 +218,7 @@ static int write_frame_info(struct iav_framedesc *framedesc)
 	return 0;
 }
 
-static int check_h26x_info(enum iav_stream_type stream_type, int stream_id)
+ int RecordStream::check_h26x_info(enum iav_stream_type stream_type, int stream_id)
 {
 	struct iav_h26x_cfg h26x;
 
@@ -419,7 +252,7 @@ static int check_h26x_info(enum iav_stream_type stream_type, int stream_id)
 }
 
 // check session and update file handle for write when needed
-static int check_session_file_handle(struct iav_framedesc *framedesc, int new_session)
+ int RecordStream::check_session_file_handle(struct iav_framedesc *framedesc, int new_session)
 {
 	char write_file_name[480] = {0};
 	char time_str[128];
@@ -553,7 +386,7 @@ static int check_session_file_handle(struct iav_framedesc *framedesc, int new_se
 	return 0;
 }
 
-static int update_files_data(struct iav_framedesc *framedesc, int new_session)
+ int RecordStream:: update_files_data(struct iav_framedesc *framedesc, int new_session)
 {
 	if (new_session)
 	{
@@ -566,7 +399,7 @@ static int update_files_data(struct iav_framedesc *framedesc, int new_session)
 	return 0;
 }
 
-static int write_svct_file(unsigned char *in, int len, int fd)
+ int RecordStream::write_svct_file(unsigned char *in, int len, int fd)
 {
 	if (write(fd, in, len) < 0)
 	{
@@ -576,7 +409,7 @@ static int write_svct_file(unsigned char *in, int len, int fd)
 	return 0;
 }
 
-static int write_fast_seek_file(unsigned char *in, int len, int fd)
+int RecordStream::write_fast_seek_file(unsigned char *in, int len, int fd)
 {
 	if (write(fd, in, len) < 0)
 	{
@@ -586,7 +419,7 @@ static int write_fast_seek_file(unsigned char *in, int len, int fd)
 	return 0;
 }
 
-static int identify_nal_ref_idc(unsigned char *in, int in_len)
+ int RecordStream::identify_nal_ref_idc(unsigned char *in, int in_len)
 {
 	const int header_magic_number = 0x000001;
 	unsigned int header_mn = 0;
@@ -612,7 +445,7 @@ static int identify_nal_ref_idc(unsigned char *in, int in_len)
 	return nal_ref_idc;
 }
 
-static int identify_nuh_temporal_id_plus1(unsigned char *in, int in_len)
+ int RecordStream::identify_nuh_temporal_id_plus1(unsigned char *in, int in_len)
 {
 	const int header_magic_number = 0x000001;
 	unsigned int header_mn = 0;
@@ -638,7 +471,7 @@ static int identify_nuh_temporal_id_plus1(unsigned char *in, int in_len)
 	return nuh_temporal_id_plus1;
 }
 
-static int get_svct_layer(enum iav_stream_type stream_type, int stream_id, unsigned char *in,
+ int RecordStream::get_svct_layer(enum iav_stream_type stream_type, int stream_id, unsigned char *in,
 						  int in_len, int *ret_layer)
 {
 
@@ -852,7 +685,7 @@ static int get_svct_layer(enum iav_stream_type stream_type, int stream_id, unsig
 	return rval;
 }
 
-static int write_svct_files(enum iav_stream_type stream_type, /*int transfer_method,*/
+ int RecordStream::write_svct_files(enum iav_stream_type stream_type, /*int transfer_method,*/
 							int stream_id, unsigned char *in, int in_len)
 {
 	int gop = stream_files.gop_structure;
@@ -938,7 +771,7 @@ static int write_svct_files(enum iav_stream_type stream_type, /*int transfer_met
 	return rval;
 }
 
-static int write_fast_seek_files(enum iav_stream_type stream_type,
+int RecordStream::write_fast_seek_files(enum iav_stream_type stream_type,
 								 int stream_id, unsigned char *in, int in_len)
 {
 	int fd = stream_files.fd_fast_seek;
@@ -993,7 +826,7 @@ static int write_fast_seek_files(enum iav_stream_type stream_type,
 	return rval;
 }
 
-static int write_video_file(struct iav_framedesc *framedesc, int new_frame)
+ int RecordStream::write_video_file(struct iav_framedesc *framedesc, int new_frame)
 {
 	u32 pic_size = framedesc->size;
 	int fd = stream_files.fd;
@@ -1040,7 +873,7 @@ static int write_video_file(struct iav_framedesc *framedesc, int new_frame)
 	return 0;
 }
 
-static int flush_frame_desc(void)
+ int RecordStream::flush_frame_desc(void)
 {
 	struct iav_queryinfo query_info;
 	struct iav_bsb_stats_info *bsb_stats;
@@ -1061,13 +894,13 @@ static int flush_frame_desc(void)
 	return rval;
 }
 
-static int release_frame_desc(struct iav_framedesc *frame_desc)
+int RecordStream::release_frame_desc(struct iav_framedesc *frame_desc)
 {
 	AM_IOCTL(fd_iav, IAV_IOC_RELEASE_FRAMEDESC, frame_desc);
 	return 0;
 }
 
-static int show_bsb_stats(void)
+ int RecordStream::show_bsb_stats(void)
 {
 	struct iav_queryinfo query_info;
 	struct iav_bsb_stats_info *bsb_stats;
@@ -1092,7 +925,7 @@ static int show_bsb_stats(void)
 	return rval;
 }
 
-static int write_stream(u64 *total_frames, u64 *total_bytes)
+int RecordStream::write_stream(u64 *total_frames, u64 *total_bytes)
 {
 	struct iav_queryinfo query_info;
 	struct iav_stream_info *stream_info;
@@ -1206,7 +1039,7 @@ static int write_stream(u64 *total_frames, u64 *total_bytes)
 				stream_id, frame_desc->session_id);
 		return -4;
 	}
-printf("new_session:%d----fd_iav:%d \n",new_session,fd_iav);
+////printf("new_session:%d----fd_iav:%d \n",new_session,fd_iav);
 	release_frame_desc(frame_desc);
 	if (show_bsb_stats_flag)
 	{
@@ -1240,7 +1073,7 @@ write_stream_exit:
 	return 0;
 }
 
-static int show_waiting(void)
+ int RecordStream::show_waiting(void)
 {
 #define DOT_MAX_COUNT 10
 	static int dot_count = DOT_MAX_COUNT;
@@ -1264,58 +1097,7 @@ static int show_waiting(void)
 	return 0;
 }
 
-static void *capture_encoded_video(void *arg)
-{
-	int rval;
-	// open file handles to write to
-	u64 total_frames;
-	u64 total_bytes;
-	total_frames = 0;
-	total_bytes = 0;
-
-#ifdef ENABLE_RT_SCHED
-	{
-		struct sched_param param;
-		param.sched_priority = 99;
-		if (sched_setscheduler(0, SCHED_FIFO, &param) < 0)
-			perror("sched_setscheduler");
-	}
-#endif
-	flush_frame_desc();
-	gettimeofday(&pre, NULL);
-	while (write_video_file_run)
-	{
-		if ((rval = write_stream(&total_frames, &total_bytes)) < 0)
-		{
-			if (rval == -1)
-			{
-				usleep(100 * 1000);
-				show_waiting();
-			}
-			else
-			{
-				fprintf(stderr, "write_stream err code %d \n", rval);
-				break;
-			}
-			continue;
-		}
-		if (md5_idr_number == 0)
-		{
-			md5_idr_number = -1;
-			/// statistics_run = 0;
-			break;
-		}
-	}
-
-	printf("stop encoded stream capture\n");
-
-	printf("total_frames = %lld\n", total_frames);
-	printf("total_bytes = %lld\n", total_bytes);
-
-	return 0;
-}
-
-static int map_bsb(void)
+int RecordStream::map_bsb(void)
 {
 	struct iav_querymem query_mem = {(enum iav_mem_id)0};
 	struct iav_mem_part_info *part_info = NULL;
@@ -1347,16 +1129,25 @@ static int map_bsb(void)
 
 	return 0;
 }
-
-static int init_data(void)
+long long RecordStream::get_disk_space_free(void)
+{
+	struct statfs spaceInfo;
+	statfs(DISK_DIRECTORY, &spaceInfo);
+	unsigned long long totalBlocks = spaceInfo.f_bsize;
+	unsigned long long freeSpace = spaceInfo.f_bfree * totalBlocks;
+	return freeSpace;
+	//*free = freeDisk;
+	// return 0;
+}
+int RecordStream::init_data(void)
 {
 	int ret = 0;
 
-	// if ((fd_iav = open("/dev/iav", O_RDWR, 0)) < 0)
-	// {
-	// 	perror("/dev/iav");
-	// 	return -1;
-	// }
+	if ((fd_iav = open("/dev/iav", O_RDWR, 0)) < 0)
+	{
+		perror("/dev/iav");
+		return -1;
+	}
 	if (get_disk_space_free() <= 0)
 	{
 		perror("No space free");
@@ -1374,3 +1165,67 @@ static int init_data(void)
 
 	return ret;
 }
+
+int RecordStream::capture_encoded_video(int run_write_video_file)
+{
+	int rval;
+	// open file handles to write to
+	u64 total_frames;
+	u64 total_bytes;
+	total_frames = 0;
+	total_bytes = 0;
+
+#ifdef ENABLE_RT_SCHED
+	{
+		struct sched_param param;
+		param.sched_priority = 99;
+		if (sched_setscheduler(0, SCHED_FIFO, &param) < 0)
+			perror("sched_setscheduler");
+	}
+#endif
+	flush_frame_desc();
+	gettimeofday(&pre, NULL);
+	while (run_write_video_file)
+	{
+		if ((rval = write_stream(&total_frames, &total_bytes)) < 0)
+		{
+			if (rval == -1)
+			{
+				usleep(100 * 1000);
+				show_waiting();
+			}
+			else
+			{
+				fprintf(stderr, "write_stream err code %d \n", rval);
+				break;
+			}
+			continue;
+		}
+		if (md5_idr_number == 0)
+		{
+			md5_idr_number = -1;
+			/// statistics_run = 0;
+			break;
+		}
+	}
+
+	printf("stop encoded stream capture\n");
+
+	printf("total_frames = %lld\n", total_frames);
+	printf("total_bytes = %lld\n", total_bytes);
+
+	return 0;
+}
+
+int RecordStream::deinit_data()
+{
+	close_stream_files();
+	
+	if (fd_iav)
+		close(fd_iav);
+	fd_iav = -1;
+	return 0;
+}
+#ifdef __cplusplus
+}
+#endif

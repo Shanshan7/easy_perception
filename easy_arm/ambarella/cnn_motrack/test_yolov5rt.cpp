@@ -1,6 +1,7 @@
 #include <iostream>
 
 // #include "yolov5rt/yolov5/detnet.h"
+#include "./image_acquisition/record_stream.h"
 #include "yolov5rt/deepsort/deepsort.h"
 #include "yolov5rt/yolov5/denetv2.h"
 #include "yolov5rt/sde_tracker.h"
@@ -15,15 +16,48 @@ static void sig_stop(int a)
 {
 	(void)a;
 	track_ctx.sig_flag = 1;
+    track_ctx.run_write_video_file = 0;
+}
+
+static void *run_image_pthread(void *thread_params)
+{
+    int rval = 0;
+    // int run_write_video_file = 1;
+    int run_write_video_file = *(int *)thread_params;
+
+    RecordStream record_stream;
+    if (record_stream.init_data() < 0)
+	{
+		fprintf(stderr, "data initiation failed!\n");
+		rval = -1;
+	}
+
+    printf("run_write_video_file: %d", run_write_video_file);
+    rval = record_stream.capture_encoded_video(run_write_video_file);
+    if (rval != 0)
+    {
+        fprintf(stderr, "capture encoded video failed: %s\n", strerror(rval));
+        rval = -1;
+    }
+
+    record_stream.deinit_data();
+
+	return NULL;
 }
 
 int main(int argc, char** argv)
 {
     int rval = 0;
-	const std::string model_path = "./detnet.bin";
+    track_ctx.run_write_video_file = 1;
+    track_ctx.canvas_id = 1;
+    int run_track = 1;
+
+	const std::string detnet_model_path = "./detnet.bin";
 	const std::vector<std::string> input_name = {"images"};
 	const std::vector<std::string> output_name = {"326", "385", "444"};
 	const char* class_name[CLASS_NUMBER] = {"car", "truck", "bus"};
+    
+    const std::string sort_model_path = "./deepsort.bin";
     std::string input_dir = "./in";
     std::string output_dir = "./out/";
     snprintf(track_ctx.input_dir, sizeof(track_ctx.input_dir), "%s", \
@@ -44,16 +78,10 @@ int main(int argc, char** argv)
 	ea_tensor_t *img_tensor = NULL;
 	ea_img_resource_data_t data;
 	uint32_t dsp_pts = 0;
+
+    // detnet init
 	DetNet denet_process;
-    DeepSort* DS = new DeepSort("./yolov5rt/deepsort/deepsort.onnx", 128, 256, 0);
-    CalculateTraj calculate_traj;
-	// Time measurement
-	uint32_t loop_count = 1;
-
-	int width = 0;
-	int height = 0;
-
-	if(denet_process.init(model_path, input_name, output_name, CLASS_NUMBER) < 0)
+	if(denet_process.init(detnet_model_path, input_name, output_name) < 0)
     {
 		std::cout << "DetNet init fail!" << std::endl;
     }
@@ -61,21 +89,39 @@ int main(int argc, char** argv)
     {
         std::cout << "DetNet init success!" << std::endl;   
     }
+    DeepSort* DS = new DeepSort(sort_model_path, 128, 256, 0);
+    CalculateTraj calculate_traj;
+	// Time measurement
+	uint32_t loop_count = 1;
+
+	int width = 0;
+	int height = 0;
 
 	memset(&data, 0, sizeof(data));
+
+    pthread_t capture_encoded_video_tid = 0;
+    rval = pthread_create(&capture_encoded_video_tid, NULL, run_image_pthread, &track_ctx.run_write_video_file);
+	// if (capture_encoded_video_tid)
+	// {
+	// 	pthread_join(capture_encoded_video_tid, NULL);
+	// }
 
     do {
         unsigned long start_time = get_current_time();
         RVAL_OK(ea_img_resource_hold_data(track_ctx.img_resource, &data));
-        if (data.tensor_group == NULL)
-        {
-            break;
-        }
+        // if (data.tensor_group == NULL)
+        // {
+        //     break;
+        // }
+        // RVAL_ASSERT(data.tensor_group[0] != NULL);
+        RVAL_ASSERT(data.tensor_group != NULL);
+        RVAL_ASSERT(data.tensor_num >= 1);
         RVAL_ASSERT(data.tensor_group[0] != NULL);
         img_tensor = data.tensor_group[0];
         dsp_pts = data.dsp_pts;
         width = ea_tensor_shape(img_tensor)[3];
         height = ea_tensor_shape(img_tensor)[2];
+        EA_LOG_NOTICE("[main] image width: %d, image height: %d\n", width, height);
         denet_process.run(img_tensor);
         
         // ea_display_refresh(track_ctx.display, (void *)data.tensor_group[0]);
