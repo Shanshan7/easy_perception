@@ -2,7 +2,6 @@
 #define NN_MATCHING_H
 
 #include "../../common/datatype.h"
-
 #include <map>
 
 //A tool to calculate distance;

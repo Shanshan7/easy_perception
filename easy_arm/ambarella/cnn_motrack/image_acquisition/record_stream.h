@@ -20,7 +20,6 @@
 #include <time.h>
 #include <assert.h>
 #include <arpa/inet.h>
-#include <time.h>
 
 #include <signal.h>
 #include <basetypes.h>

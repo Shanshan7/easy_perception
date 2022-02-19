@@ -40,8 +40,6 @@ int DetNet::init(const std::string &modelPath, const std::vector<std::string> &i
 		// std::cout << "yolov5 size:" << ea_tensor_shape(yolov5_ctx.input_tensor)[0] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[1] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[2] << " " << ea_tensor_shape(yolov5_ctx.input_tensor)[3] << std::endl;
 	} while (0);
 
-    // this->threshold = threshold;
-
     return rval;
 }
 
@@ -57,9 +55,9 @@ int DetNet::run(ea_tensor_t *img_tensor)
 	det_results.clear();
 	do {
 		memset(&yolov5_net_result, 0, sizeof(yolov5_result_t));
-		// RVAL_OK(ea_cvt_color_resize(img_tensor, yolov5_input(&yolov5_ctx), EA_COLOR_YUV2RGB_NV12, EA_VP));
-		RVAL_OK(ea_cvt_color_resize(img_tensor, yolov5_input(&yolov5_ctx), EA_COLOR_BGR2RGB, EA_VP));
-		RVAL_OK(ea_tensor_to_jpeg(yolov5_input(&yolov5_ctx), EA_TENSOR_COLOR_MODE_RGB, "/sdcard/input.jpg"));
+		RVAL_OK(ea_cvt_color_resize(img_tensor, yolov5_input(&yolov5_ctx), EA_COLOR_YUV2RGB_NV12, EA_VP));
+		// RVAL_OK(ea_cvt_color_resize(img_tensor, yolov5_input(&yolov5_ctx), EA_COLOR_BGR2RGB, EA_VP));
+		// RVAL_OK(ea_tensor_to_jpeg(yolov5_input(&yolov5_ctx), EA_TENSOR_COLOR_MODE_RGB, "/sdcard/input.jpg"));
 		RVAL_OK(yolov5_vp_forward(&yolov5_ctx));
 		RVAL_OK(yolov5_arm_post_process(&yolov5_ctx, &yolov5_net_result));
 	} while (0);

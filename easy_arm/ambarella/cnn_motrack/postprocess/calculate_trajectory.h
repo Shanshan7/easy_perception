@@ -24,7 +24,7 @@ public:
     ~CalculateTraj();
     int init_save_dir();
 	// int calculate_trajectory(DetectResultInfo &det_result_info);
-    int calculate_tracking_trajectory(mot_result_t *mot_result, std::map<int, TrajectoryParams> &track_idx_map);
+    int calculate_tracking_trajectory(mot_result_t *mot_result, std::map<int, TrajectoryParams> &track_idx_map, int data_height);
     int calculate_tracking_trajectory(std::vector<DetectBox>& boxes, int frame_id, int data_height);
     // int calculate_trajectory(std::vector<DetectBox>& boxes, int frame_id, int data_height);
 	// int save_det_result(DetectResultInfo &det_result_info);               

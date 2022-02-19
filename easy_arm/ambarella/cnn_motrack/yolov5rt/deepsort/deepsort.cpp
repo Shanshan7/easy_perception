@@ -103,13 +103,13 @@ void DeepSort::sort(cv::Mat& frame, DETECTIONSV2& detectionsv2) {
 #else
     bool flag = featureExtractor->getRectsFeature(detections);
 #endif
-    LOG(INFO) << "[deepsort] Extract REID feature!";
+    // LOG(INFO) << "[deepsort] Extract REID feature!";
     if (flag) {
-        LOG(INFO) << "[deepsort] Start tracking!";
+        // LOG(INFO) << "[deepsort] Start tracking!";
         objTracker->predict();
-        LOG(INFO) << "[deepsort] Predict track object done!";
+        // LOG(INFO) << "[deepsort] Predict track object done!";
         objTracker->update(detectionsv2);
-        LOG(INFO) << "[deepsort] Update object track id done!";
+        // LOG(INFO) << "[deepsort] Update object track id done!";
         result.clear();
         results.clear();
         for (Track& track : objTracker->tracks) {
@@ -118,7 +118,7 @@ void DeepSort::sort(cv::Mat& frame, DETECTIONSV2& detectionsv2) {
             result.push_back(make_pair(track.track_id, track.to_tlwh()));
             results.push_back(make_pair(CLSCONF(track.cls, track.conf), track.to_tlwh()));
         }
-        LOG(INFO) << "[deepsort] Track object has been record in results done!";
+        // LOG(INFO) << "[deepsort] Track object has been record in results done!";
     }
 }
 

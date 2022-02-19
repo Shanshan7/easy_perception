@@ -1,6 +1,4 @@
 #include <iostream>
-// #include <time.h>
-#include <json/json.h>
 #include <record_stream.h>
 #include <deepsort.h>
 #include <denetv2.h>
@@ -8,11 +6,10 @@
 #include <data_struct.h>
 #include <calculate_trajectory.h>
 
+
 #define CLASS_NUMBER (3)
-#define ONE_MINUTE_TO_MISECOND (60000)
 
 static sde_track_ctx_t track_ctx;
-
 
 static void sig_stop(int a)
 {
@@ -47,73 +44,12 @@ static void *run_image_pthread(void *thread_params)
 	return NULL;
 }
 
-static void save_json_result(struct timeval &pre, std::map<int, TrajectoryParams> track_idx_map)
-{
-    struct timeval curr;
-    char time_str[64];
-    std::stringstream save_path;
-    save_path.str("");
-
-    gettimeofday(&curr, NULL);
-
-    //根节点  
-    Json::StyledWriter sw;
-	Json::Value root;
-
-    for (std::map<int, TrajectoryParams>::iterator it = track_idx_map.begin(); it != track_idx_map.end(); ++it)
-    {
-        Json::Value targets;
-        targets["record_id"] = Json::Value((int)(pre.tv_sec * 1000));
-        targets["target_id"] = Json::Value(it->first);
-        targets["target_type"] = Json::Value(1);
-        targets["snap_time"] = Json::Value((int)(curr.tv_sec * 1000));
-        targets["target_speed"] = Json::Value(0.0);
-        targets["move_direction"] = Json::Value(-1);
-        targets["distance"] = Json::Value(0.0);
-        if (it->second.trajectory_position.size() > 0)
-        {
-            targets["track_point"]["x"] = Json::Value(it->second.trajectory_position.back().x);
-            targets["track_point"]["y"] = Json::Value(it->second.trajectory_position.back().y);
-        }
-        targets["target_rect"]["left_top_x"] = Json::Value(it->second.pedestrian_x_start.back());
-        targets["target_rect"]["left_top_y"] = Json::Value(it->second.pedestrian_y_start.back());
-        targets["target_rect"]["right_btm_x"] = Json::Value(it->second.pedestrian_x_end.back());
-        targets["target_rect"]["right_btm_y"] = Json::Value(it->second.pedestrian_y_end.back());
-        root["event_type"]["target_list"].append(targets);
-    }
- 
-    // save json file
-	if (((curr.tv_sec - pre.tv_sec) * 1000 + (curr.tv_usec - pre.tv_usec) / 1000) >= ONE_MINUTE_TO_MISECOND)
-    {
-        pre.tv_sec = curr.tv_sec;
-		pre.tv_usec = curr.tv_usec;
-
-        strftime(time_str, sizeof(time_str)-1, "%Y_%m_%d_%H_%M_%S", localtime(&pre.tv_sec)); 
-        save_path << "/data/" << time_str << ".json";
-
-        //输出到文件  
-        std::ofstream os;
-        os.open(save_path.str(), std::ios::out | std::ios::app);
-        if (!os.is_open())
-            std::cout << "error：can not find or create the file which named \" demo.json\"." << std::endl;
-        os << sw.write(root);
-        os.close();
-    }
- 
-	//缩进输出  
-	// std::cout << "StyledWriter:" << std::endl;
-	// std::cout << sw.write(root) << endl << std::endl;
-}
-
 int main(int argc, char** argv)
 {
     int rval = 0;
     track_ctx.run_write_video_file = 1;
     track_ctx.canvas_id = 1;
     int run_track = 1;
-
-    struct timeval pre;
-    gettimeofday(&pre, NULL);
 
 	const std::string detnet_model_path = "/data/detnet.bin";
 	const std::vector<std::string> input_name = {"images"};
@@ -172,6 +108,11 @@ int main(int argc, char** argv)
     do {
         unsigned long start_time = get_current_time();
         RVAL_OK(ea_img_resource_hold_data(track_ctx.img_resource, &data));
+        // if (data.tensor_group == NULL)
+        // {
+        //     break;
+        // }
+        // RVAL_ASSERT(data.tensor_group[0] != NULL);
         RVAL_ASSERT(data.tensor_group != NULL);
         RVAL_ASSERT(data.tensor_num >= 1);
         RVAL_ASSERT(data.tensor_group[0] != NULL);
@@ -181,6 +122,8 @@ int main(int argc, char** argv)
         height = ea_tensor_shape(img_tensor)[2];
         EA_LOG_NOTICE("[main] image width: %d, image height: %d\n", width, height);
         denet_process.run(img_tensor);
+        
+        // ea_display_refresh(track_ctx.display, (void *)data.tensor_group[0]);
         std::cout << "[Yolov5 cost time: " << (get_current_time() - start_time) / 1000 << " ms]" << std::endl;
 
         unsigned long time_start_sort = get_current_time();
@@ -197,8 +140,6 @@ int main(int argc, char** argv)
         RVAL_OK(ea_img_resource_drop_data(track_ctx.img_resource, &data));
         std::cout << "[Loop: "<< loop_count << ", all process cost time: " << (get_current_time() - start_time) / 1000 << " ms]" << std::endl;
         loop_count++;
-
-        save_json_result(pre, calculate_traj.track_idx_map);
 
         if (track_ctx.sig_flag) {
             break;

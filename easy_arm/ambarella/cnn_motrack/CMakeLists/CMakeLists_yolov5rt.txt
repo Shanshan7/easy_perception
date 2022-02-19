@@ -2,18 +2,22 @@
 cmake_minimum_required(VERSION 3.5.0)
 
 #2.project name
-project(yolov5rt)
+project(cnn_motrack)
 
 set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 #add_definitions(-DIS_SHOW)
 #add_definitions(-DIS_SEND_DATA)
+#add_definitions(-DFAIRMOT)
 #add_definitions(-DFEATURE_MATCH_EN)
 
 #include amba_arm directories
 include(${PROJECT_SOURCE_DIR}/../cmake/ambacv25_3_dependencies.cmake)
 
 #include MOT headers
+include_directories(${PROJECT_SOURCE_DIR}/3rdlibrary)
+include_directories(${PROJECT_SOURCE_DIR}/3rdlibrary/json/include)
 include_directories(${PROJECT_SOURCE_DIR}/common)
 include_directories(${PROJECT_SOURCE_DIR}/yolov5rt)
 include_directories(${PROJECT_SOURCE_DIR}/yolov5rt/yolov5)
@@ -45,6 +49,7 @@ file(GLOB POSTPROCESS_SRCS
 #collect UTILS files
 file(GLOB UTILS_SRCS
     "${PROJECT_SOURCE_DIR}/common/*.cpp"
+    "${PROJECT_SOURCE_DIR}/3rdlibrary/json/src/*.cpp"
 	)
 
 #collect image files

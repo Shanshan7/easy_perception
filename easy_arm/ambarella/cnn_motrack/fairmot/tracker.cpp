@@ -286,14 +286,9 @@ int amba_track_run(track_ctx_t *track_ctx, std::map<int, TrajectoryParams> &trac
 
         RVAL_OK(mot_process(&track_ctx->mot, &mot_input, &track_ctx->mot_result));
 
-        // fps = ea_calc_fps(&calc_fps_ctx);
-        // if (fps > 0) {
-        //     EA_LOG_NOTICE("fps %.1f\n", fps);
-        // }
-
         // save_result(live_ctx); // save fairmot result
-
-		SAVE_LOG_PROCESS(calculate_tracking_trajectory(&track_ctx->mot_result, track_idx_map), "[Postprocess] Calculate Tracking trajectory");
+		CalculateTraj calculate_traj;
+		SAVE_LOG_PROCESS(calculate_traj.calculate_tracking_trajectory(&track_ctx->mot_result, track_idx_map, ea_display_obj_params(track_ctx->display)->dis_win_h), "[Postprocess] Calculate Tracking trajectory");
 
 		// draw result
 #ifdef IS_SHOW

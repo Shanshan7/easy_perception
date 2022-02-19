@@ -1,3 +1,4 @@
+#include <iostream>
 #include "calculate_trajectory.h"
 
 
@@ -92,7 +93,7 @@ int CalculateTraj::projection_on_bird(cv::Point2f &point_image, cv::Point2f &poi
 //     return 0;
 // }
 
-int CalculateTraj::calculate_tracking_trajectory(mot_result_t *mot_result, std::map<int, TrajectoryParams> &track_idx_map) {
+int CalculateTraj::calculate_tracking_trajectory(mot_result_t *mot_result, std::map<int, TrajectoryParams> &track_idx_map, int data_height) {
 	int rval = 0;
 	// read lost_frame_count
     for (std::map<int, TrajectoryParams>::iterator it = track_idx_map.begin(); it != track_idx_map.end();)
@@ -113,51 +114,70 @@ int CalculateTraj::calculate_tracking_trajectory(mot_result_t *mot_result, std::
 		float y_start = mot_result->tracks[i].y_start;
         float x_end = mot_result->tracks[i].x_end;
         float y_end = mot_result->tracks[i].y_end;
+		float pedestrian_location[4] = {x_start, y_start, x_end, y_end};
+		float head_loc[4] = {0, 0, 0, 0};
+
 		// printf("id: %d, distancex: %f, distancey: %f\n", track_id, x_start, y_start);
 		cv::Point2f trajectory_position_current = cv::Point2f(x_start + (x_end - x_start) / 2, y_end);
+        cv::Point2f trajectory_position_bird;
+        this->projection_on_bird(trajectory_position_current, trajectory_position_bird);
 
 		std::map<int, TrajectoryParams>::iterator iter;
 		iter = track_idx_map.find(track_id); 
 		if (iter != track_idx_map.end()) {
-			track_idx_map[track_id].trajectory_position.push_back(trajectory_position_current);
 			// calculate the latest velocity
-			float latest_frame_x_start = track_idx_map[track_id].pedestrian_x_start.back();
-			float latest_frame_y_start = track_idx_map[track_id].pedestrian_y_start.back();
+			float trajectory_bird_position_latest_x = this->track_idx_map[track_id].trajectory_bird_position.back().x;
+            float trajectory_bird_position_latest_y = this->track_idx_map[track_id].trajectory_bird_position.back().y;
 
-			// float velocity_current = sqrt(pow((latest_frame_x_start - x_start) * ea_display_obj_params(live_ctx->display)->dis_win_w, 2) + \
-			// pow((y_start - latest_frame_y_start) * ea_display_obj_params(live_ctx->display)->dis_win_h, 2)) / 0.04 * 0.017; // s per meter m/s
+            float move_distance = sqrt(pow((trajectory_bird_position_latest_x - trajectory_position_bird.x), 2) + \
+                                    pow((trajectory_bird_position_latest_y - trajectory_position_bird.y), 2));
 
-			track_idx_map[track_id].pedestrian_x_start.push_back(x_start);
-			track_idx_map[track_id].pedestrian_y_start.push_back(y_start);
-			track_idx_map[track_id].pedestrian_x_end.push_back(x_end);
-			track_idx_map[track_id].pedestrian_y_end.push_back(y_end);
-			track_idx_map[track_id].velocity_vector.push_back(1.38);
-			track_idx_map[track_id].mean_velocity = 1.38;
-			// if (track_idx_map[track_id].velocity_vector.size() < 3) {
-			// 	track_idx_map[track_id].mean_velocity = 1.38;
-			// }
-			// else {
+            this->track_idx_map[track_id].trajectory_position.push_back(trajectory_position_current);
+            this->track_idx_map[track_id].trajectory_bird_position.push_back(trajectory_position_bird);
+            this->track_idx_map[track_id].draw_flag = 1;
+            this->track_idx_map[track_id].latest_frame_id = mot_result->frame_id;
+            this->track_idx_map[track_id].pedestrian_direction = -1;
+            this->track_idx_map[track_id].relative_distance = (data_height - trajectory_position_bird.y) \
+                                                                * this->pixel2world_distance;
 
-			// }
-			track_idx_map[track_id].draw_flag = 1;
-			track_idx_map[track_id].latest_frame_id = mot_result->frame_id;
-            // printf("track id size: %d\n", track_idx_map.size());
+            float velocity_current = move_distance * this->pixel2world_distance / this->dTs;
+            memcpy(this->track_idx_map[track_id].pedestrian_location, pedestrian_location, sizeof(pedestrian_location));
+            memcpy(this->track_idx_map[track_id].head_location, head_loc, sizeof(head_loc));
+            this->track_idx_map[track_id].velocity_vector.push_back(velocity_current);
+            if (this->track_idx_map[track_id].trajectory_bird_position.size() < 3)
+            {
+                this->track_idx_map[track_id].mean_velocity = 1.38;
+            }
+            else
+            {
+                std::vector<float> velocity_vector_tmp = this->track_idx_map[track_id].velocity_vector;
+                this->track_idx_map[track_id].mean_velocity = (velocity_vector_tmp.at(velocity_vector_tmp.size()-1) + \
+                                                               velocity_vector_tmp.at(velocity_vector_tmp.size()-2) + \
+                                                               velocity_vector_tmp.at(velocity_vector_tmp.size()-3)) / 3;
+			}
+            this->track_idx_map[track_id].pedestrian_x_start.push_back(x_start);
+			this->track_idx_map[track_id].pedestrian_y_start.push_back(y_start);
+			this->track_idx_map[track_id].pedestrian_x_end.push_back(x_end);
+			this->track_idx_map[track_id].pedestrian_y_end.push_back(y_end);
 		}
 		else {
-            // printf("No track id find!!!\n");
-			TrajectoryParams track_idx_param;
-			track_idx_param.draw_flag = 1;
-			// printf("Frame id: %d\n", track_output->nframe_index);
-			// printf("latest_frame_id: %d\n", track_idx_param.latest_frame_id);
-			track_idx_param.latest_frame_id = mot_result->frame_id;
-			track_idx_param.pedestrian_x_start.push_back(x_start);
-			track_idx_param.pedestrian_y_start.push_back(y_start);
-			track_idx_param.pedestrian_x_end.push_back(x_end);
-			track_idx_param.pedestrian_y_end.push_back(y_end);
-			track_idx_param.velocity_vector.push_back(1.38);
-			track_idx_param.mean_velocity = 1.38;
-			track_idx_param.trajectory_position.push_back(trajectory_position_current);
-			track_idx_map.insert(std::pair<int, TrajectoryParams>(track_id, track_idx_param));
+			TrajectoryParams trajector_param;
+			trajector_param.draw_flag = 1;
+			trajector_param.latest_frame_id = mot_result->frame_id;
+            trajector_param.trajectory_position.push_back(trajectory_position_current);
+            trajector_param.trajectory_bird_position.push_back(trajectory_position_bird);
+            trajector_param.relative_distance = (data_height - trajectory_position_bird.y) \
+                                                                * this->pixel2world_distance;
+            memcpy(trajector_param.pedestrian_location, pedestrian_location, sizeof(pedestrian_location));
+            memcpy(trajector_param.head_location, head_loc, sizeof(head_loc));
+			trajector_param.velocity_vector.push_back(1.38);
+			trajector_param.mean_velocity = 1.38;
+            trajector_param.pedestrian_x_start.push_back(x_start);
+			trajector_param.pedestrian_y_start.push_back(y_start);
+			trajector_param.pedestrian_x_end.push_back(x_end);
+			trajector_param.pedestrian_y_end.push_back(y_end);
+
+			track_idx_map.insert(std::pair<int, TrajectoryParams>(track_id, trajector_param));
 		}
 	}
 	return rval;
@@ -231,6 +251,10 @@ int CalculateTraj::calculate_tracking_trajectory(std::vector<DetectBox>& boxes, 
                                                                velocity_vector_tmp.at(velocity_vector_tmp.size()-2) + \
                                                                velocity_vector_tmp.at(velocity_vector_tmp.size()-3)) / 3;
             }
+			this->track_idx_map[track_id].pedestrian_x_start.push_back(x_start);
+			this->track_idx_map[track_id].pedestrian_y_start.push_back(y_start);
+			this->track_idx_map[track_id].pedestrian_x_end.push_back(x_end);
+			this->track_idx_map[track_id].pedestrian_y_end.push_back(y_end);
 		}
 		else {
             TrajectoryParams trajector_param;
@@ -245,6 +269,10 @@ int CalculateTraj::calculate_tracking_trajectory(std::vector<DetectBox>& boxes, 
             memcpy(trajector_param.head_location, head_loc, sizeof(head_loc));
             trajector_param.velocity_vector.push_back(1.38);
             trajector_param.mean_velocity = 1.38;
+            trajector_param.pedestrian_x_start.push_back(x_start);
+			trajector_param.pedestrian_y_start.push_back(y_start);
+			trajector_param.pedestrian_x_end.push_back(x_end);
+			trajector_param.pedestrian_y_end.push_back(y_end);
 
 			this->track_idx_map.insert(std::pair<int, TrajectoryParams>(track_id, trajector_param));
 		}

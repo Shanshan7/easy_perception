@@ -75,7 +75,7 @@ void tracker::update(const DETECTIONSV2 & detectionsv2)
     const DETECTIONS& detections = detectionsv2.second;
     TRACHER_MATCHD res;
     _match(detections, res);
-    LOG(INFO) << "[deepsort] Match detection with last frame done!";
+    // LOG(INFO) << "[deepsort] Match detection with last frame done!";
 
     vector < MATCH_DATA > &matches = res.matches;
     for (MATCH_DATA & data:matches) {
@@ -83,7 +83,7 @@ void tracker::update(const DETECTIONSV2 & detectionsv2)
         int detection_idx = data.second;
         tracks[track_idx].update(this->kf, detections[detection_idx], clsConf[detection_idx]);
     }
-    LOG(INFO) << "[deepsort] KalmanFilter update object done!";
+    // LOG(INFO) << "[deepsort] KalmanFilter update object done!";
     vector < int >&unmatched_tracks = res.unmatched_tracks;
     for (int &track_idx:unmatched_tracks) {
         this->tracks[track_idx].mark_missed();
@@ -119,7 +119,7 @@ void tracker::_match(const DETECTIONS & detections, TRACHER_MATCHD & res)
         else unconfirmed_tracks.push_back(idx);
         idx++;
     }
-    LOG(INFO) << "[deepsort] Track confirme&unconfirm done!";
+    // LOG(INFO) << "[deepsort] Track confirme&unconfirm done!";
 
     TRACHER_MATCHD matcha = linear_assignment::getInstance()-> matching_cascade(
         this, &tracker::gated_matric,
@@ -128,7 +128,7 @@ void tracker::_match(const DETECTIONS & detections, TRACHER_MATCHD & res)
         this->tracks,
         detections,
         confirmed_tracks);
-    LOG(INFO) << "[deepsort] Track linear assignment matching cascade done!";
+    // LOG(INFO) << "[deepsort] Track linear assignment matching cascade done!";
     vector < int >iou_track_candidates;
     iou_track_candidates.assign(unconfirmed_tracks.begin(), unconfirmed_tracks.end());
     vector < int >::iterator it;
@@ -151,7 +151,7 @@ void tracker::_match(const DETECTIONS & detections, TRACHER_MATCHD & res)
     //get result:
     res.matches.assign(matcha.matches.begin(), matcha.matches.end());
     res.matches.insert(res.matches.end(), matchb.matches.begin(), matchb.matches.end());
-    LOG(INFO) << "[deepsort] Track linear assignment done!";
+    // LOG(INFO) << "[deepsort] Track linear assignment done!";
     //unmatched_tracks;
     res.unmatched_tracks.assign(
         matcha.unmatched_tracks.begin(), 

@@ -1,7 +1,7 @@
 #ifndef LINEAR_ASSIGNMENT_H
 #define LINEAR_ASSIGNMENT_H
 
-#include "datatype.h"
+#include "../../common/datatype.h"
 #include "tracker.h"
 
 #define INFTY_COST 1e5
