@@ -41,7 +41,7 @@ static void* heart_send_pthread(void* arg)
 		std::stringstream send_result;
 		gettimeofday(&tv, NULL); 
 		strftime(buf, sizeof(buf)-1, "%Y-%m-%d_%H:%M:%S", localtime(&tv.tv_sec)); 
-		send_result <<  0 << "|" << buf;
+		send_result << 0 << "|" << buf;
 		sendto(*broadcast_socket_fd, send_result.str().c_str(), strlen(send_result.str().c_str()), 0, (struct sockaddr *)&broadcast_addr, sizeof(broadcast_addr)); 
 		sleep(1);
 	}
@@ -97,7 +97,7 @@ NetWorkProcess::NetWorkProcess()
 	dest_port = 9998;
     dest_addr.sin_family = AF_INET;
 	dest_addr.sin_port = htons(dest_port);
-	dest_addr.sin_addr.s_addr = inet_addr("10.0.0.102");
+	dest_addr.sin_addr.s_addr = inet_addr("192.168.13.128");
 
 	broadcast_socket_fd = -1;
     broadcast_port = 8888;
@@ -277,6 +277,28 @@ int NetWorkProcess::send_json(const std::string &json_result)
 		0, (struct sockaddr *)&dest_addr,sizeof(dest_addr));
 	pthread_mutex_unlock(&send_mutex);
 	LOG(WARNING) << json_result.c_str();
+	return 0;
+}
+
+int NetWorkProcess::receive_message()
+{
+	int ret = 0;
+	struct sockaddr_in src_addr = {0};  //用来存放对方(信息的发送方)的IP地址信息
+	int len = sizeof(struct sockaddr_in);	//地址信息的大小
+	char msg_buffer[1024] = {0};//消息缓冲区
+
+	ret = recvfrom(udp_socket_fd, msg_buffer, sizeof(msg_buffer), 0, (struct sockaddr *)(&src_addr), (socklen_t*)(&len));
+	if(ret >= 0)
+	{
+		struct timespec ts;
+		std::string tmp_str = msg_buffer;
+		LOG(INFO) << "IP:" << inet_ntoa(src_addr.sin_addr) << " port:" << ntohs(src_addr.sin_port);
+		LOG(INFO) << "msg:" << msg_buffer;
+		receive_code = parseRecv(tmp_str);
+		std::cout << "recv_code:" << receive_code << std::endl;
+		sem_post(&sem_put);
+		memset(msg_buffer, 0, sizeof(msg_buffer));//清空存留消息	
+	}
 	return 0;
 }
 

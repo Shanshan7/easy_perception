@@ -1,6 +1,7 @@
 #define _DLL_EXPORTS
 
 #include "deepsort.h"
+#include "../../common/utils.h"
 #include <glog/logging.h>
 
 //DeepSort::DeepSort(std::string modelPath, int batchSize, int featureDim, int gpuID, ILogger* gLogger) {
@@ -57,10 +58,12 @@ void DeepSort::sort(cv::Mat& frame, vector<DetectBox>& dets) {
     }
     result.clear();
     results.clear();
+    unsigned long start_time_01 = get_current_time();
     if (detections.size() > 0) {
         DETECTIONSV2 detectionsv2 = make_pair(clsConf, detections);
         sort(frame, detectionsv2);
     }
+    std::cout << "[deepsort] Match track object done! Cost time: " << (get_current_time() - start_time_01) / 1000 << " ms]" << std::endl;
     // postprocess DETECTION -> Mat
     dets.clear();
     for (auto r : result) {
@@ -75,7 +78,6 @@ void DeepSort::sort(cv::Mat& frame, vector<DetectBox>& dets) {
         dets[i].confidence = c.conf;
     }
 }
-
 
 void DeepSort::sort(cv::Mat& frame, DETECTIONS& detections) {
 #ifdef FEATURE_MATCH_EN
@@ -106,9 +108,13 @@ void DeepSort::sort(cv::Mat& frame, DETECTIONSV2& detectionsv2) {
     // LOG(INFO) << "[deepsort] Extract REID feature!";
     if (flag) {
         // LOG(INFO) << "[deepsort] Start tracking!";
+        unsigned long start_time_1 = get_current_time();
         objTracker->predict();
+        std::cout << "[deepsort] Predict track object done! Cost time: " << (get_current_time() - start_time_1) / 1000 << " ms]" << std::endl;
         // LOG(INFO) << "[deepsort] Predict track object done!";
+        unsigned long start_time_2 = get_current_time();
         objTracker->update(detectionsv2);
+        std::cout << "[deepsort] Update object track id done! Cost time: " << (get_current_time() - start_time_2) / 1000 << " ms]" << std::endl;
         // LOG(INFO) << "[deepsort] Update object track id done!";
         result.clear();
         results.clear();

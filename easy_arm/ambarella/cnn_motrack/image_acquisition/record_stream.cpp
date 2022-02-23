@@ -1162,6 +1162,8 @@ int RecordStream::init_data(void)
 	}
 
 	init_stream_files();
+	flush_frame_desc();
+	gettimeofday(&pre, NULL);
 
 	return ret;
 }

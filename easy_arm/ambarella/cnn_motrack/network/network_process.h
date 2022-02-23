@@ -33,6 +33,8 @@ public:
 
     int process_recv();
 
+    int receive_message();
+
     int send_result(const std::string &lpr_result, const int code);
 
     int send_json(const std::string &json_result);
@@ -40,6 +42,9 @@ public:
     int send_error(const int code);
 
     void send_post();
+
+public:
+    int receive_code;
 
 private:
 

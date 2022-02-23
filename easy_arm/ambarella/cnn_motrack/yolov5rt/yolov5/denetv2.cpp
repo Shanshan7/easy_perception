@@ -3,7 +3,7 @@
 
 DetNet::DetNet()
 {
-    threshold = 0.4f;
+    threshold = 0.5f;
     nms_threshold = 0.45f;
     top_k = 100;
 	use_multi_cls = 1;
