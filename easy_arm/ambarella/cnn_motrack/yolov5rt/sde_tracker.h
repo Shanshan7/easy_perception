@@ -32,5 +32,6 @@ int amba_cv_env_init(sde_track_ctx_t *track_ctx);
 void amba_cv_env_deinit(sde_track_ctx_t *track_ctx);
 // int amba_draw_detection(sde_track_ctx_t *track_ctx, std::vector<DetectBox> &det_results, uint32_t dsp_pts);
 int amba_draw_detection(sde_track_ctx_t *track_ctx);
+int amba_draw_detection(sde_track_ctx_t *track_ctx, std::vector<DetectBox> &det_results);
 
 #endif // _SDE_TRACKER_H_

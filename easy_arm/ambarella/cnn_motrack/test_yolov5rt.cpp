@@ -21,6 +21,7 @@ int run_write_video_file = 1;
 int run_receive_message = 1;
 int run_result_process_flag = 0;
 int run_json_save_flag = 0;
+std::vector<Json::Value> json_value_results;
 
 static void sig_stop(int a)
 {
@@ -60,7 +61,7 @@ static void save_json_result(struct timeval &pre, std::map<int, TrajectoryParams
         targets["target_rect"]["left_top_y"] = Json::Value(it->second.pedestrian_y_start.back());
         targets["target_rect"]["right_btm_x"] = Json::Value(it->second.pedestrian_x_end.back());
         targets["target_rect"]["right_btm_y"] = Json::Value(it->second.pedestrian_y_end.back());
-        root["event_type"]["target_list"].append(targets);
+        json_value_results.push_back(targets);
     }
  
     // save json file
@@ -72,6 +73,11 @@ static void save_json_result(struct timeval &pre, std::map<int, TrajectoryParams
         strftime(time_str, sizeof(time_str)-1, "%Y_%m_%d_%H_%M_%S", localtime(&pre.tv_sec)); 
         save_path << "/data/" << time_str << ".json";
 
+        for (int i = 0; i < json_value_results.size(); i++)
+        {
+            root["event_type"]["target_list"].append(json_value_results[i]);
+        }
+
         //输出到文件  
         std::ofstream os;
         os.open(save_path.str(), std::ios::out | std::ios::app);
@@ -79,8 +85,9 @@ static void save_json_result(struct timeval &pre, std::map<int, TrajectoryParams
             std::cout << "[error: can not find or create the file which named \" ***.json\"]." << std::endl;
         os << sw.write(root);
         os.close();
+        json_value_results.clear();
     }
- 
+
 	//缩进输出  
 	// std::cout << "StyledWriter:" << std::endl;
 	// std::cout << sw.write(root) << endl << std::endl;
@@ -134,6 +141,7 @@ static void* result_process_thread(void* argv)
     int rval = 0;
     struct timeval pre;
     gettimeofday(&pre, NULL);
+    json_value_results.clear();
 
     while (run_result_process)
     {
@@ -196,24 +204,26 @@ static void* yolov5_deepsort_thread(void* argv)
         std::cout << "[main] image width: " << width << ", image height: " << height << std::endl;
 
         denet_process.run(img_tensor);
+        // std::cout << "Yolov5 size after detect: " << denet_process.det_results.size() << std::endl;
         std::cout << "[Yolov5 cost time: " << (get_current_time() - start_time) / 1000 << " ms]" << std::endl;
 
         unsigned long time_start_sort = get_current_time();
         cv::Mat input_src(cv::Size(width, height), CV_8UC3);
         // tensor2mat(img_tensor, input_src, 3);
         DS->sort(input_src, denet_process.det_results);
-        std::cout << "[deepsort cost time: " <<  (get_current_time() - time_start_sort) / 1000.0  << " ms]" << std::endl;
+        std::cout << "[deepsort cost time: " << (get_current_time() - time_start_sort) / 1000.0  << " ms]" << std::endl;
 
         unsigned long time_start_calculate_tracking_trajectory = get_current_time();
-        calculate_traj.calculate_tracking_trajectory(denet_process.det_results, track_ctx.loop_count, input_src.rows);
+        calculate_traj.calculate_tracking_trajectory(denet_process.det_results, track_ctx.loop_count, height);
         pthread_rwlock_wrlock(&rwlock);
         track_ctx.image_width = width;
         track_ctx.image_height = height;
         track_ctx.track_idx_map = calculate_traj.track_idx_map;
         pthread_rwlock_unlock(&rwlock);
-        std::cout << "[calculate_tracking_trajectory cost time: " <<  (get_current_time() - time_start_calculate_tracking_trajectory) / 1000.0  << " ms]" << std::endl;
+        std::cout << "[calculate_tracking_trajectory cost time: " << (get_current_time() - time_start_calculate_tracking_trajectory) / 1000.0  << " ms]" << std::endl;
 
         std::cout << "[Loop: "<< track_ctx.loop_count << ", all process cost time: " << (get_current_time() - start_time) / 1000 << " ms]" << std::endl;
+        // amba_draw_detection(&track_ctx, denet_process.det_results);
         RVAL_OK(ea_img_resource_drop_data(track_ctx.img_resource, &track_ctx.image_data));
         run_result_process_flag = 1;
         track_ctx.loop_count++;
@@ -259,8 +269,10 @@ int main(int argc, char** argv)
         std::cout << "[Network] process initial fail!" << std::endl;
 		return -1;
 	}
+    
+    network_process.send_json("Connect Success!!!");
 
-    // pthread_t capture_encoded_video_tid = 0;
+    pthread_t capture_encoded_video_tid = 0;
     pthread_t result_process_thread_pid = 1;
     pthread_t yolov5_deepsort_thread_pid = 2;
     pthread_t receive_message_thread_pid = 3;
@@ -272,12 +284,12 @@ int main(int argc, char** argv)
 
     amba_cv_env_init(&track_ctx);
 
-    // pthread_create(&capture_encoded_video_tid, NULL, run_image_pthread, NULL);
+    pthread_create(&capture_encoded_video_tid, NULL, run_image_pthread, NULL);
     pthread_create(&result_process_thread_pid, NULL, result_process_thread, NULL);
     pthread_create(&yolov5_deepsort_thread_pid, NULL, yolov5_deepsort_thread, NULL);
     pthread_create(&receive_message_thread_pid, NULL, receive_message_thread, NULL);
  
-    // pthread_join(capture_encoded_video_tid, NULL);
+    pthread_join(capture_encoded_video_tid, NULL);
     pthread_join(result_process_thread_pid, NULL);
     pthread_join(yolov5_deepsort_thread_pid, NULL);
     pthread_join(receive_message_thread_pid, NULL);

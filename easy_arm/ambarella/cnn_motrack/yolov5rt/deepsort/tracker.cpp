@@ -78,6 +78,7 @@ void tracker::update(const DETECTIONSV2 & detectionsv2)
     // LOG(INFO) << "[deepsort] Match detection with last frame done!";
 
     vector < MATCH_DATA > &matches = res.matches;
+    std::cout << "[deepsort] Match detection with last frame done! Matches size: " << res.matches.size() << std::endl;
     for (MATCH_DATA & data:matches) {
         int track_idx = data.first;
         int detection_idx = data.second;

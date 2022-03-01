@@ -110,10 +110,12 @@ void DeepSort::sort(cv::Mat& frame, DETECTIONSV2& detectionsv2) {
         // LOG(INFO) << "[deepsort] Start tracking!";
         unsigned long start_time_1 = get_current_time();
         objTracker->predict();
+        // std::cout << "[deepsort] Track size after predict: " << objTracker->tracks.size() << std::endl;
         std::cout << "[deepsort] Predict track object done! Cost time: " << (get_current_time() - start_time_1) / 1000 << " ms]" << std::endl;
         // LOG(INFO) << "[deepsort] Predict track object done!";
         unsigned long start_time_2 = get_current_time();
         objTracker->update(detectionsv2);
+        // std::cout << "[deepsort] Track size after update: " << objTracker->tracks.size() << std::endl;
         std::cout << "[deepsort] Update object track id done! Cost time: " << (get_current_time() - start_time_2) / 1000 << " ms]" << std::endl;
         // LOG(INFO) << "[deepsort] Update object track id done!";
         result.clear();
