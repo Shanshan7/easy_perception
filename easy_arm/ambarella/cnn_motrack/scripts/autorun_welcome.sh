@@ -12,4 +12,4 @@ cavalry_load -f /lib/firmware/cavalry.bin -r
 
 test_encode -i 2432x2048 --hdmi 720p --ors 1280x720 --mctf-cmpr 0 -X --bsize 2432x2048 --bmaxsize 2432x2048 -K --bsize 1920x1080 --bmaxsize 1920x1080 -J --btype prev
 
-test_encode -A -H 1080p -b 3 -e
+test_encode -A -h 1080p -b 3 -e

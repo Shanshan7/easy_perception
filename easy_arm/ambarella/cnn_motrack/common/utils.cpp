@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include "utils.h"
 
 // tensor: size is n,c,h,w
@@ -116,4 +118,37 @@ unsigned long get_current_time(void)
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return (tv.tv_sec*1000000 + tv.tv_usec);
+}
+
+/* 复制文件
+ * @参数 src - 源文件名
+ * @参数 dest - 目标文件名，如果目标文件已存在，则覆盖
+ * @返回 true | false 代表拷贝是否成功
+*/
+bool copy_file(std::string src, std::string dest) {
+    std::ifstream is(src, std::ios::binary);
+    if (is.fail()) {
+        return false;
+    }
+
+    std::ofstream os(dest, std::ios::binary);
+    if (os.fail()) {
+        return false;
+    }
+
+    is.seekg(0, std::ios::end);
+    long long length = is.tellg();  // C++ 支持的最大索引位置
+    is.seekg(0);
+    char buf[2048];
+    while (length > 0)
+    {
+        int bufSize = length >= 2048 ? 2048 : length;
+        is.read(buf, bufSize);
+        os.write(buf, bufSize);
+        length -= bufSize;
+    }
+
+    is.close();
+    os.close();
+    return true;
 }

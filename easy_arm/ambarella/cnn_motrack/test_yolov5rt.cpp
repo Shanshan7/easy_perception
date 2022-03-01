@@ -85,6 +85,7 @@ static void save_json_result(struct timeval &pre, std::map<int, TrajectoryParams
             std::cout << "[error: can not find or create the file which named \" ***.json\"]." << std::endl;
         os << sw.write(root);
         os.close();
+        copy_file(save_path.str(), "/data/newest.json");
         json_value_results.clear();
     }
 
@@ -154,11 +155,11 @@ static void* result_process_thread(void* argv)
             unsigned long start_time_draw = get_current_time();
             pthread_rwlock_rdlock(&rwlock);
             amba_draw_detection(&track_ctx);
+            pthread_rwlock_unlock(&rwlock);
             if (run_json_save_flag == 1)
             {
                 save_json_result(pre, track_ctx.track_idx_map);
             }
-            pthread_rwlock_unlock(&rwlock);
             run_result_process_flag = 0;
             std::cout << "[Result process cost time: " << (get_current_time() - start_time_draw) / 1000 << " ms]" << std::endl;
         }

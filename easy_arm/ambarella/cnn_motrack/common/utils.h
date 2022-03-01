@@ -22,5 +22,6 @@ float overlap(float x1, float w1, float x2, float w2);
 float cal_iou(std::vector<float> box, std::vector<float>truth);
 float sigmoid_x(float x);
 unsigned long get_current_time(void);
+bool copy_file(std::string src, std::string dest);
 
 #endif // _UTILS_H_
