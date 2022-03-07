@@ -147,7 +147,7 @@ class RecordStream {
    struct timeval pre;
   // bitstream filename base
    char filename[512] = "/sdcard/encoded_stream_record_10min_0.h264";
-   const char *default_filename = "/sdcard/encoded_stream_record_10min";
+   const char *default_filename = "/sdcard/";
    int record_file_index = 0;
 
   long long get_disk_space_free(void);

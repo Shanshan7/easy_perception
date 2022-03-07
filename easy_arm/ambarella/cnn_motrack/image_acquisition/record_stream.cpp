@@ -308,6 +308,9 @@ u8 RecordStream::is_last_framedesc(struct iav_framedesc *framedesc)
 			fprintf(stderr, "filename is too long (%lu >= %lu) \n", len, sizeof(write_file_name));
 			return -1;
 		}
+		char time_str_UTC[64];
+		strftime(time_str_UTC, sizeof(time_str_UTC)-1, "%Y_%m_%d_%H_%M_%S", localtime(&pre.tv_sec)); 
+		sprintf(filename, "%s%s.h264", default_filename, time_str_UTC);
 		memcpy(write_file_name, filename, len);
 
 		if (md5_idr_number <= 0)
@@ -1062,7 +1065,9 @@ write_stream_exit:
 		///stream_files.fd = -1;
 		memset(filename, 0x00, sizeof(filename));
 		record_file_index++;
-		sprintf(filename, "%s_%d.h264", default_filename, record_file_index);
+		char time_str_UTC[64];
+		strftime(time_str_UTC, sizeof(time_str_UTC)-1, "%Y_%m_%d_%H_%M_%S", localtime(&pre.tv_sec)); 
+		sprintf(filename, "%s_%s.h264", default_filename, time_str_UTC);
 		if ((stream_files.fd = open(filename, O_CREAT | O_RDWR | O_APPEND)) < 0)
 		{
 			fprintf(stderr, "create file for write failed %s \n", filename);
