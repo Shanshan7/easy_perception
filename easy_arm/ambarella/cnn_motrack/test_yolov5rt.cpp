@@ -191,7 +191,7 @@ static void* result_process_thread(void* argv)
                 write_json_result();
             }
             run_result_process_flag = 0;
-            std::cout << "[Result process cost time: " << (get_current_time() - start_time_draw) / 1000 << " ms]" << std::endl;
+            // std::cout << "[Result process cost time: " << (get_current_time() - start_time_draw) / 1000 << " ms]" << std::endl;
         }
     }
     
