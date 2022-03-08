@@ -19,8 +19,10 @@ int run_result_process = 1;
 int run_yolov5_deepsort = 1;
 int run_write_video_file = 1;
 int run_receive_message = 1;
+int run_result_process_flag = 0;
 int run_json_save_flag = 0;
-
+int run_write_json_file = 0;
+std::vector<Json::Value> json_value_results_temp;
 std::vector<Json::Value> json_value_results;
 std::stringstream save_path;
 
@@ -39,7 +41,7 @@ static void save_json_result(struct timeval &pre, std::map<int, TrajectoryParams
 
     //根节点  
     Json::StyledWriter sw;
-	Json::Value root;
+	// Json::Value root;
 
     for (std::map<int, TrajectoryParams>::iterator it = track_idx_map.begin(); it != track_idx_map.end(); ++it)
     {
@@ -60,7 +62,7 @@ static void save_json_result(struct timeval &pre, std::map<int, TrajectoryParams
         targets["target_rect"]["left_top_y"] = Json::Value(it->second.pedestrian_y_start.back());
         targets["target_rect"]["right_btm_x"] = Json::Value(it->second.pedestrian_x_end.back());
         targets["target_rect"]["right_btm_y"] = Json::Value(it->second.pedestrian_y_end.back());
-        json_value_results.push_back(targets);
+        json_value_results_temp.push_back(targets);
     }
  
     // save json file
@@ -72,26 +74,51 @@ static void save_json_result(struct timeval &pre, std::map<int, TrajectoryParams
         strftime(time_str, sizeof(time_str)-1, "%Y_%m_%d_%H_%M_%S", localtime(&pre.tv_sec)); 
         save_path.str("");
         save_path << "/data/" << time_str << ".json";
+        json_value_results = json_value_results_temp;
+        json_value_results_temp.clear();
+        run_write_json_file = 1;
 
-        for (int i = 0; i < json_value_results.size(); i++)
-        {
-            root["event_type"]["target_list"].append(json_value_results[i]);
-        }
+        // for (int i = 0; i < json_value_results.size(); i++)
+        // {
+        //     root["event_type"]["target_list"].append(json_value_results[i]);
+        // }
 
-        //输出到文件  
-        std::ofstream os;
-        os.open(save_path.str(), std::ios::out | std::ios::app);
-        if (!os.is_open())
-            std::cout << "[error: can not find or create the file which named \" ***.json\"]." << std::endl;
-        os << sw.write(root);
-        os.close();
-        copy_file(save_path.str(), "/data/newest.json");
-        json_value_results.clear();
+        // //输出到文件  
+        // std::ofstream os;
+        // os.open(save_path.str(), std::ios::out | std::ios::app);
+        // if (!os.is_open())
+        //     std::cout << "[error: can not find or create the file which named \" ***.json\"]." << std::endl;
+        // os << sw.write(root);
+        // os.close();
+        // copy_file(save_path.str(), "/data/newest.json");
+        // json_value_results.clear();
     }
 
 	//缩进输出  
 	// std::cout << "StyledWriter:" << std::endl;
 	// std::cout << sw.write(root) << endl << std::endl;
+}
+
+static void write_json_result()
+{
+    Json::StyledWriter sw;
+    Json::Value root;
+
+    for (int i = 0; i < json_value_results.size(); i++)
+    {
+        root["event_type"]["target_list"].append(json_value_results[i]);
+    }
+
+    //输出到文件  
+    std::ofstream os;
+    os.open(save_path.str(), std::ios::out | std::ios::app);
+    if (!os.is_open())
+        std::cout << "[error: can not find or create the file which named \" ***.json\"]." << std::endl;
+    os << sw.write(root);
+    os.close();
+    copy_file(save_path.str(), "/data/newest.json");
+    json_value_results.clear();
+    run_write_json_file = 0;
 }
 
 static void *run_image_pthread(void *thread_params)
@@ -142,16 +169,30 @@ static void* result_process_thread(void* argv)
     int rval = 0;
     struct timeval pre;
     gettimeofday(&pre, NULL);
-    json_value_results.clear();
+    json_value_results_temp.clear();
 
     while (run_result_process)
     {
-        unsigned long start_time_draw = get_current_time();
-        if (run_json_save_flag == 1)
+        if (run_result_process_flag < 1)
         {
-            save_json_result(pre, track_ctx.track_idx_map);
+            continue;
         }
-        std::cout << "[Result process cost time: " << (get_current_time() - start_time_draw) / 1000 << " ms]" << std::endl;
+        else
+        {
+            unsigned long start_time_draw = get_current_time();
+            pthread_rwlock_rdlock(&rwlock);
+            if (run_json_save_flag == 1)
+            {
+                save_json_result(pre, track_ctx.track_idx_map);
+            }
+            pthread_rwlock_unlock(&rwlock);
+            if (run_write_json_file == 1)
+            {
+                write_json_result();
+            }
+            run_result_process_flag = 0;
+            std::cout << "[Result process cost time: " << (get_current_time() - start_time_draw) / 1000 << " ms]" << std::endl;
+        }
     }
     
     return NULL;
@@ -205,14 +246,17 @@ static void* yolov5_deepsort_thread(void* argv)
 
         unsigned long time_start_calculate_tracking_trajectory = get_current_time();
         calculate_traj.calculate_tracking_trajectory(denet_process.det_results, track_ctx.loop_count, height);
+        pthread_rwlock_wrlock(&rwlock);
         track_ctx.image_width = width;
         track_ctx.image_height = height;
         track_ctx.track_idx_map = calculate_traj.track_idx_map;
+        pthread_rwlock_unlock(&rwlock);
         std::cout << "[Yolov5rt] Calculate_tracking_trajectory cost time: " << (get_current_time() - time_start_calculate_tracking_trajectory) / 1000.0  << " ms]" << std::endl;
 
         std::cout << "[Yolov5rt] Loop: "<< track_ctx.loop_count << ", all process cost time: " << (get_current_time() - start_time) / 1000 << " ms]" << std::endl;
         amba_draw_detection(&track_ctx);
         RVAL_OK(ea_img_resource_drop_data(track_ctx.img_resource, &track_ctx.image_data));
+        run_result_process_flag = 1;
         track_ctx.loop_count++;
     }
     denet_process.deinit();
@@ -223,6 +267,9 @@ static void* yolov5_deepsort_thread(void* argv)
 static void* receive_message_thread(void* argv)
 {
     int rval = 0;
+    struct timeval pre;
+    gettimeofday(&pre, NULL);
+    json_value_results.clear();
 
     while (run_receive_message)
     {
