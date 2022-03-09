@@ -12,6 +12,7 @@ typedef struct sde_track_ctx_s {
 
 	ea_img_resource_t *img_resource;
 	ea_display_t *display;
+    ea_display_t *display_jpeg;
 
     std::map<int, TrajectoryParams> track_idx_map;
 
@@ -33,5 +34,6 @@ void amba_cv_env_deinit(sde_track_ctx_t *track_ctx);
 // int amba_draw_detection(sde_track_ctx_t *track_ctx, std::vector<DetectBox> &det_results, uint32_t dsp_pts);
 int amba_draw_detection(sde_track_ctx_t *track_ctx);
 int amba_draw_detection(sde_track_ctx_t *track_ctx, std::vector<DetectBox> &det_results);
+int amba_draw_detection_jpeg(sde_track_ctx_t *track_ctx , std::string file_name);
 
 #endif // _SDE_TRACKER_H_

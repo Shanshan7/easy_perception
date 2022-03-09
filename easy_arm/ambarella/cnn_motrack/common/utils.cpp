@@ -44,8 +44,36 @@ void tensor2mat(ea_tensor_t *input_tensor, cv::Mat output_mat, int channel_conve
     cv::merge(channels, output_mat);
 }
 
-// void mat2tensor() {
+// void mat2tensor(cv::Mat input_mat, ea_tensor_t *input_tensor) 
+// {
+// 	std::vector<cv::Mat> channels(3);
+// 	size_t shape[4];
+// 	uint8_t *p_src = NULL;
+// 	uint8_t *p_dst = NULL;
+// 	ea_tensor_t *tensor = NULL;
+// 	size_t c, h;
 
+// 	do {
+// 		cv::split(input_mat, channels);
+
+// 		shape[0] = 1;
+// 		shape[1] = image.channels();
+// 		shape[2] = image.rows;
+// 		shape[3] = image.cols;
+
+// 		tensor = ea_tensor_new(EA_U8, shape, 0);
+// 		RVAL_ASSERT(tensor != NULL);
+
+// 		p_dst = (uint8_t *)ea_tensor_data_for_write(tensor, EA_CPU);
+// 		for (c = 0; c < shape[1]; c++) {
+// 			p_src = channels[c].data;
+// 			for (h = 0; h < shape[2]; h++) {
+// 				memcpy(p_dst, p_src, shape[3]);
+// 				p_src += shape[3];
+// 				p_dst += ea_tensor_pitch(tensor);
+// 			}
+// 		}
+// 	} while (0);
 // }
 
 std::vector<std::vector<float>> applyNMS(std::vector<std::vector<float>>& boxes,

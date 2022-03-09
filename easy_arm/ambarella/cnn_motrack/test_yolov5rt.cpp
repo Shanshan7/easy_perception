@@ -9,7 +9,7 @@
 #include <network_process.h>
 
 #define CLASS_NUMBER (3)
-#define ONE_MINUTE_TO_MISECOND (60000)
+#define ONE_MINUTE_TO_MISECOND (60000) // 600000
 
 static sde_track_ctx_t track_ctx;
 static NetWorkProcess network_process;
@@ -20,7 +20,7 @@ int run_yolov5_deepsort = 1;
 int run_write_video_file = 1;
 int run_receive_message = 1;
 int run_result_process_flag = 0;
-int run_json_save_flag = 0;
+int run_json_save_flag = 1;
 int run_write_json_file = 0;
 std::vector<Json::Value> json_value_results_temp;
 std::vector<Json::Value> json_value_results;
@@ -76,22 +76,8 @@ static void save_json_result(struct timeval &pre, std::map<int, TrajectoryParams
         save_path << "/data/" << time_str << ".json";
         json_value_results = json_value_results_temp;
         json_value_results_temp.clear();
+        amba_draw_detection_jpeg(&track_ctx, time_str);
         run_write_json_file = 1;
-
-        // for (int i = 0; i < json_value_results.size(); i++)
-        // {
-        //     root["event_type"]["target_list"].append(json_value_results[i]);
-        // }
-
-        // //输出到文件  
-        // std::ofstream os;
-        // os.open(save_path.str(), std::ios::out | std::ios::app);
-        // if (!os.is_open())
-        //     std::cout << "[error: can not find or create the file which named \" ***.json\"]." << std::endl;
-        // os << sw.write(root);
-        // os.close();
-        // copy_file(save_path.str(), "/data/newest.json");
-        // json_value_results.clear();
     }
 
 	//缩进输出  
@@ -190,6 +176,9 @@ static void* result_process_thread(void* argv)
             {
                 write_json_result();
             }
+            else{
+                usleep(150);
+            }
             run_result_process_flag = 0;
             // std::cout << "[Result process cost time: " << (get_current_time() - start_time_draw) / 1000 << " ms]" << std::endl;
         }
@@ -205,8 +194,8 @@ static void* yolov5_deepsort_thread(void* argv)
     // model related
 	const std::string detnet_model_path = "/data/detnet.bin";
 	const std::vector<std::string> input_name = {"images"};
-	// const std::vector<std::string> output_name = {"326", "385", "444"};
-    const std::vector<std::string> output_name = {"804", "863", "922"};
+	const std::vector<std::string> output_name = {"326", "385", "444"};
+    // const std::vector<std::string> output_name = {"804", "863", "922"};
 	const char* class_name[CLASS_NUMBER] = {"car", "truck", "bus"};
     const std::string sort_model_path = "./deepsort.bin";
 
@@ -309,7 +298,7 @@ int main(int argc, char** argv)
     pthread_t capture_encoded_video_tid = 0;
     pthread_t result_process_thread_pid = 1;
     pthread_t yolov5_deepsort_thread_pid = 2;
-    pthread_t receive_message_thread_pid = 3;
+    // pthread_t receive_message_thread_pid = 3;
 
     // process signals to control program operation
     signal(SIGINT, sig_stop);
@@ -321,12 +310,12 @@ int main(int argc, char** argv)
     pthread_create(&capture_encoded_video_tid, NULL, run_image_pthread, NULL);
     pthread_create(&result_process_thread_pid, NULL, result_process_thread, NULL);
     pthread_create(&yolov5_deepsort_thread_pid, NULL, yolov5_deepsort_thread, NULL);
-    pthread_create(&receive_message_thread_pid, NULL, receive_message_thread, NULL);
+    // pthread_create(&receive_message_thread_pid, NULL, receive_message_thread, NULL);
  
     pthread_join(capture_encoded_video_tid, NULL);
     pthread_join(result_process_thread_pid, NULL);
     pthread_join(yolov5_deepsort_thread_pid, NULL);
-    pthread_join(receive_message_thread_pid, NULL);
+    // pthread_join(receive_message_thread_pid, NULL);
     
     // network_process.stop();
     amba_cv_env_deinit(&track_ctx);
