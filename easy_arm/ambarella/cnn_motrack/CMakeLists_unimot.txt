@@ -63,11 +63,11 @@ file(GLOB NETWORK_SRCS
     "${PROJECT_SOURCE_DIR}/network/*.cpp"
     )
 
-add_executable(test_yolov5rt "")
+add_executable(test_unimot "")
 
-target_sources(test_yolov5rt
+target_sources(test_unimot
         PRIVATE
-        "${PROJECT_SOURCE_DIR}/test_yolov5rt.cpp"
+        "${PROJECT_SOURCE_DIR}/test_unimot.cpp"
         ${YOLOV5_SRCS}
         ${DEEPSORT_SRCS}
         ${POSTPROCESS_SRCS}
@@ -78,7 +78,7 @@ target_sources(test_yolov5rt
         )
 
 # link libraries
-target_link_libraries(test_yolov5rt
+target_link_libraries(test_unimot
                       opencv_core
                       opencv_imgcodecs
                       opencv_imgproc
