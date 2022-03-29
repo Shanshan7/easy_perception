@@ -1,5 +1,5 @@
 #include <fstream>
-
+#include <iostream>
 #include "utils.h"
 
 // tensor: size is n,c,h,w
@@ -44,37 +44,34 @@ void tensor2mat(ea_tensor_t *input_tensor, cv::Mat output_mat, int channel_conve
     cv::merge(channels, output_mat);
 }
 
-// void mat2tensor(cv::Mat input_mat, ea_tensor_t *input_tensor) 
-// {
-// 	std::vector<cv::Mat> channels(3);
-// 	size_t shape[4];
-// 	uint8_t *p_src = NULL;
-// 	uint8_t *p_dst = NULL;
-// 	ea_tensor_t *tensor = NULL;
-// 	size_t c, h;
+void mat2tensor(cv::Mat input_mat, ea_tensor_t *output_tensor) 
+{
+	std::vector<cv::Mat> channels(3);
+	uint8_t *p_src = NULL;
+	uint8_t *p_dst = NULL;
+	// ea_tensor_t *tensor = NULL;
 
-// 	do {
-// 		cv::split(input_mat, channels);
+    cv::split(input_mat, channels);
 
-// 		shape[0] = 1;
-// 		shape[1] = image.channels();
-// 		shape[2] = image.rows;
-// 		shape[3] = image.cols;
+    // shape[0] = 1;
+    // shape[1] = image.channels();
+    // shape[2] = image.rows;
+    // shape[3] = image.cols;
 
-// 		tensor = ea_tensor_new(EA_U8, shape, 0);
-// 		RVAL_ASSERT(tensor != NULL);
+    // tensor = ea_tensor_new(EA_U8, shape, 0);
+    // RVAL_ASSERT(tensor != NULL);
 
-// 		p_dst = (uint8_t *)ea_tensor_data_for_write(tensor, EA_CPU);
-// 		for (c = 0; c < shape[1]; c++) {
-// 			p_src = channels[c].data;
-// 			for (h = 0; h < shape[2]; h++) {
-// 				memcpy(p_dst, p_src, shape[3]);
-// 				p_src += shape[3];
-// 				p_dst += ea_tensor_pitch(tensor);
-// 			}
-// 		}
-// 	} while (0);
-// }
+    p_dst = (uint8_t *)ea_tensor_data(output_tensor);
+    for (int c = 0; c < input_mat.channels(); c++) {
+        p_src = channels[c].data;
+        for (int h = 0; h < input_mat.rows; h++) {
+            memcpy(p_dst, p_src, input_mat.cols);
+            p_src += input_mat.cols;
+            p_dst += ea_tensor_pitch(output_tensor);
+        }
+	}
+    ea_tensor_sync_cache(output_tensor, EA_CPU, EA_VP);
+}
 
 std::vector<std::vector<float>> applyNMS(std::vector<std::vector<float>>& boxes,
 	                                    const float thres) 
@@ -130,6 +127,29 @@ float overlap(float x1, float w1, float x2, float w2)
     return right - left;
 }
 
+std::vector<std::vector<float>> martrix_multiply_num(std::vector<std::vector<float>> matrix, float num) 
+{
+    // 矩阵除以一个数
+    for (int i = 0; i < matrix.size(); i++)
+    {
+        for (int j = 0; j < matrix[0].size(); j++)
+        {
+            matrix[i][j] = matrix[i][j] * num;
+        }
+    }
+    return matrix;
+}
+
+void array_reverse(float* array, int array_length)
+{
+    float temp;
+    for (int i = 0; i < array_length / 2; i++){
+        temp = array[array_length-1-i];
+        array[array_length-1-i] = array[i];
+        array[i] = temp;
+    }
+} 
+
 float cal_iou(std::vector<float> box, std::vector<float>truth)
 {
     float w = overlap(box[0], box[2], truth[0], truth[2]);
@@ -179,4 +199,32 @@ bool copy_file(std::string src, std::string dest) {
     is.close();
     os.close();
     return true;
+}
+
+void conv1d(float *input, float *kernel, int input_length, int kernel_size, float *output)
+{
+	int output_length = input_length + kernel_size - 1;
+    for(int k = 0; k < output_length; k++) {
+        output[k] = 0;
+    }
+    for(int i = 0; i < output_length; i++) {
+        for(int j = max(0, i + 1 - kernel_size); j <= min(i, input_length - 1); j++) 
+        {
+            output[i] += input[j] * kernel[i - j];
+        }
+    }
+}
+
+void conv1d(std::vector<float> &input, float *kernel, int input_length, int kernel_size, float *output)
+{
+	int output_length = input_length + kernel_size - 1;
+    for(int k = 0; k < output_length; k++) {
+        output[k] = 0;
+    }
+    for(int i = 0; i < output_length; i++) {
+        for(int j = max(0, i + 1 - kernel_size); j <= min(i, input_length - 1); j++) 
+        {
+            output[i] += input[j] * kernel[i - j];
+        }
+    }
 }

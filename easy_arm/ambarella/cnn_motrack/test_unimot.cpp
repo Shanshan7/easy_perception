@@ -7,7 +7,7 @@
 #include "common/data_struct.h"
 #include "postprocess/calculate_trajectory.h"
 
-#define CLASS_NUMBER (3)
+#define CLASS_NUMBER (1)
 
 static sde_track_ctx_t track_ctx;
 
@@ -20,13 +20,16 @@ static void sig_stop(int a)
 int main(int argc, char** argv)
 {
     int rval = 0;
+    track_ctx.track_idx_map.clear();
 
     // model related
-	const std::string detnet_model_path = "/data/detnet.bin";
+	const std::string detnet_model_path = "/sdcard/detnet.bin";
 	const std::vector<std::string> input_name = {"images"};
 	const std::vector<std::string> output_name = {"326", "385", "444"};
     // const std::vector<std::string> output_name = {"804", "863", "922"};
-	const char* class_name[CLASS_NUMBER] = {"car", "truck", "bus"};
+    // const std::vector<std::string> output_name = {"377", "436", "495"};
+	// const char* class_name[CLASS_NUMBER] = {"car", "truck", "bus"};
+    const char* class_name[CLASS_NUMBER] = {"person"};
     const std::string sort_model_path = "./deepsort.bin";
 
 	// image related
@@ -64,13 +67,17 @@ int main(int argc, char** argv)
         // tensor2mat(img_tensor, input_src, 3);
         DS->sort(input_src, denet_process.det_results);
         std::cout << "[deepsort cost time: " <<  (get_current_time() - time_start_sort) / 1000.0  << " ms]" << std::endl;
-        ++loop_count;
+        // amba_draw_detection(&track_ctx, denet_process.det_results);
 
         unsigned long time_start_calculate_tracking_trajectory = get_current_time();
-        calculate_traj.calculate_trajectory(denet_process.det_results, track_ctx.loop_count, height);
+        calculate_traj.calculate_trajectory(denet_process.det_results, track_ctx.loop_count);
         std::cout << "[calculate_tracking_trajectory cost time: " <<  (get_current_time() - time_start_calculate_tracking_trajectory) / 1000.0  << " ms]" << std::endl;
+        track_ctx.image_width = width;
+        track_ctx.image_height = height;
+        track_ctx.track_idx_map = calculate_traj.track_idx_map;
         amba_draw_detection(&track_ctx);
-        RVAL_OK(ea_img_resource_drop_data(track_ctx.img_resource, &data));
+        RVAL_OK(ea_img_resource_drop_data(track_ctx.img_resource, &track_ctx.image_data));
+        track_ctx.loop_count++;
         if (track_ctx.sig_flag) {
             break;
         }

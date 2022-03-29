@@ -15,8 +15,8 @@
 #define SAVE_LOG_PROCESS(rval, s) \
     LOG_IF(ERROR, rval < 0) << s << " failed, return " << rval;
 
-void tensor2mat(ea_tensor_t *input_tensor, cv::Mat output_mat, int channel_convert);
-void mat2tensor(cv::Mat input_mat, ea_tensor_t *output_tensor);
+// void tensor2mat(ea_tensor_t *input_tensor, cv::Mat output_mat, int channel_convert);
+// void mat2tensor(cv::Mat input_mat, ea_tensor_t *output_tensor);
 std::vector<std::vector<float>> applyNMS(std::vector<std::vector<float>>& boxes,
 	                                    const float thres);
 float overlap(float x1, float w1, float x2, float w2);

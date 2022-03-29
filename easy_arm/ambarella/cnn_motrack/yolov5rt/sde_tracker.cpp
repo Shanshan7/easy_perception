@@ -76,10 +76,10 @@ int amba_draw_detection(sde_track_ctx_t *track_ctx)
 			if(it->second.draw_flag == 1) {
 				// draw ID trajectory
 				ea_display_obj_params(track_ctx->display)->border_thickness = 2;
-				ea_display_obj_params(track_ctx->display)->font_size = 8;
+				ea_display_obj_params(track_ctx->display)->font_size = 12;
 				ea_display_obj_params(track_ctx->display)->text_color = EA_16_COLORS_YELLOW;
 				ea_display_obj_params(track_ctx->display)->box_color = EA_16_COLORS_YELLOW;
-				snprintf(text, MAX_LABEL_LEN, "ID %d", (int)it->first);
+				snprintf(text, MAX_LABEL_LEN, "ID %d D %d V %.2f R %.2f", (int)it->first, it->second.object_direction, it->second.mean_velocity, it->second.relative_distance);
 				float xmin = (it->second.pedestrian_x_start.back() / width < 0.0)? 1 / width:it->second.pedestrian_x_start.back() / width;
 				float ymin = (it->second.pedestrian_y_start.back() / height < 0.0)? 1 / height:it->second.pedestrian_y_start.back() / height;
 				float box_width = (it->second.pedestrian_x_end.back() / width > 1.0)? 1.0 - xmin:it->second.pedestrian_x_end.back() / width - xmin;
@@ -94,11 +94,11 @@ int amba_draw_detection(sde_track_ctx_t *track_ctx)
 				for (int j = 0; j < it->second.trajectory_position.size(); j++) {
 					float track_xmin = (it->second.trajectory_position[j].x / width < 0.0)? 1 / width:it->second.trajectory_position[j].x / width;
 					float track_ymin = (it->second.trajectory_position[j].y / height < 0.0)? 1 / height:it->second.trajectory_position[j].y / height;
-					if (it->second.trajectory_position[j].x / width <= 1.0 - 2.0 / width && 
-						it->second.trajectory_position[j].y / height <= 1.0 - 2.0 / height) {
+					if (it->second.trajectory_position[j].x / width <= 1.0 - 10.0 / width && 
+						it->second.trajectory_position[j].y / height <= 1.0 - 10.0 / height) {
 						ea_display_set_bbox(track_ctx->display, text,
 						track_xmin, track_ymin,
-						2.0 / width, 2.0 / height);
+						10.0 / width, 10.0 / height);
 					}
 				}
 			}
@@ -120,7 +120,6 @@ int amba_draw_detection(sde_track_ctx_t *track_ctx, std::vector<DetectBox> &det_
 	uint32_t dsp_pts = track_ctx->image_data.dsp_pts;
 	int width = track_ctx->image_width;
     int height = track_ctx->image_height;
-	std::map<int, TrajectoryParams> track_idx_map = track_ctx->track_idx_map;
 
 	ea_display_obj_params(track_ctx->display)->obj_win_w = 1.0;
 	ea_display_obj_params(track_ctx->display)->obj_win_h = 1.0;
@@ -189,4 +188,6 @@ int amba_draw_detection_jpeg(sde_track_ctx_t *track_ctx, std::string file_name) 
 	cv::imwrite(save_path.str(), input_src);
 	copy_file(save_path.str(), "/data/newest.jpg");
 	ea_tensor_free(out_tensor);
+	
+	return rval;
 }

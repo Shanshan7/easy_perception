@@ -16,18 +16,30 @@ BirdTransform::BirdTransform()
 		return;
 	}
 
+    transferI2B = cv::Mat(3,3,CV_32FC1);
+
     if (reader.parse(camera_calibration_in, root))
 	{
         Json::Value transferI2B_array;
-        transferI2B_array = root["paramater"]['transfer_Image2Bird'];
-        for(int i = 0; i < transferI2B_array.size(); i++){
-            std::cout << transferI2B_array[i].asDouble() << std::endl;
+        transferI2B_array = root["paramater"]["transfer_Image2Bird"];
+        for(int i = 0; i < transferI2B_array.size(); i++)
+        {
+            for (int j = 0; j < transferI2B_array[i].size(); j++)
+            {
+                transferI2B.at<float>(i,j) = transferI2B_array[i][j].asDouble();
+            }
         }
-        // transferB2I = root["paramater"]['transfer_Bird2Image']
-        pixel2world_distance = root["paramater"]['pixel2world_distance'].asDouble();
-        time_interval = root["paramater"]['time_interval'].asDouble();
+        pixel2world_distance = root["paramater"]["pixel2world_distance"].asDouble();
+        time_interval = root["paramater"]["time_interval"].asDouble();
+        camera_position_pixel = root["paramater"]["camera_position_pixel"].asInt();
+        translation_position = root["paramater"]["translation_position"].asDouble();
     }
     camera_calibration_in.close();
+}
+
+BirdTransform::~BirdTransform()
+{
+
 }
 
 int BirdTransform::bird_view_matrix_calculate()

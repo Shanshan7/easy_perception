@@ -234,7 +234,7 @@ static void* yolov5_deepsort_thread(void* argv)
         std::cout << "[Yolov5rt] Deepsort cost time: " << (get_current_time() - time_start_sort) / 1000.0  << " ms]" << std::endl;
 
         unsigned long time_start_calculate_tracking_trajectory = get_current_time();
-        calculate_traj.calculate_trajectory(denet_process.det_results, track_ctx.loop_count, height);
+        calculate_traj.calculate_trajectory(denet_process.det_results, track_ctx.loop_count);
         pthread_rwlock_wrlock(&rwlock);
         track_ctx.image_width = width;
         track_ctx.image_height = height;

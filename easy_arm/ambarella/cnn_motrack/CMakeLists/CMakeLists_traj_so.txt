@@ -1,0 +1,58 @@
+#1.cmake verson
+cmake_minimum_required(VERSION 3.5.0)
+
+#2.project name
+project(cnn_motrack)
+
+set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})
+
+#add_definitions(-DIS_SHOW)
+#add_definitions(-DIS_SEND_DATA)
+
+#include amba_arm directories
+include(${PROJECT_SOURCE_DIR}/../cmake/ambacv25_3_dependencies.cmake)
+
+#include MOT headers
+#include_directories(${PROJECT_SOURCE_DIR}/fairmot)
+include_directories(${PROJECT_SOURCE_DIR}/common)
+include_directories(${PROJECT_SOURCE_DIR}/3rdlibrary/json/include)
+include_directories(${PROJECT_SOURCE_DIR}/postprocess)
+
+#collect source files
+file(GLOB TRAJ_RUNTIME_SRCS 
+    "${PROJECT_SOURCE_DIR}/common/*.cpp"
+    "${PROJECT_SOURCE_DIR}/postprocess/*.cpp"
+    "${PROJECT_SOURCE_DIR}/3rdlibrary/json/src/*.cpp"
+	)
+
+add_library(cal_traj SHARED ${TRAJ_RUNTIME_SRCS})
+
+# link libraries
+target_link_libraries(cal_traj
+                      opencv_core
+                      opencv_imgcodecs
+                      opencv_imgproc
+                      opencv_videoio
+                      tbb
+                      jpeg
+                      png
+                      z
+                      bz2
+                      freetype
+                      pthread)
+
+set(LIB_NAME "cal_traj")
+set(PACK_DIR_NAME "demo_traj")
+add_custom_command(TARGET ${LIB_NAME}
+    POST_BUILD
+
+    COMMAND mkdir -p ${PACK_DIR_NAME}
+    COMMAND mkdir -p ${PACK_DIR_NAME}/include
+    COMMAND mkdir -p ${PACK_DIR_NAME}/lib
+
+    COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/build/libcal_traj.so ${PACK_DIR_NAME}/lib/
+    COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/common/data_struct.h ${PACK_DIR_NAME}/include/
+    COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/common/utils.h ${PACK_DIR_NAME}/include/
+    COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/postprocess/*.h ${PACK_DIR_NAME}/include/
+    COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/3rdlibrary/json/include/json ${PACK_DIR_NAME}/include/
+)

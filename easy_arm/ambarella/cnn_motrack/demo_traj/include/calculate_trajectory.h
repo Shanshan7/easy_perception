@@ -10,8 +10,8 @@
 
 #include "bird_transform.h"
 #include "trajectory_norm.h"
-#include "../common/data_struct.h"
-#include "../common/utils.h"
+#include "data_struct.h"
+#include "utils.h"
 // #include "../fairmot/mot.h"
 
 
