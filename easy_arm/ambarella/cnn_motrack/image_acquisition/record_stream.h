@@ -47,6 +47,7 @@
 
 #define DISK_DIRECTORY ("/sdcard/")
 #define TEN_MINUTE_TO_MISECOND (600000)
+#define TEN_MINUTE_TO_SECOND (600)
 #define ENCODEN_VIDEO_STREAM_ID (1)
 
 // total frames we need to capture

@@ -9,7 +9,7 @@
 #include <network_process.h>
 
 #define CLASS_NUMBER (3)
-#define ONE_MINUTE_TO_MISECOND (60000) // 600000
+#define ONE_MINUTE_TO_MISECOND (600000) // 600000
 
 static sde_track_ctx_t track_ctx;
 static NetWorkProcess network_process;

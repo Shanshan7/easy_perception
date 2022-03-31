@@ -309,7 +309,10 @@ u8 RecordStream::is_last_framedesc(struct iav_framedesc *framedesc)
 			return -1;
 		}
 		char time_str_UTC[64];
-		strftime(time_str_UTC, sizeof(time_str_UTC)-1, "%Y_%m_%d_%H_%M_%S", localtime(&pre.tv_sec)); 
+		// struct timeval write_fir;
+		long write_fir = pre.tv_sec + TEN_MINUTE_TO_SECOND;
+		// write_fir.tv_sec = pre.tv_sec + TEN_MINUTE_TO_SECOND;
+		strftime(time_str_UTC, sizeof(time_str_UTC)-1, "%Y_%m_%d_%H_%M_%S", localtime(&write_fir)); 
 		sprintf(filename, "%s%s.h264", default_filename, time_str_UTC);
 		memcpy(write_file_name, filename, len);
 
@@ -1066,7 +1069,10 @@ write_stream_exit:
 		memset(filename, 0x00, sizeof(filename));
 		record_file_index++;
 		char time_str_UTC[64];
-		strftime(time_str_UTC, sizeof(time_str_UTC)-1, "%Y_%m_%d_%H_%M_%S", localtime(&pre.tv_sec)); 
+		// struct timeval write_sec;
+		long write_sec = pre.tv_sec + TEN_MINUTE_TO_SECOND;
+		// write_sec.tv_sec = pre.tv_sec + TEN_MINUTE_TO_SECOND;
+		strftime(time_str_UTC, sizeof(time_str_UTC)-1, "%Y_%m_%d_%H_%M_%S", localtime(&write_sec)); 
 		sprintf(filename, "%s_%s.h264", default_filename, time_str_UTC);
 		if ((stream_files.fd = open(filename, O_CREAT | O_RDWR | O_APPEND)) < 0)
 		{
