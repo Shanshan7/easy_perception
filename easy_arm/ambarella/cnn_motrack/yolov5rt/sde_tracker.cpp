@@ -151,6 +151,7 @@ int amba_draw_detection(sde_track_ctx_t *track_ctx, std::vector<DetectBox> &det_
 int amba_draw_detection_jpeg(sde_track_ctx_t *track_ctx, std::string file_name) // 
 {
 	int rval = 0;
+	int draw_result = 0;
     std::stringstream save_path;
 	save_path << "/data/" << file_name << ".jpg";
 
@@ -172,20 +173,23 @@ int amba_draw_detection_jpeg(sde_track_ctx_t *track_ctx, std::string file_name) 
 
 	ea_cvt_color_resize(img_tensor, out_tensor, EA_COLOR_YUV2BGR_NV12, EA_VP);
     tensor2mat(out_tensor, input_src, 3);
-    for (std::map<int, TrajectoryParams>::iterator it = track_idx_map.begin(); it != track_idx_map.end(); ++it)
-    {
-        if(it->second.draw_flag == 1) {
-            cv::Point lt(it->second.pedestrian_location[0], it->second.pedestrian_location[1]);
-            cv::Point br(it->second.pedestrian_location[2], it->second.pedestrian_location[3]);
-            cv::rectangle(input_src, lt, br, cv::Scalar(0, 255, 255), 1);
-            std::string lbl = cv::format("ID:%d",(int)it->first);
-            cv::putText(input_src, lbl, lt, cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0,255,255));
-            for (int j = 0; j < it->second.trajectory_position.size(); j++) {
-                cv::Point p(it->second.trajectory_position[j].x, it->second.trajectory_position[j].y);
-                cv::circle(input_src, p, 2, cv::Scalar(0, 0, 255), -1);
-            }
-        }
-    }
+	if (draw_result > 0)
+	{
+		for (std::map<int, TrajectoryParams>::iterator it = track_idx_map.begin(); it != track_idx_map.end(); ++it)
+		{
+			if(it->second.draw_flag == 1) {
+				cv::Point lt(it->second.pedestrian_location[0], it->second.pedestrian_location[1]);
+				cv::Point br(it->second.pedestrian_location[2], it->second.pedestrian_location[3]);
+				cv::rectangle(input_src, lt, br, cv::Scalar(0, 255, 255), 1);
+				std::string lbl = cv::format("ID:%d",(int)it->first);
+				cv::putText(input_src, lbl, lt, cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0,255,255));
+				for (int j = 0; j < it->second.trajectory_position.size(); j++) {
+					cv::Point p(it->second.trajectory_position[j].x, it->second.trajectory_position[j].y);
+					cv::circle(input_src, p, 2, cv::Scalar(0, 0, 255), -1);
+				}
+			}
+		}
+	}
 	cv::imwrite(save_path.str(), input_src);
 	copy_file(save_path.str(), "/data/newest.jpg");
 	ea_tensor_free(out_tensor);
