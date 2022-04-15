@@ -1,0 +1,92 @@
+[
+    {
+        "name": "target_id",
+        "display_name": "目标标识",
+        "value_display_style": {
+            "unit_display": "",
+            "need_trans_display": false
+        },
+        "type": "int",
+        "length": 10,
+        "indexed": false,
+        "primary": false,
+        "unique": false,
+        "default": "未知",
+        "is_analysed_attribute": true
+    },
+    {
+        "name": "target_type",
+        "display_name": "目标类型",
+        "value_display_style": {
+            "unit_display": "",
+            "need_trans_display": false
+        },
+        "type": "int",
+        "length": 10,
+        "indexed": false,
+        "primary": false,
+        "unique": false,
+        "default": "未知",
+        "is_analysed_attribute": true
+    },
+    {
+        "name": "target_rect_height",
+        "display_name": "目标框高度",
+        "value_display_style": {
+            "unit_display": "",
+            "need_trans_display": false
+        },
+        "type": "int",
+        "length": 10,
+        "indexed": false,
+        "primary": false,
+        "unique": false,
+        "default": "0",
+        "is_analysed_attribute": false
+    },
+    {
+        "name": "target_rect_width",
+        "display_name": "目标框宽度",
+        "value_display_style": {
+            "unit_display": "",
+            "need_trans_display": false
+        },
+        "type": "int",
+        "length": 10,
+        "indexed": false,
+        "primary": false,
+        "unique": false,
+        "default": "0",
+        "is_analysed_attribute": false
+    },
+    {
+        "name": "target_rect_x",
+        "display_name": "目标框x坐标",
+        "value_display_style": {
+            "unit_display": "",
+            "need_trans_display": false
+        },
+        "type": "int",
+        "length": 10,
+        "indexed": false,
+        "primary": false,
+        "unique": false,
+        "default": "0",
+        "is_analysed_attribute": false
+    },
+    {
+        "name": "target_rect_y",
+        "display_name": "目标框y坐标",
+        "value_display_style": {
+            "unit_display": "",
+            "need_trans_display": false
+        },
+        "type": "int",
+        "length": 10,
+        "indexed": false,
+        "primary": false,
+        "unique": false,
+        "default": "0",
+        "is_analysed_attribute": false
+    }
+]

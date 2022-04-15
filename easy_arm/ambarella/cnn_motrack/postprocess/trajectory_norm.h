@@ -2,8 +2,6 @@
 #define _TRAJECROTY_NORM_H_
 
 #include <numeric>
-#include <Eigen/Core>
-#include <Eigen/Dense>
 
 #include "../common/utils.h"
 

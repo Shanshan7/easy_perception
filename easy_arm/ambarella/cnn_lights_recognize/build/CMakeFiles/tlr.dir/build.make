@@ -57,9 +57,33 @@ include CMakeFiles/tlr.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/tlr.dir/flags.make
 
+CMakeFiles/tlr.dir/impl.cpp.o: CMakeFiles/tlr.dir/flags.make
+CMakeFiles/tlr.dir/impl.cpp.o: ../impl.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/tlr.dir/impl.cpp.o"
+	/usr/local/linaro-aarch64-2020.09-gcc10.2-linux5.4/bin/aarch64-linux-gnu-g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tlr.dir/impl.cpp.o -c /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/impl.cpp
+
+CMakeFiles/tlr.dir/impl.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/tlr.dir/impl.cpp.i"
+	/usr/local/linaro-aarch64-2020.09-gcc10.2-linux5.4/bin/aarch64-linux-gnu-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/impl.cpp > CMakeFiles/tlr.dir/impl.cpp.i
+
+CMakeFiles/tlr.dir/impl.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/tlr.dir/impl.cpp.s"
+	/usr/local/linaro-aarch64-2020.09-gcc10.2-linux5.4/bin/aarch64-linux-gnu-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/impl.cpp -o CMakeFiles/tlr.dir/impl.cpp.s
+
+CMakeFiles/tlr.dir/impl.cpp.o.requires:
+
+.PHONY : CMakeFiles/tlr.dir/impl.cpp.o.requires
+
+CMakeFiles/tlr.dir/impl.cpp.o.provides: CMakeFiles/tlr.dir/impl.cpp.o.requires
+	$(MAKE) -f CMakeFiles/tlr.dir/build.make CMakeFiles/tlr.dir/impl.cpp.o.provides.build
+.PHONY : CMakeFiles/tlr.dir/impl.cpp.o.provides
+
+CMakeFiles/tlr.dir/impl.cpp.o.provides.build: CMakeFiles/tlr.dir/impl.cpp.o
+
+
 CMakeFiles/tlr.dir/json11.cpp.o: CMakeFiles/tlr.dir/flags.make
 CMakeFiles/tlr.dir/json11.cpp.o: ../json11.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/tlr.dir/json11.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/tlr.dir/json11.cpp.o"
 	/usr/local/linaro-aarch64-2020.09-gcc10.2-linux5.4/bin/aarch64-linux-gnu-g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tlr.dir/json11.cpp.o -c /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/json11.cpp
 
 CMakeFiles/tlr.dir/json11.cpp.i: cmake_force
@@ -81,9 +105,33 @@ CMakeFiles/tlr.dir/json11.cpp.o.provides: CMakeFiles/tlr.dir/json11.cpp.o.requir
 CMakeFiles/tlr.dir/json11.cpp.o.provides.build: CMakeFiles/tlr.dir/json11.cpp.o
 
 
+CMakeFiles/tlr.dir/common/image.cpp.o: CMakeFiles/tlr.dir/flags.make
+CMakeFiles/tlr.dir/common/image.cpp.o: ../common/image.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/tlr.dir/common/image.cpp.o"
+	/usr/local/linaro-aarch64-2020.09-gcc10.2-linux5.4/bin/aarch64-linux-gnu-g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tlr.dir/common/image.cpp.o -c /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/common/image.cpp
+
+CMakeFiles/tlr.dir/common/image.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/tlr.dir/common/image.cpp.i"
+	/usr/local/linaro-aarch64-2020.09-gcc10.2-linux5.4/bin/aarch64-linux-gnu-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/common/image.cpp > CMakeFiles/tlr.dir/common/image.cpp.i
+
+CMakeFiles/tlr.dir/common/image.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/tlr.dir/common/image.cpp.s"
+	/usr/local/linaro-aarch64-2020.09-gcc10.2-linux5.4/bin/aarch64-linux-gnu-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/common/image.cpp -o CMakeFiles/tlr.dir/common/image.cpp.s
+
+CMakeFiles/tlr.dir/common/image.cpp.o.requires:
+
+.PHONY : CMakeFiles/tlr.dir/common/image.cpp.o.requires
+
+CMakeFiles/tlr.dir/common/image.cpp.o.provides: CMakeFiles/tlr.dir/common/image.cpp.o.requires
+	$(MAKE) -f CMakeFiles/tlr.dir/build.make CMakeFiles/tlr.dir/common/image.cpp.o.provides.build
+.PHONY : CMakeFiles/tlr.dir/common/image.cpp.o.provides
+
+CMakeFiles/tlr.dir/common/image.cpp.o.provides.build: CMakeFiles/tlr.dir/common/image.cpp.o
+
+
 CMakeFiles/tlr.dir/traffic_lights_classifier/traffic_lights_classifier.cpp.o: CMakeFiles/tlr.dir/flags.make
 CMakeFiles/tlr.dir/traffic_lights_classifier/traffic_lights_classifier.cpp.o: ../traffic_lights_classifier/traffic_lights_classifier.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/tlr.dir/traffic_lights_classifier/traffic_lights_classifier.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/tlr.dir/traffic_lights_classifier/traffic_lights_classifier.cpp.o"
 	/usr/local/linaro-aarch64-2020.09-gcc10.2-linux5.4/bin/aarch64-linux-gnu-g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tlr.dir/traffic_lights_classifier/traffic_lights_classifier.cpp.o -c /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/traffic_lights_classifier/traffic_lights_classifier.cpp
 
 CMakeFiles/tlr.dir/traffic_lights_classifier/traffic_lights_classifier.cpp.i: cmake_force
@@ -107,35 +155,41 @@ CMakeFiles/tlr.dir/traffic_lights_classifier/traffic_lights_classifier.cpp.o.pro
 
 # Object files for target tlr
 tlr_OBJECTS = \
+"CMakeFiles/tlr.dir/impl.cpp.o" \
 "CMakeFiles/tlr.dir/json11.cpp.o" \
+"CMakeFiles/tlr.dir/common/image.cpp.o" \
 "CMakeFiles/tlr.dir/traffic_lights_classifier/traffic_lights_classifier.cpp.o"
 
 # External object files for target tlr
 tlr_EXTERNAL_OBJECTS =
 
+libtlr.so: CMakeFiles/tlr.dir/impl.cpp.o
 libtlr.so: CMakeFiles/tlr.dir/json11.cpp.o
+libtlr.so: CMakeFiles/tlr.dir/common/image.cpp.o
 libtlr.so: CMakeFiles/tlr.dir/traffic_lights_classifier/traffic_lights_classifier.cpp.o
 libtlr.so: CMakeFiles/tlr.dir/build.make
 libtlr.so: CMakeFiles/tlr.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX shared library libtlr.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX shared library libtlr.so"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/tlr.dir/link.txt --verbose=$(VERBOSE)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "make package /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build/demo_app.tar.gz ..."
-	mkdir -p demo_app
-	mkdir -p demo_app/conf
-	mkdir -p demo_app/lib
-	mkdir -p demo_app/model
-	cp -rf libtlr.so demo_app/lib/
-	cp -rf /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/conf/* demo_app/conf/
-	cp -rf /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/model/* demo_app/model/
-	cp -rf /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/ALG-OpenAI demo_app/
-	tar zcf /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build/demo_app.tar.gz demo_app
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "make package /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build/EdgeTLR.tar.gz ..."
+	mkdir -p EdgeTLR
+	mkdir -p EdgeTLR/conf
+	mkdir -p EdgeTLR/lib
+	mkdir -p EdgeTLR/model
+	cp -rf libtlr.so EdgeTLR/lib/
+	cp -rf /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/conf/* EdgeTLR/conf/
+	cp -rf /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/model/* EdgeTLR/model/
+	cp -rf /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/ALG-OpenAI EdgeTLR/
+	tar zcf /home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build/EdgeTLR.tar.gz EdgeTLR
 
 # Rule to build all files generated by this target.
 CMakeFiles/tlr.dir/build: libtlr.so
 
 .PHONY : CMakeFiles/tlr.dir/build
 
+CMakeFiles/tlr.dir/requires: CMakeFiles/tlr.dir/impl.cpp.o.requires
 CMakeFiles/tlr.dir/requires: CMakeFiles/tlr.dir/json11.cpp.o.requires
+CMakeFiles/tlr.dir/requires: CMakeFiles/tlr.dir/common/image.cpp.o.requires
 CMakeFiles/tlr.dir/requires: CMakeFiles/tlr.dir/traffic_lights_classifier/traffic_lights_classifier.cpp.o.requires
 
 .PHONY : CMakeFiles/tlr.dir/requires

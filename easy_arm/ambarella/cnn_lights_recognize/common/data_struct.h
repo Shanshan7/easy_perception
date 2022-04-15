@@ -297,7 +297,7 @@ struct TrafficLightsParams {
 	int target_id;
 	TRAFFIC_LIGHTS_TYPE traffic_lights_type;
 
-	float traffic_lights_location;
+	float traffic_lights_location[4];
 };
 
 // struct GlobalControlParam {

@@ -6,5 +6,5 @@ CXX_FLAGS = -fPIC
 
 CXX_DEFINES = -Dtlr_EXPORTS
 
-CXX_INCLUDES = -I/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/common -I/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/3rd_party/opencv/include -I/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize 
+CXX_INCLUDES = -I/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/common -I/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/traffic_lights_classifier -I/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize -I/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/3rd_party/opencv/include 
 

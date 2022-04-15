@@ -11,11 +11,13 @@ TrafficLightsClassifier:: ~TrafficLightsClassifier()
 
 }
 
-void TrafficLightsClassifier::red_green_yellow(cv::Mat rgb_image)
+void TrafficLightsClassifier::red_green_yellow(const cv::Mat &rgb_image, const std::vector<float> traffic_lights_locations, const int32_t f_threshold)
 {
-    cv::Mat resize_rgb_image, hsv_image;
-    cv::resize(rgb_image, resize_rgb_image, cv::Size(64, 64));
-    cv::cvtColor(resize_rgb_image, hsv_image, cv::COLOR_BGR2HSV);
+    cv::Mat rgb_image_roi, rgb_image_resize, hsv_image;
+    rgb_image_roi = rgb_image(cv::Rect(traffic_lights_locations[0], traffic_lights_locations[1], traffic_lights_locations[2], \
+                                        traffic_lights_locations[3]));
+    cv::resize(rgb_image_roi, rgb_image_resize, cv::Size(64, 64));
+    cv::cvtColor(rgb_image_resize, hsv_image, cv::COLOR_BGR2HSV);
     std::vector<cv::Mat> hsv_split;
     cv::split(hsv_image, hsv_split);
     cv::Scalar sum_saturation = cv::sum(hsv_split[2]);  // Sum the brightness values
@@ -29,12 +31,12 @@ void TrafficLightsClassifier::red_green_yellow(cv::Mat rgb_image)
     // Green
     cv::Scalar lower_green = cv::Scalar(60, sat_low, val_low);
     cv::Scalar upper_green = cv::Scalar(100, 255, 255);
-	cv::inRange(hsv_image, lower_green, upper_green, green_mask);
+    cv::inRange(hsv_image, lower_green, upper_green, green_mask);
     int sum_green = cv::countNonZero(green_mask);
     // Yellow
     cv::Scalar lower_yellow = cv::Scalar(15, sat_low, val_low);
     cv::Scalar upper_yellow = cv::Scalar(60, 255, 255);
-	cv::inRange(hsv_image, lower_yellow, upper_yellow, yellow_mask);
+    cv::inRange(hsv_image, lower_yellow, upper_yellow, yellow_mask);
     int sum_yellow = cv::countNonZero(yellow_mask);
     // Red
     cv::Scalar red_min_1 = cv::Scalar(0, sat_low, val_low);
@@ -47,24 +49,34 @@ void TrafficLightsClassifier::red_green_yellow(cv::Mat rgb_image)
 
     int sum_all = sum_green + sum_red + sum_yellow;
 
-    if(sum_all > 5)
+    TrafficLightsParams traffic_lights_params;
+    traffic_lights_params.traffic_lights_location[0] = traffic_lights_locations[0];
+    traffic_lights_params.traffic_lights_location[1] = traffic_lights_locations[1];
+    traffic_lights_params.traffic_lights_location[2] = traffic_lights_locations[2];
+    traffic_lights_params.traffic_lights_location[3] = traffic_lights_locations[3];
+
+    if(sum_all > f_threshold)
     {
         if(sum_red >= sum_yellow && sum_red >= sum_green)
         {
-            // this->traffic_lights_params.traffic_lights_type = 0;
+            traffic_lights_params.traffic_lights_type = E_TRAFFIC_LIGHTS_TYPE_RED;
             std::cout << "light type: Red" << std::endl;
         }
         else if (sum_yellow >= sum_green)
         {
+            traffic_lights_params.traffic_lights_type = E_TRAFFIC_LIGHTS_TYPE_GREEN;
             std::cout << "light type: yellow" << std::endl;
         }
         else
         {
+            traffic_lights_params.traffic_lights_type = E_TRAFFIC_LIGHTS_TYPE_YELLOW;
             std::cout << "light type: green" << std::endl;
         }
     }
     else
     {
+        traffic_lights_params.traffic_lights_type = E_TRAFFIC_LIGHTS_TYPE_DONT_KNOWN;
         std::cout << "light type: DontKnown" << std::endl;
     }
+    this->traffic_lights_results.push_back(traffic_lights_params);
 }

@@ -123,6 +123,60 @@ tlr/fast:
 	$(MAKE) -f CMakeFiles/tlr.dir/build.make CMakeFiles/tlr.dir/build
 .PHONY : tlr/fast
 
+common/image.o: common/image.cpp.o
+
+.PHONY : common/image.o
+
+# target to build an object file
+common/image.cpp.o:
+	$(MAKE) -f CMakeFiles/tlr.dir/build.make CMakeFiles/tlr.dir/common/image.cpp.o
+.PHONY : common/image.cpp.o
+
+common/image.i: common/image.cpp.i
+
+.PHONY : common/image.i
+
+# target to preprocess a source file
+common/image.cpp.i:
+	$(MAKE) -f CMakeFiles/tlr.dir/build.make CMakeFiles/tlr.dir/common/image.cpp.i
+.PHONY : common/image.cpp.i
+
+common/image.s: common/image.cpp.s
+
+.PHONY : common/image.s
+
+# target to generate assembly for a file
+common/image.cpp.s:
+	$(MAKE) -f CMakeFiles/tlr.dir/build.make CMakeFiles/tlr.dir/common/image.cpp.s
+.PHONY : common/image.cpp.s
+
+impl.o: impl.cpp.o
+
+.PHONY : impl.o
+
+# target to build an object file
+impl.cpp.o:
+	$(MAKE) -f CMakeFiles/tlr.dir/build.make CMakeFiles/tlr.dir/impl.cpp.o
+.PHONY : impl.cpp.o
+
+impl.i: impl.cpp.i
+
+.PHONY : impl.i
+
+# target to preprocess a source file
+impl.cpp.i:
+	$(MAKE) -f CMakeFiles/tlr.dir/build.make CMakeFiles/tlr.dir/impl.cpp.i
+.PHONY : impl.cpp.i
+
+impl.s: impl.cpp.s
+
+.PHONY : impl.s
+
+# target to generate assembly for a file
+impl.cpp.s:
+	$(MAKE) -f CMakeFiles/tlr.dir/build.make CMakeFiles/tlr.dir/impl.cpp.s
+.PHONY : impl.cpp.s
+
 json11.o: json11.cpp.o
 
 .PHONY : json11.o
@@ -186,6 +240,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... tlr"
 	@echo "... edit_cache"
+	@echo "... common/image.o"
+	@echo "... common/image.i"
+	@echo "... common/image.s"
+	@echo "... impl.o"
+	@echo "... impl.i"
+	@echo "... impl.s"
 	@echo "... json11.o"
 	@echo "... json11.i"
 	@echo "... json11.s"

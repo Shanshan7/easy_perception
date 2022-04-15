@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 2.8...3.19)
-project(unis_package)
+#1.cmake verson
+cmake_minimum_required(VERSION 3.5.0)
+project(cnn_lights_recognize)
 
 set(TOOLS_CHAIN_DIR /usr/local/linaro-aarch64-2020.09-gcc10.2-linux5.4) # 交叉工具链所在目录
 
@@ -12,6 +13,8 @@ set(CMAKE_C_COMPILER ${TOOLS_CHAIN_DIR}/bin/aarch64-linux-gnu-gcc)
 set(CMAKE_CXX_COMPILER ${TOOLS_CHAIN_DIR}/bin/aarch64-linux-gnu-g++)
 
 include_directories(${PROJECT_SOURCE_DIR}/common)
+include_directories(${PROJECT_SOURCE_DIR}/traffic_lights_classifier)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # opencv
 include_directories(${PROJECT_SOURCE_DIR}/3rd_party/opencv/include)
@@ -20,16 +23,19 @@ link_directories(${PROJECT_SOURCE_DIR}/3rd_party/opencv/lib)
 set(SRC_FILES
     ialg_error_code.h
     ialg_open_app.h
+
+    impl.cpp
     json11.cpp
     json11.hpp
     task_queue.h
-    analyser.h
+    ctx.h
+    channel.h
 )
 
 set(LIGHTSREC_SRCS
+    ${PROJECT_SOURCE_DIR}/common/image.cpp
     ${PROJECT_SOURCE_DIR}/traffic_lights_classifier/traffic_lights_classifier.cpp
-    ${PROJECT_SOURCE_DIR}/traffic_lights_classifier/traffic_lights_classifier.h
-	)
+)
 
 set(LIB_NAME "tlr")
 set(LIB_FULL_NAME "lib${LIB_NAME}.so")
@@ -45,11 +51,7 @@ target_link_libraries(${LIB_NAME}
                       opencv_imgproc
                       opencv_videoio)
 
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-set(PACK_DIR_NAME "demo_app")
+set(PACK_DIR_NAME "EdgeTLR")
 
 add_custom_command(TARGET ${LIB_NAME}
     POST_BUILD

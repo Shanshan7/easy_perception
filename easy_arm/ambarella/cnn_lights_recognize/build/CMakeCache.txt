@@ -130,7 +130,7 @@ CMAKE_OBJCOPY:FILEPATH=/usr/bin/objcopy
 CMAKE_OBJDUMP:FILEPATH=/usr/bin/objdump
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=unis_package
+CMAKE_PROJECT_NAME:STATIC=cnn_lights_recognize
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -181,14 +181,14 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//Value Computed by CMake
+cnn_lights_recognize_BINARY_DIR:STATIC=/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build
+
+//Value Computed by CMake
+cnn_lights_recognize_SOURCE_DIR:STATIC=/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize
+
 //Dependencies for the target
 tlr_LIB_DEPENDS:STATIC=general;opencv_core;general;opencv_imgcodecs;general;opencv_imgproc;general;opencv_videoio;
-
-//Value Computed by CMake
-unis_package_BINARY_DIR:STATIC=/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize/build
-
-//Value Computed by CMake
-unis_package_SOURCE_DIR:STATIC=/home/edge/workspace/EDGE/Track/easy_perception_main/easy_arm/ambarella/cnn_lights_recognize
 
 
 ########################
