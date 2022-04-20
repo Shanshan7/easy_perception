@@ -35,7 +35,7 @@ static void image_dir_infer(const std::string &image_dir){
         time_end = get_current_time();
         std::cout << "OneClassNet cost time: " <<  (time_end - time_start)/1000.0  << "ms" << std::endl;
 
-        save_result << images[index] << " " << score << "\n";
+        save_result << images[index] << " " << score << " " << result << "\n";
     }
     save_result.close();
 }
@@ -49,7 +49,7 @@ static void image_txt_infer(const std::string &image_dir, const std::string &ima
     std::string line_data;
     cv::Mat src_img;
     OneClassNet oneClassNet_process;
-    if(oneClassNet_process.init(model_path, input_name, output_name) < 0)
+    if(oneClassNet_process.init(model_path, input_name, output_name, 0.9) < 0)
     {
         std::cout << "OneClassNet init fail!" << std::endl;
         return;
@@ -77,7 +77,7 @@ static void image_txt_infer(const std::string &image_dir, const std::string &ima
         time_end = get_current_time();
         std::cout << "OneClassNet cost time: " <<  (time_end - time_start)/1000.0  << "ms" << std::endl;
 
-        save_result << image_name << " " << score << "\n";
+        save_result << image_name << " " << score << " " << result << "\n";
     }
     read_txt.close();
     save_result.close();

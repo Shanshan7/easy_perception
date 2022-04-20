@@ -1,7 +1,7 @@
 include_directories(${amba_arm_BINARY_DIR})
 include_directories(${amba_arm_SOURCE_DIR})
 
-SET(AMBARELLA_DIR /easy_data/cv22_linux_sdk/ambarella)
+SET(AMBARELLA_DIR /home/edge/cv22_linux_sdk/ambarella)
 
 #fakeroot
 link_directories(${AMBARELLA_DIR}/out/cv22_walnut/fakeroot/usr/lib)

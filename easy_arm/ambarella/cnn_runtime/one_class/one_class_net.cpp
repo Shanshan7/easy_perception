@@ -68,14 +68,30 @@ int OneClassNet::run(const cv::Mat &srcImage, const std::string &embedding_file,
         }
     }
 
+    // std::ifstream embedding("./score.bin", std::ios::binary|std::ios::in);
+    // embedding.seekg(0,std::ios::end);
+    // int embedding_length = embedding.tellg() / sizeof(float);
+    // embedding.seekg(0, std::ios::beg);
+    // embedding.read(reinterpret_cast<char*>(oneClassOutput), sizeof(float) * embedding_length);
+    // embedding.close();
+
     *score = postprocess(oneClassOutput, embedding_file);
+
+    // std::ofstream ouF;
+    // std::stringstream temp_str;
+    // temp_str.str("");
+    // temp_str << "./" << *score << ".bin";
+    // ouF.open(temp_str.str(), std::ofstream::binary);
+    // ouF.write(reinterpret_cast<const char*>(oneClassOutput), sizeof(float) * output_c * output_h * output_w);
+    // ouF.close();
+
     if(*score > this->threshold) {
         result = 1;
     }
     else {
         result = 0;
     }
-    std::cout << "result: " << result << std::endl;
+    // std::cout << "result: " << *score << std::endl;
     return result;
 }
 
@@ -105,8 +121,6 @@ float OneClassNet::postprocess(const float *output,
 
     int max_posit = std::max_element(distances, \
 				                distances + distanceMatWidth) - distances; // - distances.data;
-
-    // std::cout << "max_posit: " << max_posit << std::endl;
 
     float* N_b = new float[distanceMatHeight];
     for(int i = 0; i < distanceMatHeight; i++)
