@@ -1,0 +1,10 @@
+[2022-01-10 16:40:27.019] [12736.12736] [NetSDK] [info] [idm_netsdk.cpp:66] IDM_DEV_SaveLogToFile out. ret:0
+[2022-01-10 16:40:27.019] [12736.12736] [NetSDK] [info] [idm_netsdk.cpp:2462] IDM_DEV_SetGlobalWaitTime enter! lWaitTimems:10000
+[2022-01-10 16:40:27.019] [12736.12736] [info] [idm_netsdk.cpp:156] IDM_DEV_SetReconnect ulInterval:3000, ucEnable:1
+[2022-01-10 16:40:27.019] [12736.12736] [info] [idm_netsdk.cpp:158] IDM_DEV_SetReconnect out
+[2022-01-10 16:40:27.019] [12736.12757] [info] [component_manager.cpp:749] ReconnectProc start run! CURRENT TID:139827129427712!
+[2022-04-02 09:40:45.868] [17687.17687] [NetSDK] [info] [idm_netsdk.cpp:66] IDM_DEV_SaveLogToFile out. ret:0
+[2022-04-02 09:40:45.869] [17687.17687] [NetSDK] [info] [idm_netsdk.cpp:2462] IDM_DEV_SetGlobalWaitTime enter! lWaitTimems:10000
+[2022-04-02 09:40:45.869] [17687.17687] [info] [idm_netsdk.cpp:156] IDM_DEV_SetReconnect ulInterval:3000, ucEnable:1
+[2022-04-02 09:40:45.869] [17687.17687] [info] [idm_netsdk.cpp:158] IDM_DEV_SetReconnect out
+[2022-04-02 09:40:45.869] [17687.17708] [info] [component_manager.cpp:749] ReconnectProc start run! CURRENT TID:140588249052928!
