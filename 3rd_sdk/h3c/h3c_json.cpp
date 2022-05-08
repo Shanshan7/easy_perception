@@ -19,9 +19,11 @@ int main()
     }
 
     h3cProcess.startEvent();
+    std::cout<<""<<std::endl;
     while (1)
     {
-        std::cout << "--------------" << std::endl;
+
+        // std::cout << "--------------" << std::endl;
     }
     
     h3cProcess.stopEvent();

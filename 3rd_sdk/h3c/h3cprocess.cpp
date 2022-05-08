@@ -5,8 +5,11 @@
 #include <fstream>
 #include <string>
 #include <string.h>
+#include<sstream>
+#include<time.h>
 
 static std::string result = "";
+std::ofstream outFile;
 
 VOID CALLBACK My_Alarm_Callback(
     LONG lUserID,
@@ -17,15 +20,127 @@ VOID CALLBACK My_Alarm_Callback(
     VOID *pUserData)
 {
     std::cout << "IDM_DEV_Message_Callback_PF userID:" << lUserID << std::endl;
-    std::cout << "IDM_DEV_Message_Callback_PF userData:" << (char *)pUserData << std::endl;
+    // std::cout << "IDM_DEV_Message_Callback_PF userData:" << (char *)pUserData << std::endl;
     std::cout << "IDM_DEV_Message_Callback_PF ulCommand " << ulCommand << std::endl;
     IDM_DEV_ALARM_EVENT_S *pinfo = (IDM_DEV_ALARM_EVENT_S *)pBuffer;
     std::cout << "IDM_DEV_Message_Callback_PF Event Type"<< pinfo->ulEventType << std::endl;
     std::string json;
+
+    
+
+
     if ((0 != pinfo->stEvent.ulBufferSize) && (nullptr != pinfo->stEvent.pBuffer)) {
         json = pinfo->stEvent.pBuffer;
-        std::cout << "JSON: " << std::endl;
+        std::cout << "JmaN------------------------------------------------------------------------------------: " << std::endl;
+        std::cout<<"----------------------------------------------------------------------------------------"<<std::endl;
         std::cout << json << std::endl;
+
+        //------------------------------------------------------------------------------------------------------//
+        Json::Reader  reader;
+        Json::Value     root;
+        Json::Value     rootson;
+
+        if(reader.parse(json,rootson))
+        {
+            std::cout<<"json open is ok"<<std::endl;
+            std::string sex1="."; 
+            std::string  glasses1 =".";
+            std::string  cap1=".";
+            std::string  respitator1=".";
+            char mystr[25]={0};
+            long time =0;
+            if(rootson.isMember("event_body"))
+            {
+                std::cout<<"+++++++++++++++++++++++++++++++++YES++++++++++++++++++++++++++++++++++"<<std::endl;
+                 root =rootson["event_body"];
+            }
+            if(root.isMember("genderCode")){
+                   int  sex                  =root["genderCode"].asInt();   
+                   std::cout<<"__________________________"<<sex<<"_________________________________"<<std::endl;
+                   if(1==sex){
+                       sex1="male";
+                    }
+                   if(2==sex){
+                       sex1="female";
+                    }
+                if(0==sex||9==sex){
+                sex1="unknow";
+                }
+            }   
+            if(root.isMember("passTime")){
+                     double time1=0;
+                      time1           =root["passTime"].asDouble();       
+                      time = (long)time1;
+                      std::cout<<time<<std::endl;
+                      time/=1000;
+                
+                      struct tm *t=gmtime(&time);
+                      t->tm_hour+=8;
+                      std::string myFormat = "%Y-%m-%d:%H:%M:%S";
+                      strftime(mystr,sizeof(mystr),myFormat.c_str(),t);
+                      std::cout<<mystr<<std::endl;
+
+
+
+
+
+            }
+            if(root.isMember("isGlasses")){
+                 int  glasses          =root["isGlasses"].asInt();
+                 if(0==glasses){
+                    glasses1="NO";
+                  }
+                 if(1==glasses){
+                    glasses1="YES";
+                  }
+            }
+            if(root.isMember("isCap")){
+                int  cap                 =root["isCap"].asInt(); 
+                 std::cout<<"_____________________________________________"<<std::endl;
+                if(0==cap){
+                  cap1="NO";
+             } 
+                if(1==cap){
+                cap1="YES";
+             }
+
+            }
+            else{
+                std::cout<<"__________________________json turn  faild__________________________________"<<std::endl;
+            }
+            if(root.isMember("isRespirator"))     {                                         
+            int  respitator    = root["isRespirator"].asInt();                
+           
+                  if(0==respitator){
+                respitator1="NO";
+               }    
+                  if(1==respitator){
+                respitator1="YES";
+               } 
+            }
+            std::string carname=".";
+            if(root["vehicleBrandComboName"].type()!=Json::nullValue){
+                std::cout<<"_______________________________________________"<<std::endl;
+                carname=root["vehicleBrandComboName"].asString();
+            }
+            
+            if(outFile.is_open()){
+               std:: cout<<"wenjian yi dakai"<<std::endl;
+                outFile<<mystr<<','<<sex1<<','<<glasses1<<','<<cap1<<','<<respitator1<<','<<carname<<std::endl;
+            }
+            else{
+                std::cout<<"dakaishibai"<<std::endl;
+            }
+           
+
+        }
+        else{
+            std::cout<<"json  failed"<<std::endl;
+        }
+        
+
+        
+
         // mutex.lock();
         // result = QString::fromStdString(json);
         // mutex.unlock();
@@ -83,6 +198,7 @@ VOID CALLBACK My_Exception_Callback(
 
 H3CProcess::H3CProcess()
 {
+    outFile.open("data.csv",std::ios::out);
     // timer = new QTimer(this);
     cameraIP = "192.168.13.227";
     cameraUser = "admin";
@@ -94,6 +210,7 @@ H3CProcess::H3CProcess()
 
 H3CProcess::~H3CProcess()
 {
+    outFile.close();
     // timer->stop();
     // timer->deleteLater();
 
