@@ -1,5 +1,7 @@
 #1.cmake verson
 cmake_minimum_required(VERSION 3.5.0)
+#CONFIGURE_COMMAND ""
+#BUILD_COMMAND ""
 
 #2.project name
 project(SSC_json)
@@ -22,8 +24,8 @@ file(GLOB H3C_PROCESS_SRCS
 	)
 
 #link cal_traj.so
-link_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2/Lib/linux64)
-
+link_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2/Lib/win64)
+    
 add_executable(h3c_process "")
 
 target_sources(h3c_process

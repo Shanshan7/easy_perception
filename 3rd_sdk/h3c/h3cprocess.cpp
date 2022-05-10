@@ -31,8 +31,8 @@ VOID CALLBACK My_Alarm_Callback(
 
     if ((0 != pinfo->stEvent.ulBufferSize) && (nullptr != pinfo->stEvent.pBuffer)) {
         json = pinfo->stEvent.pBuffer;
-        std::cout << "JmaN------------------------------------------------------------------------------------: " << std::endl;
-        std::cout<<"----------------------------------------------------------------------------------------"<<std::endl;
+        std::cout << "Json------------------------------------------------------------------------------------: " << std::endl;
+        //std::cout<<"----------------------------------------------------------------------------------------"<<std::endl;
         std::cout << json << std::endl;
 
         //------------------------------------------------------------------------------------------------------//
@@ -42,48 +42,43 @@ VOID CALLBACK My_Alarm_Callback(
 
         if(reader.parse(json,rootson))
         {
-            std::cout<<"json open is ok"<<std::endl;
+            //std::cout<<"json open is ok"<<std::endl;
             std::string sex1="."; 
             std::string  glasses1 =".";
             std::string  cap1=".";
             std::string  respitator1=".";
             char mystr[25]={0};
-            long time =0;
+            long long time =0;
             if(rootson.isMember("event_body"))
             {
-                std::cout<<"+++++++++++++++++++++++++++++++++YES++++++++++++++++++++++++++++++++++"<<std::endl;
-                 root =rootson["event_body"];
+                //std::cout<<"+++++++++++++++++++++++++++++++++YES++++++++++++++++++++++++++++++++++"<<std::endl;
+                root =rootson["event_body"];
             }
             if(root.isMember("genderCode")){
-                   int  sex                  =root["genderCode"].asInt();   
-                   std::cout<<"__________________________"<<sex<<"_________________________________"<<std::endl;
-                   if(1==sex){
+                int  sex                  =root["genderCode"].asInt();   
+                //std::cout<<"__________________________"<<sex<<"_________________________________"<<std::endl;
+                if(1==sex){
                        sex1="male";
-                    }
-                   if(2==sex){
+                 }
+                if(2==sex){
                        sex1="female";
-                    }
+                 }
                 if(0==sex||9==sex){
                 sex1="unknow";
                 }
             }   
             if(root.isMember("passTime")){
-                     double time1=0;
-                      time1           =root["passTime"].asDouble();       
-                      time = (long)time1;
-                      std::cout<<time<<std::endl;
-                      time/=1000;
-                
-                      struct tm *t=gmtime(&time);
-                      t->tm_hour+=8;
-                      std::string myFormat = "%Y-%m-%d:%H:%M:%S";
-                      strftime(mystr,sizeof(mystr),myFormat.c_str(),t);
-                      std::cout<<mystr<<std::endl;
-
-
-
-
-
+                double time1=0;
+                time1           =root["passTime"].asDouble();       
+                time = (long long)time1;
+                time/=1000;
+                //std::cout<<"+++++++++++++++++++++++++++time+++++++++++++++++++++++++++++"<<std::endl;                
+                struct tm *t=gmtime((time_t*)&time);
+                //std::cout<<"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<std::endl;
+                t->tm_hour+=8;
+                std::string myFormat = "%Y-%m-%d:%H:%M:%S";
+                strftime(mystr,sizeof(mystr),myFormat.c_str(),t);
+                std::cout<<mystr<<std::endl;
             }
             if(root.isMember("isGlasses")){
                  int  glasses          =root["isGlasses"].asInt();
@@ -124,7 +119,7 @@ VOID CALLBACK My_Alarm_Callback(
                 carname=root["vehicleBrandComboName"].asString();
             }
             
-            if(outFile.is_open()){
+            if( outFile.is_open()){
                std:: cout<<"wenjian yi dakai"<<std::endl;
                 outFile<<mystr<<','<<sex1<<','<<glasses1<<','<<cap1<<','<<respitator1<<','<<carname<<std::endl;
             }
@@ -205,7 +200,11 @@ H3CProcess::H3CProcess()
     cameraPassword = "edge2021";
     urlPath = "rtsp://admin:edge2021@192.168.13.227";
     save_path = "./network_config.json";
-    loadConfig();
+    std::fstream file;
+    file.open(save_path,std::ios::in);
+    if(file){
+        loadConfig();
+    }
 }
 
 H3CProcess::~H3CProcess()
