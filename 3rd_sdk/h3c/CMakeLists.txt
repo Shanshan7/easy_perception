@@ -24,7 +24,13 @@ file(GLOB H3C_PROCESS_SRCS
 	)
 
 #link cal_traj.so
-link_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2/Lib/win64)
+if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+     link_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2/Lib/win64)
+else(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    link_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2/Lib/linux64)   
+endif()
+
+
     
 add_executable(h3c_process "")
 

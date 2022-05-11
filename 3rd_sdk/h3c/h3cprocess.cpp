@@ -10,6 +10,8 @@
 
 static std::string result = "";
 std::ofstream outFile;
+std::ofstream outFile1;
+
 
 VOID CALLBACK My_Alarm_Callback(
     LONG lUserID,
@@ -43,10 +45,19 @@ VOID CALLBACK My_Alarm_Callback(
         if(reader.parse(json,rootson))
         {
             //std::cout<<"json open is ok"<<std::endl;
-            std::string sex1="."; 
+            long long  event_type;
+            std::string  sex1="."; 
             std::string  glasses1 =".";
             std::string  cap1=".";
             std::string  respitator1=".";
+            std::string  name="NULL";
+            int          nativeCity=0;
+            std::string  bronDate="UNKNOW";
+            int          idType = 0;
+            std::string  idNumber="UNKNOW";
+            long long    similarity=0;
+            std::string  dev_id="UNKNOW";
+            std::string  dev_ip="UNKNOW";
             char mystr[25]={0};
             long long time =0;
             if(rootson.isMember("event_body"))
@@ -76,7 +87,7 @@ VOID CALLBACK My_Alarm_Callback(
                 struct tm *t=gmtime((time_t*)&time);
                 //std::cout<<"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<std::endl;
                 t->tm_hour+=8;
-                std::string myFormat = "%Y-%m-%d:%H:%M:%S";
+                std::string myFormat = "%Y-%m-%d %H:%M:%S";
                 strftime(mystr,sizeof(mystr),myFormat.c_str(),t);
                 std::cout<<mystr<<std::endl;
             }
@@ -91,7 +102,6 @@ VOID CALLBACK My_Alarm_Callback(
             }
             if(root.isMember("isCap")){
                 int  cap                 =root["isCap"].asInt(); 
-                 std::cout<<"_____________________________________________"<<std::endl;
                 if(0==cap){
                   cap1="NO";
              } 
@@ -106,28 +116,75 @@ VOID CALLBACK My_Alarm_Callback(
             if(root.isMember("isRespirator"))     {                                         
             int  respitator    = root["isRespirator"].asInt();                
            
-                  if(0==respitator){
+                if(0==respitator){
                 respitator1="NO";
                }    
-                  if(1==respitator){
+                if(1==respitator){
                 respitator1="YES";
                } 
+            }     
+            //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            if(root.isMember("name")){
+                name=root["name"].asString();
+                std::cout<<"name"<<std::endl;
             }
-            std::string carname=".";
-            if(root["vehicleBrandComboName"].type()!=Json::nullValue){
-                std::cout<<"_______________________________________________"<<std::endl;
-                carname=root["vehicleBrandComboName"].asString();
-            }
-            
-            if( outFile.is_open()){
-               std:: cout<<"wenjian yi dakai"<<std::endl;
-                outFile<<mystr<<','<<sex1<<','<<glasses1<<','<<cap1<<','<<respitator1<<','<<carname<<std::endl;
-            }
-            else{
-                std::cout<<"dakaishibai"<<std::endl;
-            }
-           
+            if(root.isMember("nativeCityCode")){
+                nativeCity=root["nativeCityCode"].asInt();
+                std::cout<<"nativeCity"<<std::endl;
 
+            }  
+            if(root.isMember("bornDate")){
+                bronDate=root["bornDate"].asString();
+                std::cout<<bronDate<<std::endl;
+            }   
+            if(root.isMember("idType")){
+                idType=root["idType"].asInt();
+                std::cout<<"idType"<<std::endl;
+            }  
+            if(root.isMember("idNumber")){
+                idNumber=root["idNumber"].asString();
+                std::cout<<"idNumber"<<std::endl;
+            }
+            if(root.isMember("similarity")){
+                double a =root["similarity"].asDouble();
+                std::cout<< "a" <<std::endl;
+                similarity=(long long)a;
+                std::cout<<"similarity"<<std::endl;
+            }  
+            Json::Value event_src;
+            event_src=rootson["event_src"];
+            if(event_src.isMember("dev_id")){
+                dev_id=event_src["dev_id"].asString();
+                std::cout<<"dev_id"<<std::endl;
+
+            } 
+            if(event_src.isMember("dev_ip")){
+                dev_ip=event_src["dev_ip"].asString();
+                std::cout<<"dev_ip"<<std::endl;
+
+            } 
+            if(rootson.isMember("event_type")){
+                double a =rootson["event_type"].asDouble();
+                event_type=(long long )a;
+                std::cout<<event_type<<std::endl;
+                
+
+            }
+            if(33751045==event_type){
+               std:: cout<<"wenjian yi dakai"<<std::endl;
+               if(outFile.is_open()){
+                   std::cout<<"face_S_success";
+                   outFile<<mystr<<','<<sex1<<','<<glasses1<<','<<cap1<<','<<respitator1<<','<<std::endl;
+               }
+            }
+            if(33751046==event_type){
+                std::cout<<"sssssssssssss"<<std::endl;
+                if(outFile1.is_open()){
+                   std::cout<<"face_R_success"<<std::endl;
+                   outFile1<<mystr<<','<<name<<','<<sex1<<','<<nativeCity<<','<<bronDate<<','<<idType<<','<<idNumber<<','<<dev_id<<','<<dev_ip<<std::endl;
+                }
+                
+            }          
         }
         else{
             std::cout<<"json  failed"<<std::endl;
@@ -193,7 +250,11 @@ VOID CALLBACK My_Exception_Callback(
 
 H3CProcess::H3CProcess()
 {
+    
     outFile.open("data.csv",std::ios::out);
+    outFile<<"抓拍时间"<<','<<"性别"<<','<<"眼镜"<<','<<"帽子"<<','<<"口罩"<<','<<std::endl;
+    outFile1.open("Face_recognition.csv",std::ios::out);
+    outFile1<<"抓拍时间"<<','<<"姓名"<<','<<"性别"<<','<<"籍贯"<<','<<"出生日期"<<','<<"证件类型"<<','<<"证件号"<<','<<"设备ID"<<','<<"设备IP"<<std::endl;
     // timer = new QTimer(this);
     cameraIP = "192.168.13.227";
     cameraUser = "admin";
@@ -210,6 +271,7 @@ H3CProcess::H3CProcess()
 H3CProcess::~H3CProcess()
 {
     outFile.close();
+    outFile1.close();
     // timer->stop();
     // timer->deleteLater();
 
