@@ -1,6 +1,0 @@
-{
-   "cameraIP" : "192.168.13.227",
-   "cameraPassword" : "edge2021",
-   "cameraUser" : "admin",
-   "urlPath" : "rtsp://admin:edge2021@192.168.13.227"
-}
