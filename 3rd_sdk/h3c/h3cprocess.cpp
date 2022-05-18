@@ -7,10 +7,49 @@
 #include <string.h>
 #include<sstream>
 #include<time.h>
+//#include"person_Features.h"
+#include"outputCsv.h"
 
 static std::string result = "";
 std::ofstream outFile;
 std::ofstream outFile1;
+// struct person_Features
+// {
+//         int  sex; //性别
+//         int  glasses ;//眼镜
+//         int  cap;//帽子
+//         int  respitator;//口罩
+//         std::string  name;//姓名
+//         int          nativeCity=0;//籍贯
+//         std::string  bronDate;//出生日期
+//         int          idType;  //证件类型
+//         std::string  idNumber;//证件号
+//         long long    similarity;//相似度
+//         char mystr[25];//抓拍时间
+//         long long time;
+//         int age ;//年龄
+//         std::string hairStyle;//发型
+//         int coatcolor;//上身颜色
+//         int trousersColor;//下身颜色
+//         int Orientation;//朝向
+//     };
+// struct device_Information
+//     {
+//         std::string  dev_id;
+//         std::string  dev_ip;
+
+//     };
+// struct InformationSaveAndOutput
+// {
+//     long long  event_type;-
+//     struct person_Features ones;
+//     struct device_Information cammers;
+
+// };
+//void outputCsv(InformationSaveAndOutput edge);
+
+
+VOID Json_output(std::string json);
 
 
 VOID CALLBACK My_Alarm_Callback(
@@ -27,6 +66,7 @@ VOID CALLBACK My_Alarm_Callback(
     IDM_DEV_ALARM_EVENT_S *pinfo = (IDM_DEV_ALARM_EVENT_S *)pBuffer;
     std::cout << "IDM_DEV_Message_Callback_PF Event Type"<< pinfo->ulEventType << std::endl;
     std::string json;
+    struct InformationSaveAndOutput infor_Zs;
 
     
 
@@ -36,28 +76,13 @@ VOID CALLBACK My_Alarm_Callback(
         std::cout << "Json------------------------------------------------------------------------------------: " << std::endl;
         //std::cout<<"----------------------------------------------------------------------------------------"<<std::endl;
         std::cout << json << std::endl;
-
-        //------------------------------------------------------------------------------------------------------//
-        Json::Reader  reader;
+        Json::Reader    reader;
         Json::Value     root;
         Json::Value     rootson;
-
+        
         if(reader.parse(json,rootson))
         {
             //std::cout<<"json open is ok"<<std::endl;
-            long long  event_type;
-            std::string  sex1="."; 
-            std::string  glasses1 =".";
-            std::string  cap1=".";
-            std::string  respitator1=".";
-            std::string  name="NULL";
-            int          nativeCity=0;
-            std::string  bronDate="UNKNOW";
-            int          idType = 0;
-            std::string  idNumber="UNKNOW";
-            long long    similarity=0;
-            std::string  dev_id="UNKNOW";
-            std::string  dev_ip="UNKNOW";
             char mystr[25]={0};
             long long time =0;
             if(rootson.isMember("event_body"))
@@ -65,138 +90,113 @@ VOID CALLBACK My_Alarm_Callback(
                 //std::cout<<"+++++++++++++++++++++++++++++++++YES++++++++++++++++++++++++++++++++++"<<std::endl;
                 root =rootson["event_body"];
             }
-            if(root.isMember("genderCode")){
-                int  sex                  =root["genderCode"].asInt();   
-                //std::cout<<"__________________________"<<sex<<"_________________________________"<<std::endl;
-                if(1==sex){
-                       sex1="male";
-                 }
-                if(2==sex){
-                       sex1="female";
-                 }
-                if(0==sex||9==sex){
-                sex1="unknow";
-                }
+            if(root.isMember("genderCode")){  
+                infor_Zs.ones.sex =root["genderCode"].asInt();
             }   
             if(root.isMember("passTime")){
                 double time1=0;
                 time1           =root["passTime"].asDouble();       
                 time = (long long)time1;
+                std::cout<<"+++++++++++++++++++++++++++time+++++++++++++++++++++++++++++"<<std::endl; 
+                std::cout<<time<<std::endl;
+                std::cout<<"+++++++++++++++++++++++++++time+++++++++++++++++++++++++++++"<<std::endl; 
+                std::cout<<time<<std::endl;
                 time/=1000;
                 //std::cout<<"+++++++++++++++++++++++++++time+++++++++++++++++++++++++++++"<<std::endl;                
                 struct tm *t=gmtime((time_t*)&time);
                 //std::cout<<"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<std::endl;
                 t->tm_hour+=8;
                 std::string myFormat = "%Y-%m-%d %H:%M:%S";
-                strftime(mystr,sizeof(mystr),myFormat.c_str(),t);
+                strftime(infor_Zs.ones.mystr,sizeof(mystr),myFormat.c_str(),t);
                 std::cout<<mystr<<std::endl;
             }
             if(root.isMember("isGlasses")){
-                 int  glasses          =root["isGlasses"].asInt();
-                 if(0==glasses){
-                    glasses1="NO";
-                  }
-                 if(1==glasses){
-                    glasses1="YES";
-                  }
+                 infor_Zs.ones.glasses=root["isGlasses"].asInt();
             }
-            if(root.isMember("isCap")){
-                int  cap                 =root["isCap"].asInt(); 
-                if(0==cap){
-                  cap1="NO";
-             } 
-                if(1==cap){
-                cap1="YES";
-             }
+            if(root.isMember("isCap")){ 
+                infor_Zs.ones.cap =root["isCap"].asInt();
 
             }
             else{
                 std::cout<<"__________________________json turn  faild__________________________________"<<std::endl;
             }
             if(root.isMember("isRespirator"))     {                                         
-            int  respitator    = root["isRespirator"].asInt();                
-           
-                if(0==respitator){
-                respitator1="NO";
-               }    
-                if(1==respitator){
-                respitator1="YES";
-               } 
+            infor_Zs.ones.respitator   = root["isRespirator"].asInt();             
             }     
             //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             if(root.isMember("name")){
-                name=root["name"].asString();
-                std::cout<<"name"<<std::endl;
+                infor_Zs.ones.name=root["name"].asString();
             }
             if(root.isMember("nativeCityCode")){
-                nativeCity=root["nativeCityCode"].asInt();
-                std::cout<<"nativeCity"<<std::endl;
+                infor_Zs.ones.nativeCity=root["nativeCityCode"].asInt();
 
             }  
             if(root.isMember("bornDate")){
-                bronDate=root["bornDate"].asString();
-                std::cout<<bronDate<<std::endl;
+                infor_Zs.ones.bronDate=root["bornDate"].asString();
             }   
             if(root.isMember("idType")){
-                idType=root["idType"].asInt();
-                std::cout<<"idType"<<std::endl;
+                infor_Zs.ones.idType=root["idType"].asInt();
             }  
             if(root.isMember("idNumber")){
-                idNumber=root["idNumber"].asString();
-                std::cout<<"idNumber"<<std::endl;
+                infor_Zs.ones.idNumber=root["idNumber"].asString();
             }
             if(root.isMember("similarity")){
                 double a =root["similarity"].asDouble();
                 std::cout<< "a" <<std::endl;
-                similarity=(long long)a;
-                std::cout<<"similarity"<<std::endl;
+                infor_Zs.ones.similarity=(long long)a;
             }  
+            if(root.isMember("ageGroup")){
+                infor_Zs.ones.ageGroup=root["ageGroup"].asInt();
+            }
+            if(root.isMember("coatColor")){
+                infor_Zs.ones.coatcolor=root["coatClolor"].asInt();
+            }
+            if(root.isMember("trousersColor")){
+                infor_Zs.ones.trousersColor=root["trousersColor"].asInt();
+            }
+            if(root.isMember("trousersColor")){
+                infor_Zs.ones.coatcolor=root["trousersColor"].asInt();
+            }
+            if(root.isMember("hairStyle")){
+                infor_Zs.ones.hairStyle=root["hairStyle"].asString();
+                std::cout<<std::endl;
+                std::cout<<infor_Zs.ones.hairStyle<<std::endl;
+            }
+            if(root.isMember("Orientation")){
+                infor_Zs.ones.Orientation=root["Orientation"].asInt();
+            }
+
+
             Json::Value event_src;
             event_src=rootson["event_src"];
             if(event_src.isMember("dev_id")){
-                dev_id=event_src["dev_id"].asString();
-                std::cout<<"dev_id"<<std::endl;
+                infor_Zs.cammers.dev_id=event_src["dev_id"].asString();
 
             } 
             if(event_src.isMember("dev_ip")){
-                dev_ip=event_src["dev_ip"].asString();
-                std::cout<<"dev_ip"<<std::endl;
+                infor_Zs.cammers.dev_ip=event_src["dev_ip"].asString();
 
             } 
             if(rootson.isMember("event_type")){
                 double a =rootson["event_type"].asDouble();
-                event_type=(long long )a;
-                std::cout<<event_type<<std::endl;
-                
+                infor_Zs.event_type=(long long )a;
 
             }
-            if(33751045==event_type){
-               std:: cout<<"wenjian yi dakai"<<std::endl;
-               if(outFile.is_open()){
-                   std::cout<<"face_S_success";
-                   outFile<<mystr<<','<<sex1<<','<<glasses1<<','<<cap1<<','<<respitator1<<','<<std::endl;
-               }
-            }
-            if(33751046==event_type){
-                std::cout<<"sssssssssssss"<<std::endl;
-                if(outFile1.is_open()){
-                   std::cout<<"face_R_success"<<std::endl;
-                   outFile1<<mystr<<','<<name<<','<<sex1<<','<<nativeCity<<','<<bronDate<<','<<idType<<','<<idNumber<<','<<dev_id<<','<<dev_ip<<std::endl;
-                }
                 
-            }          
         }
         else{
             std::cout<<"json  failed"<<std::endl;
         }
-        
+        outputCsv(infor_Zs);
 
+        //------------------------------------------------------------------------------------------------------//
         
 
         // mutex.lock();
         // result = QString::fromStdString(json);
         // mutex.unlock();
     }
+    
 }
 
 VOID CALLBACK My_Exception_Callback(
@@ -372,9 +372,10 @@ int H3CProcess::startEvent()
         {
             aiuniteCfg.usFaceAnaInterval = 1;
         }
-        aiuniteCfg.ucDetectMode = 0;
+        aiuniteCfg.ucDetectMode = 3;
         aiuniteCfg.ucVehicle = 1;
         aiuniteCfg.ucNonVehicle = 1;
+        aiuniteCfg.ucPerson =1;
         ret = IDM_DEV_SetConfig(lUserID, CONFIG_INTELLIGENCE_AIUNITE, 0, &aiuniteCfg, sizeof(IDM_DEV_INTELLIGENCE_AIUNITE_CFG_S));
     }
     else
@@ -451,3 +452,83 @@ int H3CProcess::saveConfig()
 
     return 0;
 }
+// void outputCsv(InformationSaveAndOutput edge)
+// {
+//             long long  event_type;
+//             std::string  sex1="."; 
+//             std::string  glasses1 =".";
+//             std::string  cap1=".";
+//             std::string  respitator1=".";
+//             std::string  name=edge.ones.name;
+//             int          nativeCity=edge.ones.nativeCity;
+//             std::string  bronDate=edge.ones.bronDate;
+//             int          idType = edge.ones.idType;
+//             std::string  idNumber=edge.ones.idNumber;
+//             long long    similarity=edge.ones.similarity;
+//             std::string  dev_id=edge.cammers.dev_id;
+//             std::string  dev_ip=edge.cammers.dev_ip;
+//             char mystr[25]={0};
+//             long long time =0;
+
+//             //+++++++++++++++++++++++++++++++++++++++++++++++++++++
+//             if (1==edge.ones.sex)
+//             {
+//                 sex1="male";
+//             }
+//             if (2==edge.ones.sex)
+//             {
+//                 sex1="famale";
+//             }
+//             if(0==edge.ones.sex||9==edge.ones.sex)
+//             {
+//                 sex1="unknow";
+//             }
+//             //+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//             if(0==edge.ones.glasses)
+//             {
+//                 glasses1="NO";
+//             }
+//             if(1==edge.ones.glasses)
+//             {
+//                 glasses1="YES";
+//             }
+//             //++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//             if(0==edge.ones.cap)
+//             {
+//                 cap1="NO";
+//             }
+//             if(1==edge.ones.cap)
+//             {
+//                 cap1="YES";
+//             }
+//             //++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//             if(0==edge.ones.respitator)
+//             {
+//                 respitator1="NO";
+//             }
+//             if(1==edge.ones.respitator)
+//             {
+//                 respitator1="YES";
+//             }
+//             //________________________________________________________
+//             if(33751045==edge.event_type){
+//                std:: cout<<"wenjian yi dakai"<<std::endl;
+//                if(outFile.is_open()){
+//                    std::cout<<"face_S_success";
+//                    outFile<<edge.ones.mystr<<','<<sex1<<','<<glasses1<<','<<cap1<<','<<respitator1<<','<<std::endl;
+//                }
+//             }
+//             if(33751046==edge.event_type){
+//                 std::cout<<"sssssssssssss"<<std::endl;
+//                 if(outFile1.is_open()){
+//                    std::cout<<"face_R_success"<<std::endl;
+//                    outFile1<<edge.ones.mystr<<','<<name<<','<<sex1<<','<<nativeCity<<','<<bronDate<<','<<idType<<','<<idNumber<<','<<dev_id<<','<<dev_ip<<std::endl;
+//                 }
+                
+//             }  
+            
+
+// }
+
+
+    

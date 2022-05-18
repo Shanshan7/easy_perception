@@ -1,0 +1,1 @@
+  -LD:/fudao/shixi/easy_perception/3rd_sdk/h3c/NetSDK_V2/Lib/win64  -lidm_alarm -lidm_live -lidm_netsdk -lidm_pdsp -lidm_transfile -lidm_vod -lidm_voicetalk -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

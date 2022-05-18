@@ -20,6 +20,8 @@ include_directories(${PROJECT_SOURCE_DIR}/json/include)
 #collect source files
 file(GLOB H3C_PROCESS_SRCS
     "${PROJECT_SOURCE_DIR}/h3cprocess.cpp"
+    "${PROJECT_SOURCE_DIR}/outputCsv.cpp"
+    "${PROJECT_SOURCE_DIR}/outputCsv.h"
     "${PROJECT_SOURCE_DIR}/json/src/*.cpp"
 	)
 
@@ -33,6 +35,7 @@ endif()
 
     
 add_executable(h3c_process "")
+
 
 target_sources(h3c_process
         PRIVATE
