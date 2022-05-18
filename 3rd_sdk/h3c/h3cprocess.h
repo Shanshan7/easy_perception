@@ -5,9 +5,12 @@
 #include <unistd.h>
 #include "idm_netsdk.h"
 
+
 class H3CProcess
 {
 public:
+    
+   
     H3CProcess();
     ~H3CProcess();
 
@@ -18,7 +21,8 @@ public:
     int stopEvent();
 
     void getResult();
-
+    void outputResult();
+    
 private:
     LONG lUserID;
     LONG lAlarmHandle;

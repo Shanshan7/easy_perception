@@ -1,5 +1,7 @@
 #1.cmake verson
 cmake_minimum_required(VERSION 3.5.0)
+#CONFIGURE_COMMAND ""
+#BUILD_COMMAND ""
 
 #2.project name
 project(SSC_json)
@@ -18,13 +20,22 @@ include_directories(${PROJECT_SOURCE_DIR}/json/include)
 #collect source files
 file(GLOB H3C_PROCESS_SRCS
     "${PROJECT_SOURCE_DIR}/h3cprocess.cpp"
+    "${PROJECT_SOURCE_DIR}/outputCsv.cpp"
+    "${PROJECT_SOURCE_DIR}/outputCsv.h"
     "${PROJECT_SOURCE_DIR}/json/src/*.cpp"
 	)
 
 #link cal_traj.so
-link_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2/Lib/linux64)
+if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+     link_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2/Lib/win64)
+else(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    link_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2/Lib/linux64)   
+endif()
 
+
+    
 add_executable(h3c_process "")
+
 
 target_sources(h3c_process
         PRIVATE

@@ -1,0 +1,3 @@
+D:\vvc\cmake\bin\cmake.exe -E rm -f CMakeFiles\h3c_process.dir/objects.a
+D:\fudao\shixi\x86_64-8.1.0-release-win32-sjlj-rt_v6-rev0\mingw64\bin\ar.exe cr CMakeFiles\h3c_process.dir/objects.a @CMakeFiles\h3c_process.dir\objects1.rsp
+D:\fudao\shixi\x86_64-8.1.0-release-win32-sjlj-rt_v6-rev0\mingw64\bin\g++.exe  -std=c++11 -O3 -DNDEBUG -Wl,--whole-archive CMakeFiles\h3c_process.dir/objects.a -Wl,--no-whole-archive -o h3c_process.exe -Wl,--out-implib,libh3c_process.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\h3c_process.dir\linklibs.rsp

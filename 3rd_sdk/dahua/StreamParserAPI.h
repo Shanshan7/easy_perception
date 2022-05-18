@@ -17,96 +17,96 @@
 extern "C" {
 #endif
 
-/*½Ó¿Ú·µ»ØÖµ*/
+/*æŽ¥å£è¿”å›žå€¼*/
 enum SP_RESULT
 {
-    SP_SUCCESS = 0,							/*³É¹¦*/
-    SP_ERROR_INVALID_HANDLE = 1,			/*ÎÞÐ§¾ä±ú*/
-    SP_ERROR_FILE_TYPE_NOSUPPORT = 2,		/*ÎÄ¼þÀàÐÍ²»Ö§³Ö*/
-    SP_ERROR_STREAM_NOSUPPORT = 3,			/*Á÷ÀàÐÍ²»Ö§³Ö*/
-    SP_ERROR_PARAMETER = 6,					/*²ÎÊýÓÐÎó*/			
-    SP_ERROR_BAD_FORMATTED = 9,     		/*ÎÄ¼þ¸ñÊ½´íÎó*/
-    SP_ERROR_BUFFER_OVERFLOW = 12,			/*ÄÚ²¿»º³åÇøÒç³ö*/
-    SP_ERROR_SYSTEM_OUT_OF_MEMORY = 13,		/*ÏµÍ³ÄÚ´æ²»¹»*/
-    SP_ERROR_LIST_EMPTY = 14,				/*ÁÐ±íÎª¿Õ*/
+    SP_SUCCESS = 0,							/*æˆåŠŸ*/
+    SP_ERROR_INVALID_HANDLE = 1,			/*æ— æ•ˆå¥æŸ„*/
+    SP_ERROR_FILE_TYPE_NOSUPPORT = 2,		/*æ–‡ä»¶ç±»åž‹ä¸æ”¯æŒ*/
+    SP_ERROR_STREAM_NOSUPPORT = 3,			/*æµç±»åž‹ä¸æ”¯æŒ*/
+    SP_ERROR_PARAMETER = 6,					/*å‚æ•°æœ‰è¯¯*/			
+    SP_ERROR_BAD_FORMATTED = 9,     		/*æ–‡ä»¶æ ¼å¼é”™è¯¯*/
+    SP_ERROR_BUFFER_OVERFLOW = 12,			/*å†…éƒ¨ç¼“å†²åŒºæº¢å‡º*/
+    SP_ERROR_SYSTEM_OUT_OF_MEMORY = 13,		/*ç³»ç»Ÿå†…å­˜ä¸å¤Ÿ*/
+    SP_ERROR_LIST_EMPTY = 14,				/*åˆ—è¡¨ä¸ºç©º*/
 };
 
-/*Ö¡ÀàÐÍ*/
+/*å¸§ç±»åž‹*/
 enum SP_FRAME_TYPE
 {
-	SP_FRAME_TYPE_UNKNOWN = 0,			/*Ö¡ÀàÐÍ²»¿ÉÖª*/
-	SP_FRAME_TYPE_VIDEO,				/*Ö¡ÀàÐÍÊÇÊÓÆµÖ¡*/
-	SP_FRAME_TYPE_AUDIO,				/*Ö¡ÀàÐÍÊÇÒôÆµÖ¡*/
-	SP_FRAME_TYPE_DATA,					/*Ö¡ÀàÐÍÊÇÊý¾ÝÖ¡*/
+	SP_FRAME_TYPE_UNKNOWN = 0,			/*å¸§ç±»åž‹ä¸å¯çŸ¥*/
+	SP_FRAME_TYPE_VIDEO,				/*å¸§ç±»åž‹æ˜¯è§†é¢‘å¸§*/
+	SP_FRAME_TYPE_AUDIO,				/*å¸§ç±»åž‹æ˜¯éŸ³é¢‘å¸§*/
+	SP_FRAME_TYPE_DATA,					/*å¸§ç±»åž‹æ˜¯æ•°æ®å¸§*/
 };
 
-/*Ö¡×ÓÀàÐÍ*/
+/*å¸§å­ç±»åž‹*/
 enum SP_FRAME_SUB_TYPE
 {
-	SP_FRAME_SUB_TYPE_DATA_INVALID		= -1,	/*Êý¾ÝÎÞÐ§*/
-	SP_FRAME_SUB_TYPE_VIDEO_I_FRAME	= 0 ,		/*IÖ¡*/
-	SP_FRAME_SUB_TYPE_VIDEO_P_FRAME,			/*PÖ¡*/
-	SP_FRAME_SUB_TYPE_VIDEO_B_FRAME,			/*BÖ¡*/
-	SP_FRAME_SUB_TYPE_DATA_INTL =7,				/*ÖÇÄÜ·ÖÎöÖ¡*/
-	SP_FRAME_SUB_TYPE_VIDEO_JPEG_FRAME=8,		/*JPEGÖ¡*/
-	SP_FRAME_SUB_TYPE_DATA_INTLEX =11,          /*À©Õ¹ÖÇÄÜ·ÖÎöÖ¡*/
+	SP_FRAME_SUB_TYPE_DATA_INVALID		= -1,	/*æ•°æ®æ— æ•ˆ*/
+	SP_FRAME_SUB_TYPE_VIDEO_I_FRAME	= 0 ,		/*Iå¸§*/
+	SP_FRAME_SUB_TYPE_VIDEO_P_FRAME,			/*På¸§*/
+	SP_FRAME_SUB_TYPE_VIDEO_B_FRAME,			/*Bå¸§*/
+	SP_FRAME_SUB_TYPE_DATA_INTL =7,				/*æ™ºèƒ½åˆ†æžå¸§*/
+	SP_FRAME_SUB_TYPE_VIDEO_JPEG_FRAME=8,		/*JPEGå¸§*/
+	SP_FRAME_SUB_TYPE_DATA_INTLEX =11,          /*æ‰©å±•æ™ºèƒ½åˆ†æžå¸§*/
 };						
 
-/*±àÂëÀàÐÍ*/
+/*ç¼–ç ç±»åž‹*/
 enum SP_ENCODE_VIDEO_TYPE
 {
-	SP_ENCODE_VIDEO_UNKNOWN = 0,						/*ÊÓÆµ±àÂë¸ñÊ½²»¿ÉÖª*/
-	SP_ENCODE_VIDEO_MPEG4 ,								/*ÊÓÆµ±àÂë¸ñÊ½ÊÇMPEG4*/
-	SP_ENCODE_VIDEO_HI_H264,							/*ÊÓÆµ±àÂë¸ñÊ½ÊÇº£Ë¼H264*/
-	SP_ENCODE_VIDEO_JPEG,								/*ÊÓÆµ±àÂë¸ñÊ½ÊÇ±ê×¼JPEG*/
-	SP_ENCODE_VIDEO_DH_H264,							/*ÊÓÆµ±àÂë¸ñÊ½ÊÇH264*/
-	SP_ENCODE_VIDEO_MPEG2 = 9,          				/*ÊÓÆµ±àÂë¸ñÊ½ÊÇMPEG2*/
-	SP_ENCODE_VIDEO_DH_H265 = 12,						/*ÊÓÆµ±àÂë¸ñÊ½ÊÇH265*/
-	SP_ENCODE_VIDEO_H263 = 35,      					/*ÊÓÆµ±àÂë¸ñÊ½ÊÇH263*/
+	SP_ENCODE_VIDEO_UNKNOWN = 0,						/*è§†é¢‘ç¼–ç æ ¼å¼ä¸å¯çŸ¥*/
+	SP_ENCODE_VIDEO_MPEG4 ,								/*è§†é¢‘ç¼–ç æ ¼å¼æ˜¯MPEG4*/
+	SP_ENCODE_VIDEO_HI_H264,							/*è§†é¢‘ç¼–ç æ ¼å¼æ˜¯æµ·æ€H264*/
+	SP_ENCODE_VIDEO_JPEG,								/*è§†é¢‘ç¼–ç æ ¼å¼æ˜¯æ ‡å‡†JPEG*/
+	SP_ENCODE_VIDEO_DH_H264,							/*è§†é¢‘ç¼–ç æ ¼å¼æ˜¯H264*/
+	SP_ENCODE_VIDEO_MPEG2 = 9,          				/*è§†é¢‘ç¼–ç æ ¼å¼æ˜¯MPEG2*/
+	SP_ENCODE_VIDEO_DH_H265 = 12,						/*è§†é¢‘ç¼–ç æ ¼å¼æ˜¯H265*/
+	SP_ENCODE_VIDEO_H263 = 35,      					/*è§†é¢‘ç¼–ç æ ¼å¼æ˜¯H263*/
 };
 
 enum SP_ENCODE_AUDIO_TYPE
 {
 	SP_ENCODE_AUDIO_UNKNOWN = 0,
-	SP_ENCODE_AUDIO_PCM			= 7,					/*ÒôÆµ±àÂë¸ñÊ½ÊÇPCM8*/
-	SP_ENCODE_AUDIO_G729,								/*ÒôÆµ±àÂë¸ñÊ½ÊÇG729*/
-	SP_ENCODE_AUDIO_IMA,								/*ÒôÆµ±àÂë¸ñÊ½ÊÇIMA*/
-	SP_ENCODE_PCM_MULAW,								/*ÒôÆµ±àÂë¸ñÊ½ÊÇPCM MULAW*/
-	SP_ENCODE_AUDIO_G721,								/*ÒôÆµ±àÂë¸ñÊ½ÊÇG721*/
-	SP_ENCODE_PCM8_VWIS,								/*ÒôÆµ±àÂë¸ñÊ½ÊÇPCM8_VWIS*/
-	SP_ENCODE_MS_ADPCM,									/*ÒôÆµ±àÂë¸ñÊ½ÊÇMS_ADPCM*/
-	SP_ENCODE_AUDIO_G711A,								/*ÒôÆµ±àÂë¸ñÊ½ÊÇG711A*/
-	SP_ENCODE_AUDIO_AMR,								/*ÒôÆµ±àÂë¸ñÊ½ÊÇAMR*/
-	SP_ENCODE_AUDIO_PCM16,								/*ÒôÆµ±àÂë¸ñÊ½ÊÇPCM16*/
-	SP_ENCODE_AUDIO_G711U		= 22,					/*ÒôÆµ±àÂë¸ñÊ½ÊÇG711U*/
-	SP_ENCODE_AUDIO_G723,								/*ÒôÆµ±àÂë¸ñÊ½ÊÇG723*/
-	SP_ENCODE_AUDIO_AAC			= 26,					/*ÒôÆµ±àÂë¸ñÊ½ÊÇAAC*/
-	SP_ENCODE_AUDIO_MP2 = 31,							/*ÒôÆµ±àÂë¸ñÊ½ÊÇmp2*/
-	SP_ENCODE_AUDIO_OGG,								/*ÒôÆµ±àÂë¸ñÊ½ÊÇogg vorbis*/
-	SP_ENCODE_AUDIO_MP3,								/*ÒôÆµ±àÂë¸ñÊ½ÊÇmp3*/
-	SP_ENCODE_AUDIO_G722_1,								/*ÒôÆµ±àÂë¸ñÊ½ÊÇG722.1*/
-	SP_ENCODE_AUDIO_AC = 49,							/*ÒôÆµ±àÂë¸ñÊ½ÊÇAC3*/
+	SP_ENCODE_AUDIO_PCM			= 7,					/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯PCM8*/
+	SP_ENCODE_AUDIO_G729,								/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯G729*/
+	SP_ENCODE_AUDIO_IMA,								/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯IMA*/
+	SP_ENCODE_PCM_MULAW,								/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯PCM MULAW*/
+	SP_ENCODE_AUDIO_G721,								/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯G721*/
+	SP_ENCODE_PCM8_VWIS,								/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯PCM8_VWIS*/
+	SP_ENCODE_MS_ADPCM,									/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯MS_ADPCM*/
+	SP_ENCODE_AUDIO_G711A,								/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯G711A*/
+	SP_ENCODE_AUDIO_AMR,								/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯AMR*/
+	SP_ENCODE_AUDIO_PCM16,								/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯PCM16*/
+	SP_ENCODE_AUDIO_G711U		= 22,					/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯G711U*/
+	SP_ENCODE_AUDIO_G723,								/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯G723*/
+	SP_ENCODE_AUDIO_AAC			= 26,					/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯AAC*/
+	SP_ENCODE_AUDIO_MP2 = 31,							/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯mp2*/
+	SP_ENCODE_AUDIO_OGG,								/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯ogg vorbis*/
+	SP_ENCODE_AUDIO_MP3,								/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯mp3*/
+	SP_ENCODE_AUDIO_G722_1,								/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯G722.1*/
+	SP_ENCODE_AUDIO_AC = 49,							/*éŸ³é¢‘ç¼–ç æ ¼å¼æ˜¯AC3*/
 };
 
-/*¼ÓÃÜÀàÐÍ*/
+/*åŠ å¯†ç±»åž‹*/
 enum SP_ENCRYPT_TYPE
 {
     SP_ENCRYPT_UNKOWN = 0,
     SP_ENCRYPT_AES,
 };
-/*Ê±¼äÐÅÏ¢*/
+/*æ—¶é—´ä¿¡æ¯*/
 typedef struct
 {
-    int nYear;								/*Äê*/
-    int nMonth;								/*ÔÂ*/
-    int nDay;								/*ÈÕ*/
-    int nHour;								/*Ð¡Ê±*/
-    int nMinute;							/*·ÖÖÓ*/
-    int nSecond;							/*Ãë*/
-    int nMilliSecond;						/*ºÁÃë*/
+    int nYear;								/*å¹´*/
+    int nMonth;								/*æœˆ*/
+    int nDay;								/*æ—¥*/
+    int nHour;								/*å°æ—¶*/
+    int nMinute;							/*åˆ†é’Ÿ*/
+    int nSecond;							/*ç§’*/
+    int nMilliSecond;						/*æ¯«ç§’*/
 } SP_TIME;
 
-//ÊôÐÔ°üÊ¹ÄÜ±êÊ¶
+//å±žæ€§åŒ…ä½¿èƒ½æ ‡è¯†
 #define SP_IVS_ATTRIBUTE_FLAG_80	(1 << 0)
 #define SP_IVS_ATTRIBUTE_FLAG_81	(1 << 1)
 #define SP_IVS_ATTRIBUTE_FLAG_82	(1 << 2)
@@ -117,7 +117,7 @@ typedef struct
 
 typedef struct
 {
-	/*¹ì¼£µãÊÇÎïÌåÍâ½Ó¾ØÐÎµÄÖÐÐÄ£¬¸ù¾ÝX£¬Y¼°XSize£¬YSize¼ÆËã³öµÄÎïÌåÍâ½Ó¾ØÐÎ×ø±ê(left£¬top£¬right£¬bottom)*/
+	/*è½¨è¿¹ç‚¹æ˜¯ç‰©ä½“å¤–æŽ¥çŸ©å½¢çš„ä¸­å¿ƒï¼Œæ ¹æ®Xï¼ŒYåŠXSizeï¼ŒYSizeè®¡ç®—å‡ºçš„ç‰©ä½“å¤–æŽ¥çŸ©å½¢åæ ‡(leftï¼Œtopï¼Œrightï¼Œbottom)*/
 	/*RECT=(X-XSize, Y-YSize, X+XSize, Y+YSize)  */
 	unsigned short x;
 	unsigned short y;
@@ -125,318 +125,318 @@ typedef struct
 	unsigned short ySize;
 }SP_IVS_POINT;
 
-//0x80³µÉíÊôÐÔ°ü, ³µÐÍÀàÐÍ¶¨Òå
+//0x80è½¦èº«å±žæ€§åŒ…, è½¦åž‹ç±»åž‹å®šä¹‰
 typedef enum
 {
-	SP_IVS_TrafficVehicleUnknow = 0,		//Î´Öª
-	SP_IVS_TrafficVehiclePassengerCar,		//¿Í³µ
-	SP_IVS_TrafficVehicleLargeTruck,		//´ó»õ³µ
-	SP_IVS_TrafficVehicleMidTruck,			//ÖÐ»õ³µ
-	SP_IVS_TrafficVehicleSaloonCar,		//½Î³µ
-	SP_IVS_TrafficVehicleMicrobus,			//Ãæ°ü³µ
-	SP_IVS_TrafficVehicleMicroTruck,		//Ð¡»õ³µ
-	SP_IVS_TrafficVehicleTricycle,			//ÈýÂÖ³µ
-	SP_IVS_TrafficVehicleMotor,			//Ä¦ÍÐ³µ
-	SP_IVS_TrafficVehiclePasserby,			//ÐÐÈË
+	SP_IVS_TrafficVehicleUnknow = 0,		//æœªçŸ¥
+	SP_IVS_TrafficVehiclePassengerCar,		//å®¢è½¦
+	SP_IVS_TrafficVehicleLargeTruck,		//å¤§è´§è½¦
+	SP_IVS_TrafficVehicleMidTruck,			//ä¸­è´§è½¦
+	SP_IVS_TrafficVehicleSaloonCar,		//è½¿è½¦
+	SP_IVS_TrafficVehicleMicrobus,			//é¢åŒ…è½¦
+	SP_IVS_TrafficVehicleMicroTruck,		//å°è´§è½¦
+	SP_IVS_TrafficVehicleTricycle,			//ä¸‰è½®è½¦
+	SP_IVS_TrafficVehicleMotor,			//æ‘©æ‰˜è½¦
+	SP_IVS_TrafficVehiclePasserby,			//è¡Œäºº
 	SP_IVS_TrafficVehicleSuvMpv,			//SUV-MPV
-	SP_IVS_TrafficVehicleMidPassengerCar,	//ÖÐ¿Í³µ
-	SP_IVS_TrafficVehicleTankCar,			//Î£»¯Æ·³µÁ¾(ÌØÊâ³µÁ¾)
+	SP_IVS_TrafficVehicleMidPassengerCar,	//ä¸­å®¢è½¦
+	SP_IVS_TrafficVehicleTankCar,			//å±åŒ–å“è½¦è¾†(ç‰¹æ®Šè½¦è¾†)
 	SP_IVS_TrafficVehicleSUV,				//SUV
 	SP_IVS_TrafficVehicleMPV,				//MPV
-	SP_IVS_TrafficVehicleBus,				//¹«½»³µ
-	SP_IVS_TrafficVehiclePickup,			//Æ¤¿¨³µ
-	SP_IVS_TrafficVehicleMiniCarriage,		//Î¢ÐÍ³µ
-	SP_IVS_TrafficVehicleOilTankTruck,		//ÓÍ¹Þ³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleSlotTankCar,   	//²Û¹Þ³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleColdChainCar,   	//ÀäÁ´³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleDregsCar,			//ÔüÍÁ³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleConcreteMixerTruck,	//»ìÄýÍÁ½Á°è³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleTaxi,             //³ö×â³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehiclePolice,           //¾¯³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleAmbulance,        //¾È»¤³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleGeneral,          //ÆÕÍ¨³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleWateringCar,      //»·ÎÀ³µ(°üÀ¨È÷Ë®³µ¡¢À¬»ø³µ¡¢ÇåÉ¨³µµÈ)(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleReserved2,   		//±£Áô2(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleFireEngine,       //Ïû·À³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleTractor,          //ÍÏÀ­»ú(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleMachineshopTruck, //¹¤³Ì³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehiclePowerLotVehicle,  //·ÛÁ£ÎïÁÏ³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleSuctionSewageTruck,	//ÎüÎÛ³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficNormalVehicleTankTruck,  	//ÆÕÍ¨¹Þ³µ(ÌØÊâ³µÁ¾) 
-	SP_IVS_TrafficVehicleTwocycle,          	//¶þÂÖ³µ
-	SP_IVS_TrafficVehicleSchoolBus,			//Ð£³µ(ÌØÊâ³µÁ¾) 
-	SP_IVS_TrafficVehicleExcavator,			//ÍÚ¾ò³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleBulldozer,			//ÍÆÍÁ³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleCrane,				//µõ³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehiclePumptruck,			//±Ã³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleEscort,				//ÑºÔË³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehicleShovelLoader,			//²ù³µ(ÌØÊâ³µÁ¾)
-	SP_IVS_TrafficVehiclePoultry	=  46,		//ÇÝÐó³µ(ÌØÊâ³µÁ¾)
+	SP_IVS_TrafficVehicleBus,				//å…¬äº¤è½¦
+	SP_IVS_TrafficVehiclePickup,			//çš®å¡è½¦
+	SP_IVS_TrafficVehicleMiniCarriage,		//å¾®åž‹è½¦
+	SP_IVS_TrafficVehicleOilTankTruck,		//æ²¹ç½è½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleSlotTankCar,   	//æ§½ç½è½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleColdChainCar,   	//å†·é“¾è½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleDregsCar,			//æ¸£åœŸè½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleConcreteMixerTruck,	//æ··å‡åœŸæ…æ‹Œè½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleTaxi,             //å‡ºç§Ÿè½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehiclePolice,           //è­¦è½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleAmbulance,        //æ•‘æŠ¤è½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleGeneral,          //æ™®é€šè½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleWateringCar,      //çŽ¯å«è½¦(åŒ…æ‹¬æ´’æ°´è½¦ã€åžƒåœ¾è½¦ã€æ¸…æ‰«è½¦ç­‰)(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleReserved2,   		//ä¿ç•™2(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleFireEngine,       //æ¶ˆé˜²è½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleTractor,          //æ‹–æ‹‰æœº(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleMachineshopTruck, //å·¥ç¨‹è½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehiclePowerLotVehicle,  //ç²‰ç²’ç‰©æ–™è½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleSuctionSewageTruck,	//å¸æ±¡è½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficNormalVehicleTankTruck,  	//æ™®é€šç½è½¦(ç‰¹æ®Šè½¦è¾†) 
+	SP_IVS_TrafficVehicleTwocycle,          	//äºŒè½®è½¦
+	SP_IVS_TrafficVehicleSchoolBus,			//æ ¡è½¦(ç‰¹æ®Šè½¦è¾†) 
+	SP_IVS_TrafficVehicleExcavator,			//æŒ–æŽ˜è½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleBulldozer,			//æŽ¨åœŸè½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleCrane,				//åŠè½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehiclePumptruck,			//æ³µè½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleEscort,				//æŠ¼è¿è½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehicleShovelLoader,			//é“²è½¦(ç‰¹æ®Šè½¦è¾†)
+	SP_IVS_TrafficVehiclePoultry	=  46,		//ç¦½ç•œè½¦(ç‰¹æ®Šè½¦è¾†)
 
-	SP_IVS_TrafficVehicleBicycle                    = 201, //×ÔÐÐ³µ  
-	SP_IVS_TrafficVehicleVanTricycle        		= 202, //ÏáÊ½ÈýÂÖ³µ
-	SP_IVS_TrafficVehicleMannedConvertibleTricycle   = 203, //ÔØÈË³¨ÅñÈýÂÖ³µ
-	SP_IVS_TrafficVehicleNoMannedConvertibleTricycle = 204, //²»ÔØÈË³¨ÅñÈýÂÖ³µ
-	SP_IVS_TrafficVehicleElectricbike = 205, //¶þÂÖµçÆ¿³µ
+	SP_IVS_TrafficVehicleBicycle                    = 201, //è‡ªè¡Œè½¦  
+	SP_IVS_TrafficVehicleVanTricycle        		= 202, //åŽ¢å¼ä¸‰è½®è½¦
+	SP_IVS_TrafficVehicleMannedConvertibleTricycle   = 203, //è½½äººæ•žç¯·ä¸‰è½®è½¦
+	SP_IVS_TrafficVehicleNoMannedConvertibleTricycle = 204, //ä¸è½½äººæ•žç¯·ä¸‰è½®è½¦
+	SP_IVS_TrafficVehicleElectricbike = 205, //äºŒè½®ç”µç“¶è½¦
 }SP_IVS_TRAFFIC_VEHICLE_TYPE;
 
-//³µÉíÊôÐÔ°ü,64×Ö½Ú
+//è½¦èº«å±žæ€§åŒ…,64å­—èŠ‚
 typedef struct
 {
-	unsigned char colorVailed;	//ÑÕÉ«ÊÇ·ñÓÐÐ§
-	unsigned char carModel;		//³µÐÍ,Ïê¼ûSP_IVS_TRAFFIC_VEHICLE_TYPE
-	unsigned short brand;		//Æ·ÅÆ³µ±ê
+	unsigned char colorVailed;	//é¢œè‰²æ˜¯å¦æœ‰æ•ˆ
+	unsigned char carModel;		//è½¦åž‹,è¯¦è§SP_IVS_TRAFFIC_VEHICLE_TYPE
+	unsigned short brand;		//å“ç‰Œè½¦æ ‡
 
-	unsigned char color_r;		//ÑÕÉ«ÐÅÏ¢£¬ºì
-	unsigned char color_g;		//ÑÕÉ«ÐÅÏ¢£¬ÂÌ
-	unsigned char color_b;		//ÑÕÉ«ÐÅÏ¢£¬À¶
-	unsigned char color_a;		//ÑÕÉ«ÐÅÏ¢£¬Í¸Ã÷
+	unsigned char color_r;		//é¢œè‰²ä¿¡æ¯ï¼Œçº¢
+	unsigned char color_g;		//é¢œè‰²ä¿¡æ¯ï¼Œç»¿
+	unsigned char color_b;		//é¢œè‰²ä¿¡æ¯ï¼Œè“
+	unsigned char color_a;		//é¢œè‰²ä¿¡æ¯ï¼Œé€æ˜Ž
 
-	unsigned short subbrand;	//×ÓÆ·ÅÆ
-	unsigned short year;		//Äê¿î
-	SP_IVS_POINT windowPosition;//³µ´°Î»ÖÃ
-	unsigned char nReliabilityOfVehicleBodyDetection;	//³µÉí¼ì²âÖÃÐÅ¶È£¬0±íÊ¾Ëã·¨Î´Ìá¹©£¬È¡Öµ·¶Î§Îª1-100
+	unsigned short subbrand;	//å­å“ç‰Œ
+	unsigned short year;		//å¹´æ¬¾
+	SP_IVS_POINT windowPosition;//è½¦çª—ä½ç½®
+	unsigned char nReliabilityOfVehicleBodyDetection;	//è½¦èº«æ£€æµ‹ç½®ä¿¡åº¦ï¼Œ0è¡¨ç¤ºç®—æ³•æœªæä¾›ï¼Œå–å€¼èŒƒå›´ä¸º1-100
 
-	unsigned char reserved[43];	//Ô¤Áô
+	unsigned char reserved[43];	//é¢„ç•™
 }SP_IVS_TRAFFIC_ATTRIBUTE_80;
 
-//³µÉÏÈËÔ±ÊôÐÔ°ü,64×Ö½Ú
+//è½¦ä¸Šäººå‘˜å±žæ€§åŒ…,64å­—èŠ‚
 typedef struct
 {
-	SP_IVS_POINT mainPosition;		//Ö÷¼ÝÊ»Î»
-	SP_IVS_POINT coPosition;		//¸±¼ÝÊ»Î»
-	unsigned char mainSafetyBelt;	//Ö÷¼Ý°²È«´øÐÅÏ¢  0-Unknown 1-not 2-yes
-	unsigned char coSafetyBelt;		//¸±¼Ý°²È«´øÐÅÏ¢  0-Unknown 1-not 2-yes
-	unsigned char mainSunvisor;		//Ö÷¼ÝÕÚÑô°åÐÅÏ¢  0-Unknown 1-not 2-yes
-	unsigned char coSunvisor;		//¸±¼ÝÕÚÑô°åÐÅÏ¢  0-Unknown 1-not 2-yes
-	unsigned char reserved[44];		//¶ÔÆë
+	SP_IVS_POINT mainPosition;		//ä¸»é©¾é©¶ä½
+	SP_IVS_POINT coPosition;		//å‰¯é©¾é©¶ä½
+	unsigned char mainSafetyBelt;	//ä¸»é©¾å®‰å…¨å¸¦ä¿¡æ¯  0-Unknown 1-not 2-yes
+	unsigned char coSafetyBelt;		//å‰¯é©¾å®‰å…¨å¸¦ä¿¡æ¯  0-Unknown 1-not 2-yes
+	unsigned char mainSunvisor;		//ä¸»é©¾é®é˜³æ¿ä¿¡æ¯  0-Unknown 1-not 2-yes
+	unsigned char coSunvisor;		//å‰¯é©¾é®é˜³æ¿ä¿¡æ¯  0-Unknown 1-not 2-yes
+	unsigned char reserved[44];		//å¯¹é½
 }SP_IVS_TRAFFIC_ATTRIBUTE_81;
 
-//³µÅÆÄÚÈÝÊôÐÔ°ü,256×Ö½Ú
+//è½¦ç‰Œå†…å®¹å±žæ€§åŒ…,256å­—èŠ‚
 typedef struct
 {
-	unsigned char plateEncode;		//³µÅÆ±àÂë£¬ 0-ASCII, 1-UCS-4LE
-	unsigned char plateInfoLen;		//³µÅÆÐÅÏ¢³¤¶È
-	unsigned char reserved[2];		//¶ÔÆë
+	unsigned char plateEncode;		//è½¦ç‰Œç¼–ç ï¼Œ 0-ASCII, 1-UCS-4LE
+	unsigned char plateInfoLen;		//è½¦ç‰Œä¿¡æ¯é•¿åº¦
+	unsigned char reserved[2];		//å¯¹é½
 
-	unsigned char plateInfo[252];	//³µÅÆÐÅÏ¢
+	unsigned char plateInfo[252];	//è½¦ç‰Œä¿¡æ¯
 }SP_IVS_TRAFFIC_ATTRIBUTE_82;
 
-//³µÅÆÍâÐÎÊôÐÔ°ü,64×Ö½Ú
+//è½¦ç‰Œå¤–å½¢å±žæ€§åŒ…,64å­—èŠ‚
 typedef struct
 {
-	unsigned char colorVailed;		//ÑÕÉ«ÊÇ·ñÓÐÐ§
-	unsigned char reserved[3];		//¶ÔÆë
-	unsigned int color;				//ÑÕÉ«ÐÅÏ¢£¬RGBA
+	unsigned char colorVailed;		//é¢œè‰²æ˜¯å¦æœ‰æ•ˆ
+	unsigned char reserved[3];		//å¯¹é½
+	unsigned int color;				//é¢œè‰²ä¿¡æ¯ï¼ŒRGBA
 
-	unsigned char strCountry[4];	//³µÅÆ¹ú±ð×Ö·û´®
-	unsigned short plateType;		//³µÅÆÀàÐÍ
-	unsigned short plateWidth;		//·ÖÎö³µÅÆ»­ÃæµÄ¾ø¶Ô¿í¶È
-	unsigned char  plateConfidence;	//³µÅÆÖÃÐÅ¶È
-	unsigned char  reserved1[47];	//Ô¤Áô
+	unsigned char strCountry[4];	//è½¦ç‰Œå›½åˆ«å­—ç¬¦ä¸²
+	unsigned short plateType;		//è½¦ç‰Œç±»åž‹
+	unsigned short plateWidth;		//åˆ†æžè½¦ç‰Œç”»é¢çš„ç»å¯¹å®½åº¦
+	unsigned char  plateConfidence;	//è½¦ç‰Œç½®ä¿¡åº¦
+	unsigned char  reserved1[47];	//é¢„ç•™
 }SP_IVS_TRAFFIC_ATTRIBUTE_83;
 
-//¹ì¼£µãÐÅÏ¢,512×Ö½Ú
+//è½¨è¿¹ç‚¹ä¿¡æ¯,512å­—èŠ‚
 typedef struct
 {
-	unsigned char fatherCount;		//¸¸ID¸öÊý
-	unsigned char pointCount;		//´ýÔö¼Ó¹ì¼£µã¸öÊý
-	unsigned char trackType;		//¹ì¼£ÀàÐÍ£¬0±íÊ¾IVSÎïÌå¹ì¼££¬1±íÊ¾¸ú×ÙÎïÌå¹ì¼£
-	unsigned char reserved;			//¶ÔÆë
+	unsigned char fatherCount;		//çˆ¶IDä¸ªæ•°
+	unsigned char pointCount;		//å¾…å¢žåŠ è½¨è¿¹ç‚¹ä¸ªæ•°
+	unsigned char trackType;		//è½¨è¿¹ç±»åž‹ï¼Œ0è¡¨ç¤ºIVSç‰©ä½“è½¨è¿¹ï¼Œ1è¡¨ç¤ºè·Ÿè¸ªç‰©ä½“è½¨è¿¹
+	unsigned char reserved;			//å¯¹é½
 
-	SP_IVS_POINT trackPoint[32];	//¹ì¼£µãÐÅÏ¢
-	unsigned int  fatherID[63];		//¸¸IDÁÐ±í
+	SP_IVS_POINT trackPoint[32];	//è½¨è¿¹ç‚¹ä¿¡æ¯
+	unsigned int  fatherID[63];		//çˆ¶IDåˆ—è¡¨
 
 }SP_IVS_TRAFFIC_ATTRIBUTE_84;
 
-//Ä¿±ê¼ì²â¾Ö²¿¹ì¼£ÊôÐÔ,64×Ö½Ú
+//ç›®æ ‡æ£€æµ‹å±€éƒ¨è½¨è¿¹å±žæ€§,64å­—èŠ‚
 typedef struct
 {
-	SP_IVS_POINT trackPoint;			//Ä¿±ê¿òÎ»ÖÃ£¨¸ñÊ½,8192×ø±êÏµ£©
-	unsigned short	stayTime;			//Ä¿±êÖÍÁôÊ±¼ä,µ¥Î»Ãë
+	SP_IVS_POINT trackPoint;			//ç›®æ ‡æ¡†ä½ç½®ï¼ˆæ ¼å¼,8192åæ ‡ç³»ï¼‰
+	unsigned short	stayTime;			//ç›®æ ‡æ»žç•™æ—¶é—´,å•ä½ç§’
 	unsigned char reserved1[54];
 }SP_IVS_TRAFFIC_ATTRIBUTE_87;
 
-//ÅÅ¶ÓÖÍÁôÊ±¼äÊôÐÔ°ü
+//æŽ’é˜Ÿæ»žç•™æ—¶é—´å±žæ€§åŒ…
 typedef struct
 {
-	unsigned int m_QueuingTime;        	//ÅÅ¶ÓÖÍÁôÊ±¼ä,µ¥Î»Ãë
-	unsigned char reserved[12];    		//¶ÔÆë; 10×Ö½ÚÔ¤Áô×Ö½Ú+2×Ö½Ú¶ÔÆë
+	unsigned int m_QueuingTime;        	//æŽ’é˜Ÿæ»žç•™æ—¶é—´,å•ä½ç§’
+	unsigned char reserved[12];    		//å¯¹é½; 10å­—èŠ‚é¢„ç•™å­—èŠ‚+2å­—èŠ‚å¯¹é½
 }SP_IVS_ATTRIBUTE_90;
 
-//µ¥¸öÊôÐÔ°ü½á¹¹
+//å•ä¸ªå±žæ€§åŒ…ç»“æž„
 typedef struct _SP_IVS_OBJ_ATTR_UNIT
 {
-	unsigned int nAttrFlag;				// ÊôÐÔ°üÊ¹ÄÜ±êÊ¶
-	unsigned int nAttrDataLen;			// ÊôÐÔ°ü³¤¶È
-	unsigned char* pAttrBuf;			// ÊôÐÔ°üÊý¾Ý£¬°´Ê¹ÄÜ±êÊ¶¶ÁÈ¡¶ÔÓ¦ÊôÐÔ°ü
+	unsigned int nAttrFlag;				// å±žæ€§åŒ…ä½¿èƒ½æ ‡è¯†
+	unsigned int nAttrDataLen;			// å±žæ€§åŒ…é•¿åº¦
+	unsigned char* pAttrBuf;			// å±žæ€§åŒ…æ•°æ®ï¼ŒæŒ‰ä½¿èƒ½æ ‡è¯†è¯»å–å¯¹åº”å±žæ€§åŒ…
 }SP_IVS_OBJ_ATTR_UNIT;
 
-//IVSÖÇÄÜÄ¿±ê½á¹¹Ìå
+//IVSæ™ºèƒ½ç›®æ ‡ç»“æž„ä½“
 typedef struct _SP_IVS_OBJ_INFO
 {
-	unsigned int classID;				// ÒµÎñ´óÀàID
-	unsigned int objID;					// Ä¿±êID
-	SP_IVS_POINT trackPoint;			// ¹ì¼£µãÐÅÏ¢£¬½öÊÊÓÃÓë³µÉí³µÅÆÀàÐÍÄ¿±ê
+	unsigned int classID;				// ä¸šåŠ¡å¤§ç±»ID
+	unsigned int objID;					// ç›®æ ‡ID
+	SP_IVS_POINT trackPoint;			// è½¨è¿¹ç‚¹ä¿¡æ¯ï¼Œä»…é€‚ç”¨ä¸Žè½¦èº«è½¦ç‰Œç±»åž‹ç›®æ ‡
 
-	unsigned char objType;				// Ä¿±êÀàÐÍ£¬³µÅÆ/³µÉí/ÈËetc
-	unsigned char pointValid;			// ×ø±êÊÇ·ñ¿ÉÐÅ
-	unsigned char operatorType;			// ¸üÐÂ²Ù×÷ÀàÐÍ£¬ÐÂÔöÎïÌå(1), Ôö¼ÓÎïÌå¹ì¼£µã(2)£¬É¾³ýÎïÌå(3)£¬Òþ²ØÎïÌå¹ì¼£(4)
-	unsigned char reserved[29];			// ±£Áô×Ö¶Î
+	unsigned char objType;				// ç›®æ ‡ç±»åž‹ï¼Œè½¦ç‰Œ/è½¦èº«/äººetc
+	unsigned char pointValid;			// åæ ‡æ˜¯å¦å¯ä¿¡
+	unsigned char operatorType;			// æ›´æ–°æ“ä½œç±»åž‹ï¼Œæ–°å¢žç‰©ä½“(1), å¢žåŠ ç‰©ä½“è½¨è¿¹ç‚¹(2)ï¼Œåˆ é™¤ç‰©ä½“(3)ï¼Œéšè—ç‰©ä½“è½¨è¿¹(4)
+	unsigned char reserved[29];			// ä¿ç•™å­—æ®µ
 
-	unsigned int		nAttrCount;		// Ä¿±êÐ¯´øÊôÐÔ°ü¸öÊý
-	SP_IVS_OBJ_ATTR_UNIT*	pAttrData;	// ÊôÐÔ°üÊý¾Ý
-	unsigned char reserved1[128];		// ±£Áô×Ö¶Î
+	unsigned int		nAttrCount;		// ç›®æ ‡æºå¸¦å±žæ€§åŒ…ä¸ªæ•°
+	SP_IVS_OBJ_ATTR_UNIT*	pAttrData;	// å±žæ€§åŒ…æ•°æ®
+	unsigned char reserved1[128];		// ä¿ç•™å­—æ®µ
 }SP_IVS_OBJ_INFO;
 
 #pragma pack(1)
 typedef struct
 {
-	/*ÀàÐÍ*/
-	int					frameType;				/*Ö¡ÀàÐÍ*/
-	int					frameSubType;			/*Ö¡×ÓÀàÐÍ*/
-	int					frameEncodeType;		/*Ö¡±àÂëÀàÐÍ*/
+	/*ç±»åž‹*/
+	int					frameType;				/*å¸§ç±»åž‹*/
+	int					frameSubType;			/*å¸§å­ç±»åž‹*/
+	int					frameEncodeType;		/*å¸§ç¼–ç ç±»åž‹*/
 	unsigned char		reserved[4];
 
-	/*Êý¾Ý*/
-	unsigned char*		streamPointer;			/*Ö¸ÏòÂëÁ÷Êý¾Ý,NULL±íÊ¾ÎÞÐ§Êý¾Ý*/
-	int					streamLen;				/*ÂëÁ÷³¤¶È*/
-    unsigned char*		framePointer;			/*Ö¸ÏòÖ¡Í·,NULL±íÊ¾ÎÞÐ§Êý¾Ý*/
-    int					frameLen;				/*Ö¡³¤¶È(°üÀ¨Ö¡Í·¡¢Ö¡Ìå¡¢Ö¡Î²)*/
+	/*æ•°æ®*/
+	unsigned char*		streamPointer;			/*æŒ‡å‘ç æµæ•°æ®,NULLè¡¨ç¤ºæ— æ•ˆæ•°æ®*/
+	int					streamLen;				/*ç æµé•¿åº¦*/
+    unsigned char*		framePointer;			/*æŒ‡å‘å¸§å¤´,NULLè¡¨ç¤ºæ— æ•ˆæ•°æ®*/
+    int					frameLen;				/*å¸§é•¿åº¦(åŒ…æ‹¬å¸§å¤´ã€å¸§ä½“ã€å¸§å°¾)*/
     
-    /*Ê±¼ä*/
-    SP_TIME				frameTime;				/*Ê±¼äÐÅÏ¢*/
-    int					timeStamp;				/*Ê±¼ä´Á*/
+    /*æ—¶é—´*/
+    SP_TIME				frameTime;				/*æ—¶é—´ä¿¡æ¯*/
+    int					timeStamp;				/*æ—¶é—´æˆ³*/
     
-    /*ÐòºÅ*/
-	int					frameSeq;				/*Ö¡ÐòºÅ*/
+    /*åºå·*/
+	int					frameSeq;				/*å¸§åºå·*/
 	
-	/*ÊÓÆµÊôÐÔ£¬¹Ø¼üÖ¡²ÅÓÐ*/
-	int					frameRate;				/*Ö¡ÂÊ*/
-	int					width;					/*¿í*/
-	int					height;					/*¸ß*/
+	/*è§†é¢‘å±žæ€§ï¼Œå…³é”®å¸§æ‰æœ‰*/
+	int					frameRate;				/*å¸§çŽ‡*/
+	int					width;					/*å®½*/
+	int					height;					/*é«˜*/
 
     unsigned char  reserved2[8];
 
-	/*ÒôÆµÊôÐÔ*/
-	int					samplesPerSec;			/*²ÉÑùÆµÂÊ*/
-	int					bitsPerSample;			/*²ÉÑùÎ»Êý*/
-	int					channels;				/*ÉùµÀÊý*/
+	/*éŸ³é¢‘å±žæ€§*/
+	int					samplesPerSec;			/*é‡‡æ ·é¢‘çŽ‡*/
+	int					bitsPerSample;			/*é‡‡æ ·ä½æ•°*/
+	int					channels;				/*å£°é“æ•°*/
 
-	/*´íÎó±êÖ¾*/
-	int					isValid;				/*0ÎªÓÐÐ§£¬·Ç0±íÊ¾Ö¡´íÎó*/
+	/*é”™è¯¯æ ‡å¿—*/
+	int					isValid;				/*0ä¸ºæœ‰æ•ˆï¼Œéž0è¡¨ç¤ºå¸§é”™è¯¯*/
 
  #if defined(_WIN64) || defined(__x86_64__)
- 	/*À©Õ¹*/
- 	unsigned char	reserved3[424];				/*±£Áô×Ö½Ú*/
+ 	/*æ‰©å±•*/
+ 	unsigned char	reserved3[424];				/*ä¿ç•™å­—èŠ‚*/
  #else
-	/*À©Õ¹*/
- 	unsigned char	reserved3[408];				/*±£Áô×Ö½Ú*/
+	/*æ‰©å±•*/
+ 	unsigned char	reserved3[408];				/*ä¿ç•™å­—èŠ‚*/
  #endif
 } SP_FRAME_INFO;
 #pragma pack()
 
  /********************************************************************
  *	Funcname: 	    	SP_CreateStreamParser
- *	Purpose:				´´½¨Á÷·ÖÎöÆ÷
- *  InputParam:         nBufferSize: ÐèÒª¿ª±ÙµÄ»º³åÇø´óÐ¡£¬²»ÄÜÐ¡ÓÚSP_PaseDataÃ¿´Î´«ÈëµÄÊý¾ÝÁ÷³¤¶È
- *  OutputParam:      ÎÞ
- *  Return:					NULL: ´´½¨Á÷·ÖÎöÆ÷Ê§°Ü
- *								ÆäËûÖµ£ºÁ÷½âÎöÆ÷¾ä±ú   
+ *	Purpose:				åˆ›å»ºæµåˆ†æžå™¨
+ *  InputParam:         nBufferSize: éœ€è¦å¼€è¾Ÿçš„ç¼“å†²åŒºå¤§å°ï¼Œä¸èƒ½å°äºŽSP_PaseDataæ¯æ¬¡ä¼ å…¥çš„æ•°æ®æµé•¿åº¦
+ *  OutputParam:      æ— 
+ *  Return:					NULL: åˆ›å»ºæµåˆ†æžå™¨å¤±è´¥
+ *								å…¶ä»–å€¼ï¼šæµè§£æžå™¨å¥æŸ„   
 *********************************************************************/
 SP_API void* CALLMETHOD SP_CreateStreamParser(int nBufferSize);
 
  /********************************************************************
  *	Funcname: 	    	SP_ParseData
- *	Purpose:				ÊäÈëÊý¾ÝÁ÷,²¢Í¬²½½øÐÐ·ÖÎö
- *  InputParam:         handle:	Í¨¹ýSP_CreateStreamParser·µ»ØµÄ¾ä±ú
- *								stream:	Êý¾ÝÁ÷»º³åµØÖ·
- *								length:	Êý¾ÝÁ÷³¤¶È
- *  OutputParam:      ÎÞ
- *  Return:					0:µ÷ÓÃ³É¹¦
- *								ÆäËûÖµ£ºÊ§°Ü£¬Í¨¹ýSP_GetLastError»ñÈ¡´íÎóÂë    
+ *	Purpose:				è¾“å…¥æ•°æ®æµ,å¹¶åŒæ­¥è¿›è¡Œåˆ†æž
+ *  InputParam:         handle:	é€šè¿‡SP_CreateStreamParserè¿”å›žçš„å¥æŸ„
+ *								stream:	æ•°æ®æµç¼“å†²åœ°å€
+ *								length:	æ•°æ®æµé•¿åº¦
+ *  OutputParam:      æ— 
+ *  Return:					0:è°ƒç”¨æˆåŠŸ
+ *								å…¶ä»–å€¼ï¼šå¤±è´¥ï¼Œé€šè¿‡SP_GetLastErrorèŽ·å–é”™è¯¯ç     
 *********************************************************************/
 SP_API SP_RESULT CALLMETHOD SP_ParseData(void* handle, unsigned char* stream, int length);
 
 /********************************************************************
  *	Funcname: 	    	SP_GetOneFrame
- *	Purpose:				Í¬²½»ñÈ¡Ò»Ö¡ÐÅÏ¢,·´¸´µ÷ÓÃÖ±µ½Ê§°Ü
- *  InputParam:         handle:	Í¨¹ýSP_CreateStreamParser·µ»ØµÄ¾ä±ú
- *								frameInfo: Íâ²¿SP_FRAME_INFOµÄÒ»¸ö½á¹¹µØÖ·¡£
- *  OutputParam:      ÎÞ
- *  Return:					0:µ÷ÓÃ³É¹¦
- *								ÆäËûÖµ£ºÊ§°Ü£¬Í¨¹ýSP_GetLastError»ñÈ¡´íÎóÂë    
+ *	Purpose:				åŒæ­¥èŽ·å–ä¸€å¸§ä¿¡æ¯,åå¤è°ƒç”¨ç›´åˆ°å¤±è´¥
+ *  InputParam:         handle:	é€šè¿‡SP_CreateStreamParserè¿”å›žçš„å¥æŸ„
+ *								frameInfo: å¤–éƒ¨SP_FRAME_INFOçš„ä¸€ä¸ªç»“æž„åœ°å€ã€‚
+ *  OutputParam:      æ— 
+ *  Return:					0:è°ƒç”¨æˆåŠŸ
+ *								å…¶ä»–å€¼ï¼šå¤±è´¥ï¼Œé€šè¿‡SP_GetLastErrorèŽ·å–é”™è¯¯ç     
 *********************************************************************/
 SP_API SP_RESULT CALLMETHOD SP_GetOneFrame(void* handle, SP_FRAME_INFO* frameInfo);
 
 /********************************************************************
  *	Funcname: 	    	SP_StreamEncryptKey
- *	Purpose:	        ÉèÖÃÊµÊ±Á÷½âÎöÃØÔ¿
- *  InputParam:         handle: Í¨¹ýSP_CreateStreamParser»òSP_CreateFileParser·µ»ØµÄ¾ä±ú¡£
- *						type : ÃØÔ¿ÀàÐÍ £ºSP_ENCRYPT
- *						key£ºÃØÔ¿Êý¾Ý
- *						keylen£ºÃØÔ¿³¤¶È
- *  OutputParam:        ÎÞ
- *  Return:             0:µ÷ÓÃ³É¹¦
- *                      ÆäËûÖµ£ºÊ§°Ü£¬
+ *	Purpose:	        è®¾ç½®å®žæ—¶æµè§£æžç§˜é’¥
+ *  InputParam:         handle: é€šè¿‡SP_CreateStreamParseræˆ–SP_CreateFileParserè¿”å›žçš„å¥æŸ„ã€‚
+ *						type : ç§˜é’¥ç±»åž‹ ï¼šSP_ENCRYPT
+ *						keyï¼šç§˜é’¥æ•°æ®
+ *						keylenï¼šç§˜é’¥é•¿åº¦
+ *  OutputParam:        æ— 
+ *  Return:             0:è°ƒç”¨æˆåŠŸ
+ *                      å…¶ä»–å€¼ï¼šå¤±è´¥ï¼Œ
 *********************************************************************/
 SP_API SP_RESULT CALLMETHOD SP_StreamEncryptKey(void* handle, unsigned int type, unsigned char* key, int keylen);
 
 /********************************************************************
  *	Funcname: 	    	SP_Destroy
- *	Purpose:				Ïú»ÙÂëÁ÷·ÖÎöÆ÷
- *  InputParam:         handle: Í¨¹ýSP_CreateStreamParser·µ»ØµÄ¾ä±ú¡£
- *  OutputParam:      ÎÞ
- *  Return:					0:µ÷ÓÃ³É¹¦
- *								ÆäËûÖµ£ºÊ§°Ü£¬Í¨¹ýSP_GetLastError»ñÈ¡´íÎóÂë     
+ *	Purpose:				é”€æ¯ç æµåˆ†æžå™¨
+ *  InputParam:         handle: é€šè¿‡SP_CreateStreamParserè¿”å›žçš„å¥æŸ„ã€‚
+ *  OutputParam:      æ— 
+ *  Return:					0:è°ƒç”¨æˆåŠŸ
+ *								å…¶ä»–å€¼ï¼šå¤±è´¥ï¼Œé€šè¿‡SP_GetLastErrorèŽ·å–é”™è¯¯ç      
 *********************************************************************/
 SP_API SP_RESULT CALLMETHOD SP_Destroy(void* handle);
 
 /********************************************************************
  *	Funcname: 	    	SP_GetLastError
- *	Purpose:				»ñµÃÂëÁ÷·ÖÎö¿â´íÎóÂë
- *  InputParam:         handle: Í¨¹ýSP_CreateStreamParser»òSP_CreateFileParser·µ»ØµÄ¾ä±ú¡£
- *  OutputParam:      ÎÞ
- *  Return:					0:µ÷ÓÃ³É¹¦
- *								ÆäËûÖµ£ºÊ§°Ü£¬Í¨¹ýSP_GetLastError»ñÈ¡´íÎóÂë   Öµ  
+ *	Purpose:				èŽ·å¾—ç æµåˆ†æžåº“é”™è¯¯ç 
+ *  InputParam:         handle: é€šè¿‡SP_CreateStreamParseræˆ–SP_CreateFileParserè¿”å›žçš„å¥æŸ„ã€‚
+ *  OutputParam:      æ— 
+ *  Return:					0:è°ƒç”¨æˆåŠŸ
+ *								å…¶ä»–å€¼ï¼šå¤±è´¥ï¼Œé€šè¿‡SP_GetLastErrorèŽ·å–é”™è¯¯ç    å€¼  
 *********************************************************************/
 SP_API SP_RESULT CALLMETHOD SP_GetLastError(void* handle);
 
 
 /********************************************************************
  *	Funcname: 	    	IVSObjAttrCBFun
- *	Purpose:	        IVSÖÇÄÜÄ¿±ê»Øµ÷º¯Êý¶¨Òå
- *  OutputParam:        pIVSBuf:»Øµ÷Êý¾ÝÖ¸Õë£¬Êý¾Ý½á¹¹¼ûSP_IVS_OBJ_INFO
- *                      nIVSBuffLen£º Êý¾Ý³¤¶È¡£
- *						pUserData: ÓÃ»§×Ô¶¨Òå
+ *	Purpose:	        IVSæ™ºèƒ½ç›®æ ‡å›žè°ƒå‡½æ•°å®šä¹‰
+ *  OutputParam:        pIVSBuf:å›žè°ƒæ•°æ®æŒ‡é’ˆï¼Œæ•°æ®ç»“æž„è§SP_IVS_OBJ_INFO
+ *                      nIVSBuffLenï¼š æ•°æ®é•¿åº¦ã€‚
+ *						pUserData: ç”¨æˆ·è‡ªå®šä¹‰
  *
- *  Return:             ÎÞ			
+ *  Return:             æ— 			
 *********************************************************************/
 typedef void (CALLMETHOD *IVSObjAttrCBFun)(char* pIVSBuf, int nIVSBufLen, void* pReserved, void* pUserData);
 
 /********************************************************************
  *	Funcname: 	    	SP_SetIVSObjAttrCBFun
- *	Purpose:	        IVSÖÇÄÜÄ¿±ê»Øµ÷ÉèÖÃ
- *  InputParam:         handle: ¾ä±ú
- *                      pCallBack: »Øµ÷º¯ÊýÖ¸Õë
- *                      pUserData: ÓÃ»§Êý¾Ý
- *  OutputParam:        ÎÞ
- *  Return:             0:µ÷ÓÃ³É¹¦
- *                      ÆäËûÖµ£ºÊ§°Ü£¬Í¨¹ýSP_GetLastError»ñÈ¡´íÎóÂë       
+ *	Purpose:	        IVSæ™ºèƒ½ç›®æ ‡å›žè°ƒè®¾ç½®
+ *  InputParam:         handle: å¥æŸ„
+ *                      pCallBack: å›žè°ƒå‡½æ•°æŒ‡é’ˆ
+ *                      pUserData: ç”¨æˆ·æ•°æ®
+ *  OutputParam:        æ— 
+ *  Return:             0:è°ƒç”¨æˆåŠŸ
+ *                      å…¶ä»–å€¼ï¼šå¤±è´¥ï¼Œé€šè¿‡SP_GetLastErrorèŽ·å–é”™è¯¯ç        
 *********************************************************************/
 SP_API SP_RESULT CALLMETHOD SP_SetIVSObjAttrCBFun(void* handle, IVSObjAttrCBFun pCallBack, void* pUserData);
 															
 /********************************************************************
  *	Funcname: 	    	SP_ParseIVSEx
- *	Purpose:	        ½âÎöIVSÊý¾ÝÖ¡
- *  InputParam:         handle: ¾ä±ú
- *                      pBuffer: IVSÊý¾ÝÖ¡µÄframe»òÕßframeBodyÊý¾Ý£¬Èç¹ûÊÇIVS_PRESET(ÔÝÎ´¶¨Òå)£¬
- *                               Ðè´«Èë°üÀ¨Ö¡Í·µÄÖ¡Ö¸Õë¡£ÆäËûÀàÐÍ£¬Ôò´«ÈëpFrameBody
- *                      len: pBufferµÄ³¤¶È
- *                      frameSubType: Ö¡×ÓÀàÐÍ¡£
- *  OutputParam:        ÎÞ
- *  Return:             0:µ÷ÓÃ³É¹¦
- *                      ÆäËûÖµ£ºÊ§°Ü£¬Í¨¹ýSP_GetLastError»ñÈ¡´íÎóÂë       
+ *	Purpose:	        è§£æžIVSæ•°æ®å¸§
+ *  InputParam:         handle: å¥æŸ„
+ *                      pBuffer: IVSæ•°æ®å¸§çš„frameæˆ–è€…frameBodyæ•°æ®ï¼Œå¦‚æžœæ˜¯IVS_PRESET(æš‚æœªå®šä¹‰)ï¼Œ
+ *                               éœ€ä¼ å…¥åŒ…æ‹¬å¸§å¤´çš„å¸§æŒ‡é’ˆã€‚å…¶ä»–ç±»åž‹ï¼Œåˆ™ä¼ å…¥pFrameBody
+ *                      len: pBufferçš„é•¿åº¦
+ *                      frameSubType: å¸§å­ç±»åž‹ã€‚
+ *  OutputParam:        æ— 
+ *  Return:             0:è°ƒç”¨æˆåŠŸ
+ *                      å…¶ä»–å€¼ï¼šå¤±è´¥ï¼Œé€šè¿‡SP_GetLastErrorèŽ·å–é”™è¯¯ç        
 *********************************************************************/
 SP_API SP_RESULT CALLMETHOD SP_ParseIVSEx(void* handle, unsigned char* pBuffer, int len, int frameSubType);
 
