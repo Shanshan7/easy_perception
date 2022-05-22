@@ -4,6 +4,8 @@
 #include <string>
 #include <unistd.h>
 #include "idm_netsdk.h"
+#include "person_Features.h"
+#include "utils.h"
 
 
 class H3CProcess
@@ -22,6 +24,9 @@ public:
 
     void getResult();
     void outputResult();
+
+public:
+    struct InformationSaveAndOutput infor_Zs;
     
 private:
     LONG lUserID;

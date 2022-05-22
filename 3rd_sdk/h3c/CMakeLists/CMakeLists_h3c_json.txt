@@ -13,15 +13,15 @@ set(CMAKE_BUILD_TYPE Release)
 #add_definitions(-DIS_SEND_DATA)
 
 #include MOT headers
-include_directories(${PROJECT_SOURCE_DIR}/)
+#include_directories(${PROJECT_SOURCE_DIR}/)
 include_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2)
 include_directories(${PROJECT_SOURCE_DIR}/json/include)
 
 #collect source files
 file(GLOB H3C_PROCESS_SRCS
     "${PROJECT_SOURCE_DIR}/h3cprocess.cpp"
-    "${PROJECT_SOURCE_DIR}/utils.cpp"
     "${PROJECT_SOURCE_DIR}/outputCsv.cpp"
+    "${PROJECT_SOURCE_DIR}/outputCsv.h"
     "${PROJECT_SOURCE_DIR}/json/src/*.cpp"
 	)
 
@@ -31,22 +31,24 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 else(CMAKE_SYSTEM_NAME MATCHES "Linux")
     link_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2/Lib/linux64)   
 endif()
-    
-add_executable(test_web "")
 
-target_sources(test_web
+
+    
+add_executable(h3c_process "")
+
+
+target_sources(h3c_process
         PRIVATE
-        "${PROJECT_SOURCE_DIR}/test_socket.cpp"
+        "${PROJECT_SOURCE_DIR}/h3c_json.cpp"
         ${H3C_PROCESS_SRCS}
         )
 
 # link libraries
-target_link_libraries(test_web 
+target_link_libraries(h3c_process 
                       idm_alarm
                       idm_live
                       idm_netsdk
                       idm_pdsp
                       idm_transfile
                       idm_vod
-                      idm_voicetalk
-                      wsock32)
+                      idm_voicetalk)

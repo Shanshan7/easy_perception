@@ -5,52 +5,21 @@
 #include <fstream>
 #include <string>
 #include <string.h>
-#include<sstream>
-#include<time.h>
+#include <sstream>
+#include <time.h>
+#include <mutex>
 //#include"person_Features.h"
-#include"outputCsv.h"
+#include "outputCsv.h"
 
 static std::string result = "";
+std::mutex mutex; // lock
+
+// define snap picture
+std::string person_snap_path;
+std::string person_snap_scene_path;
+
 std::ofstream outFile;
 std::ofstream outFile1;
-// struct person_Features
-// {
-//         int  sex; //性别
-//         int  glasses ;//眼镜
-//         int  cap;//帽子
-//         int  respitator;//口罩
-//         std::string  name;//姓名
-//         int          nativeCity=0;//籍贯
-//         std::string  bronDate;//出生日期
-//         int          idType;  //证件类型
-//         std::string  idNumber;//证件号
-//         long long    similarity;//相似度
-//         char mystr[25];//抓拍时间
-//         long long time;
-//         int age ;//年龄
-//         std::string hairStyle;//发型
-//         int coatcolor;//上身颜色
-//         int trousersColor;//下身颜色
-//         int Orientation;//朝向
-//     };
-// struct device_Information
-//     {
-//         std::string  dev_id;
-//         std::string  dev_ip;
-
-//     };
-// struct InformationSaveAndOutput
-// {
-//     long long  event_type;-
-//     struct person_Features ones;
-//     struct device_Information cammers;
-
-// };
-//void outputCsv(InformationSaveAndOutput edge);
-
-
-VOID Json_output(std::string json);
-
 
 VOID CALLBACK My_Alarm_Callback(
     LONG lUserID,
@@ -66,137 +35,49 @@ VOID CALLBACK My_Alarm_Callback(
     IDM_DEV_ALARM_EVENT_S *pinfo = (IDM_DEV_ALARM_EVENT_S *)pBuffer;
     std::cout << "IDM_DEV_Message_Callback_PF Event Type"<< pinfo->ulEventType << std::endl;
     std::string json;
-    struct InformationSaveAndOutput infor_Zs;
-
-    
-
+    // struct InformationSaveAndOutput infor_Zs;
 
     if ((0 != pinfo->stEvent.ulBufferSize) && (nullptr != pinfo->stEvent.pBuffer)) {
         json = pinfo->stEvent.pBuffer;
-        std::cout << "Json------------------------------------------------------------------------------------: " << std::endl;
-        //std::cout<<"----------------------------------------------------------------------------------------"<<std::endl;
-        std::cout << json << std::endl;
+        // std::cout << "Json--------------------------------: " << std::endl;
+        mutex.lock();
+        result = json;
+
+        // save person snap picture
         Json::Reader    reader;
         Json::Value     root;
         Json::Value     rootson;
-        
-        if(reader.parse(json,rootson))
+        if(reader.parse(result, rootson))
         {
-            //std::cout<<"json open is ok"<<std::endl;
-            char mystr[25]={0};
-            long long time =0;
-            if(rootson.isMember("event_body"))
-            {
-                //std::cout<<"+++++++++++++++++++++++++++++++++YES++++++++++++++++++++++++++++++++++"<<std::endl;
-                root =rootson["event_body"];
-            }
-            if(root.isMember("genderCode")){  
-                infor_Zs.ones.sex =root["genderCode"].asInt();
-            }   
-            if(root.isMember("passTime")){
-                double time1=0;
-                time1           =root["passTime"].asDouble();       
-                time = (long long)time1;
-                std::cout<<"+++++++++++++++++++++++++++time+++++++++++++++++++++++++++++"<<std::endl; 
-                std::cout<<time<<std::endl;
-                std::cout<<"+++++++++++++++++++++++++++time+++++++++++++++++++++++++++++"<<std::endl; 
-                std::cout<<time<<std::endl;
-                time/=1000;
-                //std::cout<<"+++++++++++++++++++++++++++time+++++++++++++++++++++++++++++"<<std::endl;                
-                struct tm *t=gmtime((time_t*)&time);
-                //std::cout<<"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<std::endl;
-                t->tm_hour+=8;
-                std::string myFormat = "%Y-%m-%d %H:%M:%S";
-                strftime(infor_Zs.ones.mystr,sizeof(mystr),myFormat.c_str(),t);
-                std::cout<<mystr<<std::endl;
-            }
-            if(root.isMember("isGlasses")){
-                 infor_Zs.ones.glasses=root["isGlasses"].asInt();
-            }
-            if(root.isMember("isCap")){ 
-                infor_Zs.ones.cap =root["isCap"].asInt();
+            for (unsigned int i = 0; i < rootson["event_body"]["SubImageInfoList"].size(); i++) {
+                std::string sub_image_type = rootson["event_body"]["SubImageInfoList"][i]["Type"].asString();
+                if (!strcmp(sub_image_type.c_str(), "10")) {
+                    unsigned int index = rootson["event_body"]["SubImageInfoList"][i]["ImageIndex"].asUInt();
+                    for (unsigned int j = 0; j < pinfo->ulBufferNumber; j++)
+                    {
+                        if (index == pinfo->astBuffers[j].ulIndex) {
+                            person_snap_path = "person-snap.jpg";
+                            SaveOnePicture(pinfo->astBuffers[j], person_snap_path);
+                        }
+                    }
+                }
 
-            }
-            else{
-                std::cout<<"__________________________json turn  faild__________________________________"<<std::endl;
-            }
-            if(root.isMember("isRespirator"))     {                                         
-            infor_Zs.ones.respitator   = root["isRespirator"].asInt();             
-            }     
-            //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            if(root.isMember("name")){
-                infor_Zs.ones.name=root["name"].asString();
-            }
-            if(root.isMember("nativeCityCode")){
-                infor_Zs.ones.nativeCity=root["nativeCityCode"].asInt();
+                if (!strcmp(sub_image_type.c_str(), "14")) {
+                    unsigned int index = rootson["event_body"]["SubImageInfoList"][i]["ImageIndex"].asUInt();
+                    for (unsigned int j = 0; j < pinfo->ulBufferNumber; j++)
+                    {
+                        if (index == pinfo->astBuffers[j].ulIndex) {
+                            person_snap_scene_path = "person-snap-scene.jpg";
+                            SaveOnePicture(pinfo->astBuffers[j], person_snap_scene_path);
 
-            }  
-            if(root.isMember("bornDate")){
-                infor_Zs.ones.bronDate=root["bornDate"].asString();
-            }   
-            if(root.isMember("idType")){
-                infor_Zs.ones.idType=root["idType"].asInt();
-            }  
-            if(root.isMember("idNumber")){
-                infor_Zs.ones.idNumber=root["idNumber"].asString();
+                        }
+                    }
+                }
             }
-            if(root.isMember("similarity")){
-                double a =root["similarity"].asDouble();
-                std::cout<< "a" <<std::endl;
-                infor_Zs.ones.similarity=(long long)a;
-            }  
-            if(root.isMember("ageGroup")){
-                infor_Zs.ones.ageGroup=root["ageGroup"].asInt();
-            }
-            if(root.isMember("coatColor")){
-                infor_Zs.ones.coatcolor=root["coatClolor"].asInt();
-            }
-            if(root.isMember("trousersColor")){
-                infor_Zs.ones.trousersColor=root["trousersColor"].asInt();
-            }
-            if(root.isMember("trousersColor")){
-                infor_Zs.ones.coatcolor=root["trousersColor"].asInt();
-            }
-            if(root.isMember("hairStyle")){
-                infor_Zs.ones.hairStyle=root["hairStyle"].asString();
-                std::cout<<std::endl;
-                std::cout<<infor_Zs.ones.hairStyle<<std::endl;
-            }
-            if(root.isMember("Orientation")){
-                infor_Zs.ones.Orientation=root["Orientation"].asInt();
-            }
-
-
-            Json::Value event_src;
-            event_src=rootson["event_src"];
-            if(event_src.isMember("dev_id")){
-                infor_Zs.cammers.dev_id=event_src["dev_id"].asString();
-
-            } 
-            if(event_src.isMember("dev_ip")){
-                infor_Zs.cammers.dev_ip=event_src["dev_ip"].asString();
-
-            } 
-            if(rootson.isMember("event_type")){
-                double a =rootson["event_type"].asDouble();
-                infor_Zs.event_type=(long long )a;
-
-            }
-                
         }
-        else{
-            std::cout<<"json  failed"<<std::endl;
-        }
-        outputCsv(infor_Zs);
 
-        //------------------------------------------------------------------------------------------------------//
-        
-
-        // mutex.lock();
-        // result = QString::fromStdString(json);
-        // mutex.unlock();
+        mutex.unlock();
     }
-    
 }
 
 VOID CALLBACK My_Exception_Callback(
@@ -254,7 +135,7 @@ H3CProcess::H3CProcess()
     outFile.open("data.csv",std::ios::out);
     outFile<<"抓拍时间"<<','<<"性别"<<','<<"眼镜"<<','<<"帽子"<<','<<"口罩"<<','<<std::endl;
     outFile1.open("Face_recognition.csv",std::ios::out);
-    outFile1<<"抓拍时间"<<','<<"姓名"<<','<<"性别"<<','<<"籍贯"<<','<<"出生日期"<<','<<"证件类型"<<','<<"证件号"<<','<<"设备ID"<<','<<"设备IP"<<std::endl;
+    outFile1<<"抓拍时间"<<','<<"姓名"<<','<<"性别"<<','<<"籍贯"<<','<<"出生日期"<<','<<"证件类型"<<','<<"证件�???"<<','<<"设�?�ID"<<','<<"设�?�IP"<<std::endl;
     // timer = new QTimer(this);
     cameraIP = "192.168.13.227";
     cameraUser = "admin";
@@ -266,6 +147,9 @@ H3CProcess::H3CProcess()
     if(file){
         loadConfig();
     }
+    else{
+        saveConfig();
+    }
 }
 
 H3CProcess::~H3CProcess()
@@ -276,29 +160,28 @@ H3CProcess::~H3CProcess()
     // timer->deleteLater();
 
     stopEvent();
-    //退出登录
+    //退出登�???
     IDM_DEV_Logout(lUserID);
 
-    //清理库
+    //清理�???
     IDM_DEV_Cleanup();
 
     saveConfig();
 }
 
-
 int H3CProcess::loginCamera()
 {
-    IDM_DEV_Init();//初始化库
+    IDM_DEV_Init();//初�?�化�???
 
     IDM_DEV_SaveLogToFile(3, 0, "/home/edge/To_H3C/log");
 
     void *userData = NULL;
     IDM_DEV_SetExceptionCallback(My_Exception_Callback, (void *)userData);
 
-    //开启断线重连
+    //开�???�???线重�???
     IDM_DEV_RECONNECT_INFO_S stReconnectInfo = { 0 };
     stReconnectInfo.ucEnable = 1;
-    stReconnectInfo.uiInterval = 3000; //3秒
+    stReconnectInfo.uiInterval = 3000; //3�???
     IDM_DEV_SetReconnect(stReconnectInfo);
 
     //登录
@@ -398,17 +281,143 @@ int H3CProcess::stopEvent()
     return 0;
 }
 
-// void H3CProcess::getResult()
-// {
-//     mutex.lock();
-//     if(!result.isEmpty())
-//     {
-//         qDebug() << result <<endl;
-//         emit signalsResultMsg(result);
-//         result = "";
-//     }
-//     mutex.unlock();
-// }
+void H3CProcess::getResult()
+{
+    mutex.lock();
+    if(!result.empty())
+    {
+        std::cout << "parse result start!" << std::endl;
+        // qDebug() << result <<endl;
+        Json::Reader    reader;
+        Json::Value     root;
+        Json::Value     rootson;
+        // std::cout << "result: " << result << std::endl;
+        if(reader.parse(result, rootson))
+        {
+            //std::cout<<"json open is ok"<<std::endl;
+            char mystr[25]={0};
+            long long time =0;
+            std::cout<<"++++++++++++++++++++++++++++++++++++++++++++++++"<<std::endl;
+            Json::Value event_src;
+            event_src=rootson["event_src"];
+            if(event_src.isMember("dev_id")){
+                infor_Zs.cammers.dev_id=event_src["dev_id"].asString();
+
+            } 
+            if(event_src.isMember("dev_ip")){
+                infor_Zs.cammers.dev_ip=event_src["dev_ip"].asString();
+
+            } 
+            if(rootson.isMember("event_type")){
+                double a =rootson["event_type"].asDouble();
+                infor_Zs.event_type=(long long )a;
+
+            }
+            std::cout<<"++++++++++++++++++++++++++++++++++++++++++++++++"<<std::endl;
+            if(rootson.isMember("event_body"))
+            {
+                //std::cout<<"+++++++++++++++++++++++++++++++++YES++++++++++++++++++++++++++++++++++"<<std::endl;
+                root =rootson["event_body"];
+            }
+            if(root.isMember("genderCode")){
+                if(33751045==infor_Zs.event_type) {
+                    infor_Zs.person_Fs.sex =root["genderCode"].asInt();
+                } 
+                if(33751046==infor_Zs.event_type){
+                     infor_Zs.person_Fc.sex =root["genderCode"].asInt();
+                }
+                if(33751047==infor_Zs.event_type){
+                     infor_Zs.ones.sex =root["genderCode"].asInt();
+                }
+            }   
+            if(root.isMember("passTime")){
+                double time1=0;
+                time1           =root["passTime"].asDouble();       
+                time = (long long)time1;
+                time/=1000;
+                //std::cout<<"+++++++++++++++++++++++++++time+++++++++++++++++++++++++++++"<<std::endl;                
+                struct tm *t=gmtime((time_t*)&time);
+                //std::cout<<"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<std::endl;
+                t->tm_hour+=8;
+                std::string myFormat = "%Y-%m-%d %H:%M:%S";
+                if(33751045==infor_Zs.event_type){
+                    strftime(infor_Zs.person_Fs.mystr,sizeof(mystr),myFormat.c_str(),t);
+                }
+                if(33751046==infor_Zs.event_type){
+                    strftime(infor_Zs.person_Fc.mystr,sizeof(mystr),myFormat.c_str(),t);
+                }
+            }
+            if(root.isMember("isGlasses")){
+                 infor_Zs.person_Fs.glasses=root["isGlasses"].asInt();
+            }
+            if(root.isMember("isCap")){ 
+                infor_Zs.person_Fs.cap =root["isCap"].asInt();
+            }
+            else{
+                std::cout<<"__________________________json turn  faild__________________________________"<<std::endl;
+            }
+            if(root.isMember("isRespirator"))     {                                         
+                infor_Zs.person_Fs.respitator   = root["isRespirator"].asInt();             
+            }     
+            //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            if(root.isMember("name")){
+                infor_Zs.person_Fc.name=root["name"].asString();
+            }
+            if(root.isMember("nativeCityCode")){
+                infor_Zs.person_Fc.nativeCity=root["nativeCityCode"].asInt();
+
+            }  
+            if(root.isMember("bornDate")){
+                infor_Zs.person_Fc.bronDate=root["bornDate"].asString();
+            }   
+            if(root.isMember("idType")){
+                infor_Zs.person_Fc.idType=root["idType"].asInt();
+            }  
+            if(root.isMember("idNumber")){
+                infor_Zs.person_Fc.idNumber=root["idNumber"].asString();
+            }
+            if(root.isMember("similarity")){
+                double a = root["similarity"].asDouble();
+                std::cout<< "a" <<std::endl;
+                infor_Zs.person_Fc.similarity=(long long)a;
+            }  
+            if(root.isMember("ageGroup")){
+                infor_Zs.ones.ageGroup=root["ageGroup"].asInt();
+            }
+            if(root.isMember("coatColor")){
+                infor_Zs.ones.coatcolor=root["coatClolor"].asInt();
+            }
+            if(root.isMember("trousersColor")){
+                infor_Zs.ones.trousersColor=root["trousersColor"].asInt();
+            }
+            if(root.isMember("HairLen")){
+                infor_Zs.ones.hairlen=root["HairLen"].asInt();
+            }
+            if(root.isMember("Orientation")){
+                infor_Zs.ones.Orientation=root["Orientation"].asInt();
+            }
+
+            if(root.isMember("SubImageInfoList")){
+                for (unsigned int i = 0; i < root["SubImageInfoList"].size(); i++) {
+                    std::string sub_image_type = root["SubImageInfoList"][i]["Type"].asString();
+                    if (!strcmp(sub_image_type.c_str(), "10")) {
+                        this->infor_Zs.sub_img_info.person_snap_path = person_snap_path;
+                    }
+
+                    if (!strcmp(sub_image_type.c_str(), "14")) {
+                        this->infor_Zs.sub_img_info.person_snap_scene_path= person_snap_scene_path;
+                    }
+                }   
+            }
+        }
+        else{
+            std::cout<<"json  failed"<<std::endl;
+        }
+        outputCsv(this->infor_Zs);
+        result = "";
+    }
+    mutex.unlock();
+}
 
 int H3CProcess::loadConfig()
 {
@@ -442,7 +451,7 @@ int H3CProcess::saveConfig()
     root["cameraPassword"] = this->cameraPassword;
     root["urlPath"] = this->urlPath;
 
-    //输出到文件  
+    //输出到文�???  
     std::ofstream os;
     os.open(this->save_path, std::ios::out | std::ios::app);
     if (!os.is_open())

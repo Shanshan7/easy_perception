@@ -5,20 +5,32 @@ void outputCsv(InformationSaveAndOutput edge)
             std::ofstream outFile;
             std::ofstream outFile1;
             std::ofstream outFile2;
-            long long  event_type;
+            long long  event_type=edge.event_type;
+            int          sex;
+            char mystr[25]={0};
+            if(33751045==event_type){
+                sex=edge.person_Fs.sex;
+            }
+            if(33751046==event_type){
+                sex=edge.person_Fc.sex;
+            }
+            if(33751047==event_type){
+                sex=edge.ones.sex;
+            }
+
             std::string  sex1="."; 
             std::string  glasses1 =".";
             std::string  cap1=".";
             std::string  respitator1=".";
-            std::string  name=edge.ones.name;
-            int          nativeCity=edge.ones.nativeCity;
-            std::string  bronDate=edge.ones.bronDate;
-            int          idType = edge.ones.idType;
-            std::string  idNumber=edge.ones.idNumber;
-            long long    similarity=edge.ones.similarity;
+            std::string  name=edge.person_Fc.name;
+            int          nativeCity=edge.person_Fc.nativeCity;
+            std::string  bronDate=edge.person_Fc.bronDate;
+            int          idType = edge.person_Fc.idType;
+            std::string  idNumber=edge.person_Fc.idNumber;
+            long long    similarity=edge.person_Fc.similarity;
             std::string  dev_id=edge.cammers.dev_id;
             std::string  dev_ip=edge.cammers.dev_ip;
-            char mystr[25]={0};
+            
             long long time =0;
             std::string ageGroup ;//年龄
             std::string hairStyle;//发型
@@ -27,46 +39,46 @@ void outputCsv(InformationSaveAndOutput edge)
             std::string  Orientation;//朝向
 
             //+++++++++++++++++++++++++++++++++++++++++++++++++++++
-            if (1==edge.ones.sex)
+            if (1==sex)
             {
                 sex1="male";
             }
-            if (2==edge.ones.sex)
+            if (2==sex)
             {
                 sex1="famale";
             }
-            if(0==edge.ones.sex||9==edge.ones.sex)
+            if(0==sex||9==sex)
             {
                 sex1="unknow";
             }
             //+++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            if(0==edge.ones.glasses)
+            if(0==edge.person_Fs.glasses)
             {
                 glasses1="NO";
             }
-            if(1==edge.ones.glasses)
+            if(1==edge.person_Fs.glasses)
             {
                 glasses1="YES";
             }
             //++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            if(0==edge.ones.cap)
+            if(0==edge.person_Fs.cap)
             {
                 cap1="NO";
             }
-            if(1==edge.ones.cap)
+            if(1==edge.person_Fs.cap)
             {
                 cap1="YES";
             }
             //++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            if(0==edge.ones.respitator)
+            if(0==edge.person_Fs.respitator)
             {
                 respitator1="NO";
             }
-            if(1==edge.ones.respitator)
+            if(1==edge.person_Fs.respitator)
             {
                 respitator1="YES";
             }
-            hairStyle=edge.ones.hairStyle;
+            //hairStyle=edge.ones.hairStyle;
             switch (edge.ones.coatcolor)
             {
             case 1 :coatcolor="黑";break;
@@ -104,6 +116,15 @@ void outputCsv(InformationSaveAndOutput edge)
             case 8:ageGroup="中老年";  break;
             case 9:ageGroup="老年";  break;
             case 99:ageGroup="其他";  break;    
+            default:
+                break;
+            }
+            switch (edge.ones.hairlen)
+            {
+            case 0:hairStyle="长发";break;
+            case 1:hairStyle="短发";break;
+            case 2:hairStyle="无发";break;
+            case 3:hairStyle="未识别";break;       
             default:
                 break;
             }
@@ -152,7 +173,7 @@ void outputCsv(InformationSaveAndOutput edge)
                std:: cout<<"wenjian yi dakai"<<std::endl;
                if(outFile.is_open()){
                    std::cout<<"face_S_success";
-                   outFile<<edge.ones.mystr<<','<<sex1<<','<<glasses1<<','<<cap1<<','<<respitator1<<','<<std::endl;
+                   outFile<<edge.person_Fs.mystr<<','<<sex1<<','<<glasses1<<','<<cap1<<','<<respitator1<<','<<std::endl;
                }
                outFile.close();
             }
@@ -160,7 +181,7 @@ void outputCsv(InformationSaveAndOutput edge)
                 if(outFile1.is_open()){
                    outFile1.open("Face_recognition.csv",std::ios::app);
                    std::cout<<"face_R_success"<<std::endl;
-                   outFile1<<edge.ones.mystr<<','<<name<<','<<sex1<<','<<nativeCity<<','<<bronDate<<','<<idType<<','<<idNumber<<','<<dev_id<<','<<dev_ip<<std::endl;
+                   outFile1<<edge.person_Fc.mystr<<','<<name<<','<<sex1<<','<<nativeCity<<','<<bronDate<<','<<idType<<','<<idNumber<<','<<dev_id<<','<<dev_ip<<std::endl;
                    outFile1.close();
                 }
                 

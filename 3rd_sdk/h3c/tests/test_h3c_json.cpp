@@ -22,7 +22,7 @@ int main()
     std::cout<<""<<std::endl;
     while (1)
     {
-
+        h3cProcess.getResult();
         // std::cout << "--------------" << std::endl;
     }
     
