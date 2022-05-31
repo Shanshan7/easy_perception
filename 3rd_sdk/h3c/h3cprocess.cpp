@@ -10,6 +10,7 @@
 #include <mutex>
 //#include"person_Features.h"
 #include "outputCsv.h"
+//#include "mysql.h"
 
 static std::string result = "";
 std::mutex mutex; // lock
@@ -259,6 +260,7 @@ int H3CProcess::startEvent()
         aiuniteCfg.ucVehicle = 1;
         aiuniteCfg.ucNonVehicle = 1;
         aiuniteCfg.ucPerson =1;
+        aiuniteCfg.ucFace=1;
         ret = IDM_DEV_SetConfig(lUserID, CONFIG_INTELLIGENCE_AIUNITE, 0, &aiuniteCfg, sizeof(IDM_DEV_INTELLIGENCE_AIUNITE_CFG_S));
     }
     else
@@ -281,9 +283,11 @@ int H3CProcess::stopEvent()
     return 0;
 }
 
+
 void H3CProcess::getResult()
 {
     mutex.lock();
+    std::cout<<"+++++++++++++++++++++++++++解析启用成功++++++++++++++++++++++++++++++++++++++"<<std::endl;
     if(!result.empty())
     {
         std::cout << "parse result start!" << std::endl;
@@ -319,82 +323,68 @@ void H3CProcess::getResult()
                 //std::cout<<"+++++++++++++++++++++++++++++++++YES++++++++++++++++++++++++++++++++++"<<std::endl;
                 root =rootson["event_body"];
             }
-            if(root.isMember("genderCode")){
-                if(33751045==infor_Zs.event_type) {
+            if(33751045==infor_Zs.event_type&&this->alconfig.face_snap==true)
+            {
+                if (root.isMember("genderCode"))
+                {
                     infor_Zs.person_Fs.sex =root["genderCode"].asInt();
-                } 
-                if(33751046==infor_Zs.event_type){
-                     infor_Zs.person_Fc.sex =root["genderCode"].asInt();
                 }
-                if(33751047==infor_Zs.event_type){
-                     infor_Zs.ones.sex =root["genderCode"].asInt();
+                 if(root.isMember("isGlasses")){
+                    infor_Zs.person_Fs.glasses=root["isGlasses"].asInt();
                 }
-            }   
-            if(root.isMember("passTime")){
-                double time1=0;
-                time1           =root["passTime"].asDouble();       
-                time = (long long)time1;
-                time/=1000;
-                //std::cout<<"+++++++++++++++++++++++++++time+++++++++++++++++++++++++++++"<<std::endl;                
-                struct tm *t=gmtime((time_t*)&time);
-                //std::cout<<"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<std::endl;
-                t->tm_hour+=8;
-                std::string myFormat = "%Y-%m-%d %H:%M:%S";
-                if(33751045==infor_Zs.event_type){
-                    strftime(infor_Zs.person_Fs.mystr,sizeof(mystr),myFormat.c_str(),t);
+                if(root.isMember("isCap")){ 
+                    infor_Zs.person_Fs.cap =root["isCap"].asInt();
                 }
-                if(33751046==infor_Zs.event_type){
-                    strftime(infor_Zs.person_Fc.mystr,sizeof(mystr),myFormat.c_str(),t);
+                if(root.isMember("isRespirator")) {                                         
+                    infor_Zs.person_Fs.respitator = root["isRespirator"].asInt();             
                 }
-            }
-            if(root.isMember("isGlasses")){
-                 infor_Zs.person_Fs.glasses=root["isGlasses"].asInt();
-            }
-            if(root.isMember("isCap")){ 
-                infor_Zs.person_Fs.cap =root["isCap"].asInt();
-            }
-            else{
-                std::cout<<"__________________________json turn  faild__________________________________"<<std::endl;
-            }
-            if(root.isMember("isRespirator"))     {                                         
-                infor_Zs.person_Fs.respitator   = root["isRespirator"].asInt();             
-            }     
-            //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            if(root.isMember("name")){
-                infor_Zs.person_Fc.name=root["name"].asString();
-            }
-            if(root.isMember("nativeCityCode")){
-                infor_Zs.person_Fc.nativeCity=root["nativeCityCode"].asInt();
+            } 
+            if(33751046==infor_Zs.event_type&&this->alconfig.person_attribute==true)
+            {
+                   if(root.isMember("name")){
+                   infor_Zs.person_Fc.name=root["name"].asString();
+                }
+                   if(root.isMember("nativeCityCode")){
+                   infor_Zs.person_Fc.nativeCity=root["nativeCityCode"].asInt();
 
+                }  
+                   if(root.isMember("bornDate")){
+                   infor_Zs.person_Fc.bronDate=root["bornDate"].asString();
+                }   
+                   if(root.isMember("idType")){
+                   infor_Zs.person_Fc.idType=root["idType"].asInt();
+                }  
+                  if(root.isMember("idNumber")){
+                   infor_Zs.person_Fc.idNumber=root["idNumber"].asString();
+                }
+                  if(root.isMember("similarity")){
+                   double a = root["similarity"].asDouble();
+                   std::cout<< "a" <<std::endl;
+                   infor_Zs.person_Fc.similarity=(long long)a;
             }  
-            if(root.isMember("bornDate")){
-                infor_Zs.person_Fc.bronDate=root["bornDate"].asString();
-            }   
-            if(root.isMember("idType")){
-                infor_Zs.person_Fc.idType=root["idType"].asInt();
-            }  
-            if(root.isMember("idNumber")){
-                infor_Zs.person_Fc.idNumber=root["idNumber"].asString();
-            }
-            if(root.isMember("similarity")){
-                double a = root["similarity"].asDouble();
-                std::cout<< "a" <<std::endl;
-                infor_Zs.person_Fc.similarity=(long long)a;
-            }  
-            if(root.isMember("ageGroup")){
+            if(33751047==infor_Zs.event_type&&this->alconfig.face_compare==true)
+            {
+                if(root.isMember("ageGroup")){
                 infor_Zs.ones.ageGroup=root["ageGroup"].asInt();
-            }
-            if(root.isMember("coatColor")){
+                }
+                if(root.isMember("coatColor")){
                 infor_Zs.ones.coatcolor=root["coatClolor"].asInt();
-            }
-            if(root.isMember("trousersColor")){
+                }
+                if(root.isMember("trousersColor")){
                 infor_Zs.ones.trousersColor=root["trousersColor"].asInt();
-            }
-            if(root.isMember("HairLen")){
+                }
+                if(root.isMember("HairLen")){
                 infor_Zs.ones.hairlen=root["HairLen"].asInt();
-            }
-            if(root.isMember("Orientation")){
+                }
+                if(root.isMember("Orientation")){
                 infor_Zs.ones.Orientation=root["Orientation"].asInt();
+                }
+                if(root.isMember("Orientation"))
+                infor_Zs.ones.sex =root["genderCode"].asInt();
+
+            }
+                
+
             }
 
             if(root.isMember("SubImageInfoList")){
@@ -416,6 +406,9 @@ void H3CProcess::getResult()
         outputCsv(this->infor_Zs);
         result = "";
     }
+    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+       
+    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     mutex.unlock();
 }
 

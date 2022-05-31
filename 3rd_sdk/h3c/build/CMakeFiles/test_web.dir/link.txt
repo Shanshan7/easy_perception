@@ -1,0 +1,3 @@
+D:\vvc\cmake\bin\cmake.exe -E rm -f CMakeFiles\test_web.dir/objects.a
+D:\fudao\MinGW64\MinGW64\bin\ar.exe cr CMakeFiles\test_web.dir/objects.a @CMakeFiles\test_web.dir\objects1.rsp
+D:\fudao\MinGW64\MinGW64\bin\g++.exe  -std=c++11 -O3 -DNDEBUG -Wl,--whole-archive CMakeFiles\test_web.dir/objects.a -Wl,--no-whole-archive -o test_web.exe -Wl,--out-implib,libtest_web.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\test_web.dir\linklibs.rsp

@@ -23,10 +23,18 @@ public:
     int stopEvent();
 
     void getResult();
-    void outputResult();
+    void getResult1();
+    //void outputResult();
 
 public:
     struct InformationSaveAndOutput infor_Zs;
+    struct Alconfig
+    {
+        bool face_snap;
+        bool person_attribute;
+        bool face_compare;
+
+    } alconfig;
     
 private:
     LONG lUserID;

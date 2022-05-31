@@ -23,6 +23,7 @@ Content-Length: %d\r\n\r\n%s\
 #pragma comment(lib, "WS2_32") 
 
 static H3CProcess h3cProcess;
+
 static GlobalControlParam global_control_param;
 
 void get_connect()
@@ -39,7 +40,7 @@ void receive_data()
 {
     int rval = 0;
     struct timeval tv;
-    tv.tv_sec = 0; //���õ���ʱʱ��
+    tv.tv_sec = 0; //锟斤拷锟矫碉拷锟斤拷时时锟斤拷
     tv.tv_usec = 2000;
     printf("-------------------receive data-------------------\n");
     while(1)
@@ -100,10 +101,26 @@ void receive_data()
 void send_message()
 {
     int rval = 0;
+    h3cProcess.alconfig.face_snap=false;
+    h3cProcess.alconfig.person_attribute=false;  
+    if (global_control_param.task_response_id["person_attribute"])
+    {
+        h3cProcess.alconfig.person_attribute=true;
+    }
+    if (global_control_param.task_response_id["face_attribute"])
+    {
+        h3cProcess.alconfig.face_snap=true;
+    }
+    if (global_control_param.task_response_id["face_compare"])
+    {
+         h3cProcess.alconfig.face_compare=true;
+    }
     while(1)
     {
-        h3cProcess.getResult();
-        //printf("-------------------send message-------------------\n");
+        //h3cProcess.getResult();
+        
+        h3cProcess.getResult();  
+              //printf("-------------------send message-------------------\n");
         if (global_control_param.task_response_id["person_attribute"] && global_control_param.http_method == "GET")
         {
             char buffer[BUFFER_SIZE];
@@ -133,6 +150,28 @@ void send_message()
             }
             Sleep(100);
         }
+         if (global_control_param.task_response_id["face_attribute"] && global_control_param.http_method == "GET")
+        {
+            char buffer[BUFFER_SIZE];
+            memset(buffer, 0, BUFFER_SIZE);
+
+            Json::Value jsPerson;
+            jsPerson["person_content"]["face_feature"]["sex"] = h3cProcess.infor_Zs.person_Fs.sex;
+            jsPerson["person_content"]["face_feature"]["glasses"] = h3cProcess.infor_Zs.person_Fs.glasses;
+            jsPerson["person_content"]["face_feature"]["cap"] = h3cProcess.infor_Zs.person_Fs.cap;
+            jsPerson["person_content"]["face_feature"]["respitator"] = h3cProcess.infor_Zs.person_Fs.respitator;
+            Json::FastWriter json_write;
+            std::string strPerson = json_write.write(jsPerson);
+
+            std::list<int>::iterator it;
+            for(it=global_control_param.client_list.begin(); it!=global_control_param.client_list.end(); ++it)
+            {
+                sprintf_s(buffer, HEADER, strlen(strPerson.c_str()), strPerson.c_str());
+                send(*it, buffer, sizeof(buffer), 0);
+                // printf("Sending data\n");
+            }
+            Sleep(100);
+        }
 
         // Sleep(100);
     }
@@ -145,11 +184,11 @@ int main()
     rval = h3cProcess.loginCamera();
     if(rval < 0)
     {
-        std::cout << "��������ͷʧ��" << std::endl;
+        std::cout << "锟斤拷锟斤拷锟斤拷锟斤拷头失锟斤拷" << std::endl;
     }
     else
     {
-        std::cout << "��������ͷ�ɹ�" << std::endl;
+        std::cout << "锟斤拷锟斤拷锟斤拷锟斤拷头锟缴癸拷" << std::endl;
     }
 
     h3cProcess.startEvent();
@@ -175,8 +214,8 @@ int main()
     
     //thread : while ==>> accpet
     std::thread t(get_connect);
-    t.detach();//detach�Ļ�������̲߳�ͬ��ǰ��Ľ�����ɺ���ܽ��У���������Ϊjoin��ǰ����߳��޷��жϽ������ͻ�
-    //һֱ�ȴ������º�����߳��޷����о��޷�ʵ�ֲ���
+    t.detach();//detach锟侥伙拷锟斤拷锟斤拷锟斤拷叱滩锟酵拷锟角帮拷锟侥斤拷锟斤拷锟斤拷珊锟斤拷锟杰斤拷锟叫ｏ拷锟斤拷锟斤拷锟斤拷锟斤拷为join锟斤拷前锟斤拷锟斤拷叱锟斤拷薹锟斤拷卸辖锟斤拷锟斤拷锟斤拷突锟�
+    //一直锟饺达拷锟斤拷锟斤拷锟铰猴拷锟斤拷锟斤拷叱锟斤拷薹锟斤拷锟斤拷芯锟斤拷薹锟绞碉拷植锟斤拷锟�
     //printf("donen");
     //thread : input ==>> send
     std::thread t1(send_message);
@@ -184,7 +223,7 @@ int main()
     //thread : recv ==>> show
     std::thread t2(receive_data);
     t2.detach();
-    while(1)//��һ����ѭ��ʹ�����̲߳�����ǰ�˳�
+    while(1)//锟斤拷一锟斤拷锟斤拷循锟斤拷使锟斤拷锟斤拷锟竭程诧拷锟斤拷锟斤拷前锟剿筹拷
     {
         // printf("------------------main-----------------");
     }

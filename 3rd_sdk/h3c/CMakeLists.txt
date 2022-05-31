@@ -49,4 +49,5 @@ target_link_libraries(test_web
                       idm_transfile
                       idm_vod
                       idm_voicetalk
+                      libmysql
                       wsock32)
