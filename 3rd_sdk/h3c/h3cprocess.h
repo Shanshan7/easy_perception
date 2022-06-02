@@ -6,6 +6,7 @@
 #include "idm_netsdk.h"
 #include "person_Features.h"
 #include "utils.h"
+#include <json/json.h>
 
 
 class H3CProcess
@@ -15,6 +16,9 @@ public:
    
     H3CProcess();
     ~H3CProcess();
+    void getFacesnapResult( struct InformationSaveAndOutput infor_Zs,Json::Value  root);
+    void getFaceCompareResult( struct InformationSaveAndOutput infor_Zs,Json::Value  root);
+    void getPersonAttributeResult( struct InformationSaveAndOutput infor_Zs,Json::Value  root);
 
     int loginCamera();
 
@@ -23,7 +27,8 @@ public:
     int stopEvent();
 
     void getResult();
-    void getResult1();
+    //void getResult1();
+    
     //void outputResult();
 
 public:

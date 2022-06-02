@@ -26,7 +26,7 @@ static H3CProcess h3cProcess;
 int socketServer;
 struct sockaddr_in addrServer;
 int nServerAddrLen;
-std::list<int> client_list; //ÓÃlistÀ´´æ·ÅÌ×½Ó×Ö£¬Ã»ÓĞÏŞÖÆÌ×½Ó×ÖµÄÈİÁ¿¾Í¿ÉÒÔÊµÏÖÒ»¸öserver¸úÈô¸É¸öclientÍ¨ĞÅ
+std::list<int> client_list; //ç”¨listæ¥å­˜æ”¾å¥—æ¥å­—ï¼Œæ²¡æœ‰é™åˆ¶å¥—æ¥å­—çš„å®¹é‡å°±å¯ä»¥å®ç°ä¸€ä¸ªserverè·Ÿè‹¥å¹²ä¸ªclienté€šä¿¡
 std::string http_method;
 
 int run_receive_message = 1;
@@ -45,7 +45,7 @@ void receive_data()
 {
     int rval = 0;
     struct timeval tv;
-    tv.tv_sec = 0;//ÉèÖÃµ¹¼ÆÊ±Ê±¼ä
+    tv.tv_sec = 0;//è®¾ç½®å€’è®¡æ—¶æ—¶é—´
     tv.tv_usec = 2000;
     printf("-------------------receive data-------------------\n");
     while(run_receive_message)
@@ -194,11 +194,11 @@ int main()
     rval = h3cProcess.loginCamera();
     if(rval < 0)
     {
-        std::cout << "Á¬½ÓÉãÏñÍ·Ê§°Ü" << std::endl;
+        std::cout << "è¿æ¥æ‘„åƒå¤´å¤±è´¥" << std::endl;
     }
     else
     {
-        std::cout << "Á¬½ÓÉãÏñÍ·³É¹¦" << std::endl;
+        std::cout << "è¿æ¥æ‘„åƒå¤´æˆåŠŸ" << std::endl;
     }
 
     h3cProcess.startEvent();
@@ -223,8 +223,8 @@ int main()
     
     //thread : while ==>> accpet
     std::thread t(get_connect);
-    t.detach();//detachµÄ»°ºóÃæµÄÏß³Ì²»Í¬µÈÇ°ÃæµÄ½ø³ÌÍê³Éºó²ÅÄÜ½øĞĞ£¬Èç¹ûÕâÀï¸ÄÎªjoinÔòÇ°ÃæµÄÏß³ÌÎŞ·¨ÅĞ¶Ï½áÊø£¬¾Í»á
-    //Ò»Ö±µÈ´ı£¬µ¼ÖÂºóÃæµÄÏß³ÌÎŞ·¨½øĞĞ¾ÍÎŞ·¨ÊµÏÖ²Ù×÷
+    t.detach();//detachçš„è¯åé¢çš„çº¿ç¨‹ä¸åŒç­‰å‰é¢çš„è¿›ç¨‹å®Œæˆåæ‰èƒ½è¿›è¡Œï¼Œå¦‚æœè¿™é‡Œæ”¹ä¸ºjoinåˆ™å‰é¢çš„çº¿ç¨‹æ— æ³•åˆ¤æ–­ç»“æŸï¼Œå°±ä¼š
+    //ä¸€ç›´ç­‰å¾…ï¼Œå¯¼è‡´åé¢çš„çº¿ç¨‹æ— æ³•è¿›è¡Œå°±æ— æ³•å®ç°æ“ä½œ
     //printf("donen");
     //thread : input ==>> send
     std::thread t1(send_message);
@@ -232,7 +232,7 @@ int main()
     //thread : recv ==>> show
     std::thread t2(receive_data);
     t2.detach();
-    while(1)//×öÒ»¸öËÀÑ­»·Ê¹µÃÖ÷Ïß³Ì²»»áÌáÇ°ÍË³ö
+    while(1)//åšä¸€ä¸ªæ­»å¾ªç¯ä½¿å¾—ä¸»çº¿ç¨‹ä¸ä¼šæå‰é€€å‡º
     {
         // printf("------------------h3c-----------------");
     }

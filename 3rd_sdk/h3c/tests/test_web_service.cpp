@@ -128,7 +128,7 @@ int main(int argc, char **argv)
             jsPerson["person_feature"]["agegroup"] = h3cProcess.infor_Zs.ones.ageGroup;
             jsPerson["person_feature"]["coatcolor"] = h3cProcess.infor_Zs.ones.coatcolor;
             jsPerson["person_feature"]["trousersColor"] = h3cProcess.infor_Zs.ones.trousersColor;
-            jsPerson["person_feature"]["hairStyle"] = h3cProcess.infor_Zs.ones.hairStyle;
+            jsPerson["person_feature"]["hairStyle"] = h3cProcess.infor_Zs.ones.hairlen;
             jsPerson["person_feature"]["Orientation"] = h3cProcess.infor_Zs.ones.Orientation;
 
             // jsPerson1["age"] = 18;

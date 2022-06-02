@@ -19,6 +19,7 @@ include_directories(${PROJECT_SOURCE_DIR}/json/include)
 
 #collect source files
 file(GLOB H3C_PROCESS_SRCS
+    #"${PROJECT_SOURCE_DIR}/json/src/*.cpp"
     "${PROJECT_SOURCE_DIR}/h3cprocess.cpp"
     "${PROJECT_SOURCE_DIR}/utils.cpp"
     "${PROJECT_SOURCE_DIR}/outputCsv.cpp"
