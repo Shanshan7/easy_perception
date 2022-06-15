@@ -3,21 +3,26 @@
         {
             "label": "绘制检测区域",
             "alias": "结束绘制",
-            "name": "dect_region",
+            "name": "algo_area",
             "type": "draw",
-            "min": 0,
-            "max": 10,
+            "min": 1,
+            "max": 4,
             "params": {
                 "shapeType": "rect",
-                "shapeName": "检测区域",
+                "shapeName": "detect_area",
                 "lineColor": [
                     123,
                     218,
                     217
                 ]
             }
+        },
+        {
+            "label": "清除",
+            "type": "clear"
         }
     ],
+    
     "items": [
         {
             "label": "检测阈值",
@@ -31,18 +36,11 @@
             "default": 80
         },
         {
-            "label": "数据回流开关",
-            "name": "data_back",
-            "type": "switch",
-            "required": true,
-            "default": false
-        },
-        {
             "label": "事件ID",
             "name": "event_sort",
             "type": "number",
             "required": true,
-            "default": 0,
+            "default": 33882113,
             "precision": 0,
             "hidden": true
         }
