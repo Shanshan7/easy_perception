@@ -2,8 +2,7 @@
 cmake_minimum_required(VERSION 3.5.0)
 
 set(TOOLS_CHAIN_DIR /usr/local/linaro-aarch64-2020.09-gcc10.2-linux5.4) # 交叉工具链所在目录
-set(AMBARELLA_DIR /home/edge/cv2x_linux_sdk_3.0/ambarella)
-
+set(THIRD_DIR /home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party)#第三方库目录
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_FIND_ROOT_PATH ${TOOLS_CHAIN_DIR})
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
@@ -12,70 +11,78 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_C_COMPILER ${TOOLS_CHAIN_DIR}/bin/aarch64-linux-gnu-gcc)
 set(CMAKE_CXX_COMPILER ${TOOLS_CHAIN_DIR}/bin/aarch64-linux-gnu-g++)
 
+#2.project name
 project(cnn_lights_recognize)
 
-include_directories(${PROJECT_SOURCE_DIR}/common)
-include_directories(${PROJECT_SOURCE_DIR}/traffic_lights_classifier)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+#amba_sdk
+# include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/amba_sdk/include)
+include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/amba_sdk/include/7X22)
+
+link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/amba_sdk/lib/7X22)
 
 # opencv
-include_directories(${PROJECT_SOURCE_DIR}/3rd_party/opencv/include)
-link_directories(${PROJECT_SOURCE_DIR}/3rd_party/opencv/lib)
+include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/opencv/include)
+link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/opencv/lib)
 
-# third_party
-link_directories(${AMBARELLA_DIR}/prebuild/oss/armv8-a/libjpeg-turbo/usr/lib)
-link_directories(${AMBARELLA_DIR}/prebuild/oss/armv8-a/libpng/usr/lib)
-link_directories(${AMBARELLA_DIR}/prebuild/oss/armv8-a/zlib/usr/lib)
-link_directories(${AMBARELLA_DIR}/prebuild/oss/armv8-a/tbb/usr/lib) 
+#tbb
+include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/tbb/include)
+link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/tbb/lib)
 
-set(SRC_FILES
-    ialg_error_code.h
-    ialg_open_app.h
+#libpng
+include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libpng/include)
+link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libpng/lib)
 
-    impl.cpp
-    json11.cpp
-    json11.hpp
-    task_queue.h
-    ctx.h
-    channel.h
+#libjpeg
+include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libjpeg-turbo/include)
+link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libjpeg-turbo/lib)
+
+#zlib
+include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/zlib/include)
+link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/zlib/lib)
+
+#include MOT headers
+include_directories(${PROJECT_SOURCE_DIR}/)
+include_directories(${PROJECT_SOURCE_DIR}/traffic_lights_classifier)
+include_directories(${PROJECT_SOURCE_DIR}/common)
+include_directories(${PROJECT_SOURCE_DIR}/amba_inference)
+include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/json/include)
+
+#collect image acquisition files
+# find_package(OpenCV REQUIRED)
+
+
+
+# file(GLOB SRCS
+#     "${PROJECT_SOURCE_DIR}/*.cpp"
+# 	)
+
+file(GLOB AMBASRCS
+    "${PROJECT_SOURCE_DIR}/amba_inference/*.cpp"
 )
 
-set(LIGHTSREC_SRCS
-    ${PROJECT_SOURCE_DIR}/common/image.cpp
-    ${PROJECT_SOURCE_DIR}/traffic_lights_classifier/traffic_lights_classifier.cpp
-)
+aux_source_directory(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/json/src SRC_DIR)
+add_executable(test_traffic_lights_classifier ${SRC_DIR})
 
-set(LIB_NAME "tlr")
-set(LIB_FULL_NAME "lib${LIB_NAME}.so")
-
-add_library(${LIB_NAME} SHARED
-    ${SRC_FILES} ${LIGHTSREC_SRCS}
-)
+target_sources(test_traffic_lights_classifier
+        PRIVATE
+        "${PROJECT_SOURCE_DIR}/test_traffic_lights_classifier.cpp"
+        # "${PROJECT_SOURCE_DIR}/demo.cpp"
+        ${AMBASRCS}
+        )
 
 # link libraries
-target_link_libraries(${LIB_NAME}
+target_link_libraries(test_traffic_lights_classifier
                       opencv_core
                       opencv_imgcodecs
                       opencv_imgproc
+                      opencv_videoio
+                      nnctrl
+                      cavalry_mem
+                      vproc
                       tbb
-                      jpeg
                       png
+                      jpeg
                       z)
 
-set(PACK_DIR_NAME "EdgeTLR")
 
-add_custom_command(TARGET ${LIB_NAME}
-    POST_BUILD
-    COMMENT "make package ${CMAKE_BINARY_DIR}/${PACK_DIR_NAME}.tar.gz ..."
-
-    COMMAND mkdir -p ${PACK_DIR_NAME}
-    COMMAND mkdir -p ${PACK_DIR_NAME}/conf
-    COMMAND mkdir -p ${PACK_DIR_NAME}/lib
-    COMMAND mkdir -p ${PACK_DIR_NAME}/model
-
-    COMMAND cp -rf ${LIB_FULL_NAME} ${PACK_DIR_NAME}/lib/
-    COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/conf/* ${PACK_DIR_NAME}/conf/
-    COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/model/* ${PACK_DIR_NAME}/model/
-
-    COMMAND tar zcf  ${CMAKE_BINARY_DIR}/${PACK_DIR_NAME}.tar.gz ${PACK_DIR_NAME}
-)

@@ -8,13 +8,45 @@
 #include <string.h>
 #include "net.h"
 #include "amba_inference.h"
+#include "json/json.h"
 
 using namespace cv;
 using namespace std;
 
 Amba_Inference::Amba_Inference()
 {
-    
+    /* 模型信息，在编译之前要自定义修改 */
+    int   netInNum  = 2;                                           //输入层个数
+    char  netInName[NET_IN_MAX][STRING_MAX] = {"data", "data_uv"}; //输入层名
+    int   netOutNum = 1;                                           //输出层个数
+    char  netOutName[NET_OUT_MAX][STRING_MAX] = {"prob"};          //输出层名
+    char  netFile[STRING_MAX] = "cavalry_googlenet_yuv.bin";       //模型路径
+
+    /* vproc.bin路径，在编译之前要自定义修改 */
+     char VPROC_BIN_PATH[STRING_MAX] = "/usr/local/vproc/vproc.bin";
+
+    int             fdCavalry = -1; // cavalry设备句柄，不要改
+    uint8_t         verbose  = 0;
+    int             nnCnt     = 0;  // 算子计数器，退出安霸环境时需要
+    int             fdFlag    = 0;  // cavalry设备句柄
+    struct net_mem  stBinMem  = {0};// vproc.bin
+
+
+    std::ifstream in(json_path, ios::binary);
+    Json::Reader reader;
+    Json::Value root;
+//
+    if(reader.parse(in, root))
+    {
+        amba_path=root["amba_path"].asString();
+    }
+
+
+    else
+    {
+        std::cout << "Error opening file\n";
+        exit(0);
+    }
 }
 
 Amba_Inference::~Amba_Inference()
@@ -377,7 +409,7 @@ std::vector<float> Amba_Inference::amba_pred(cv::Mat img,std::string amba_path)
     if (!img.data)
     {
         printf("image [%s] load err!\n");
-        return -1;
+        exit(-1);
     }
 
     /* 模型加载运行 */

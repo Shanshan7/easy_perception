@@ -31,10 +31,10 @@ TrafficLightsClassifier::TrafficLightsClassifier()
         low_off=root["low_off"].asInt();
         up_off=root["up_off"].asInt();
         opencv_shape=root["opencv_shape"].asInt();
-        onnx_shape=root["onnx_shape"].asInt();
+        amba_shape=root["amba_shape"].asInt();
         w1=root["w1"].asDouble();
         w2=root["w2"].asDouble();
-        onnx_path=root["onnx_path"].asString();
+        amba_path=root["amba_path"].asString();
     }
 
 
@@ -103,7 +103,7 @@ double * TrafficLightsClassifier::red_green_yellow(const cv::Mat &rgb_image)
     
 }
 
-double ** TrafficLightsClassifier::combine_circles(vector<cv::Vec3f> circles,cv::Mat image){
+double ** TrafficLightsClassifier::combine_circles(std::vector<cv::Vec3f> circles,cv::Mat image){
     double** result=new double*[circles.size()];
     for(int i=0;i<circles.size();i++){
         result[i]=new double[4];
@@ -125,7 +125,7 @@ double ** TrafficLightsClassifier::combine_circles(vector<cv::Vec3f> circles,cv:
     return result;
 }
 
-vector<double> TrafficLightsClassifier::estimate_label(double *result[4]){
+std::vector<double> TrafficLightsClassifier::estimate_label(double *result[4]){
     double sum_red=0;
     double sum_yellow=0;
     double sum_green=0;
@@ -138,12 +138,12 @@ vector<double> TrafficLightsClassifier::estimate_label(double *result[4]){
         sum_off+=result[i][3];
     }
 
-    vector<double> label_values {sum_off,sum_red,sum_green,sum_yellow};
+    std::vector<double> label_values {sum_off,sum_red,sum_green,sum_yellow};
 //    int maxPosition = max_element(label_values.begin(),label_values.end()) - label_values.begin();
 //
 //    return maxPosition-1;
     
-    vector<double> opencv_preds={0,0,0,0};
+    std::vector<double> opencv_preds={0,0,0,0};
     int suum=accumulate(label_values.begin(),label_values.end(),0);
 
     if(suum!=0){
@@ -155,8 +155,8 @@ vector<double> TrafficLightsClassifier::estimate_label(double *result[4]){
     return opencv_preds;
 }
 
-vector<cv::Vec3f> TrafficLightsClassifier::hough_circles(cv::Mat gray){
-    vector<cv::Vec3f> circles;
+std::vector<cv::Vec3f> TrafficLightsClassifier::hough_circles(cv::Mat gray){
+    std::vector<cv::Vec3f> circles;
     HoughCircles(gray, circles,cv::HOUGH_GRADIENT, 1,20,100,10,0,50);
     
     if(circles.empty()){
@@ -179,13 +179,13 @@ vector<cv::Vec3f> TrafficLightsClassifier::hough_circles(cv::Mat gray){
 //    return vector<float>(predict);
 //}
 
-vector<TrafficLightsParams> TrafficLightsClassifier::traffic_lights_result(cv::Mat image,const vector<float> traffic_lights_locations,bool bin,bool opencv){
+std::vector<TrafficLightsParams> TrafficLightsClassifier::traffic_lights_result(cv::Mat image,const std::vector<float> traffic_lights_locations,bool bin,bool opencv){
     cv::Mat res_img,gray,rgb_image_roi,onnx_img;
     rgb_image_roi = image(cv::Rect(traffic_lights_locations[0], traffic_lights_locations[1], traffic_lights_locations[2], \
         traffic_lights_locations[3]));
 
-    vector<double> opencv_preds={0,0,0,0};
-    vector<double> combine_preds={0,0,0,0};
+    std::vector<double> opencv_preds={0,0,0,0};
+    std::vector<double> combine_preds={0,0,0,0};
 
     int label_value;
     
@@ -197,7 +197,7 @@ vector<TrafficLightsParams> TrafficLightsClassifier::traffic_lights_result(cv::M
     if(opencv){
         resize(rgb_image_roi,res_img,cv::Size(opencv_shape,opencv_shape));
         cvtColor(res_img, gray, cv::COLOR_RGBA2GRAY);
-        vector<cv::Vec3f> circles;
+        std::vector<cv::Vec3f> circles;
         circles=hough_circles(gray);
 
         if(!circles.empty()){
@@ -208,13 +208,13 @@ vector<TrafficLightsParams> TrafficLightsClassifier::traffic_lights_result(cv::M
 
     }
   
-    if(bin){
-        resize(rgb_image_roi,onnx_img,cv::Size(bin_shape,bin_shape));
+    if(amba){
+        resize(rgb_image_roi,onnx_img,cv::Size(amba_shape,amba_shape));
         AmbaInference AmbaInference;
         std::vector<float> amba_preds=AmbaInference.amba_pred(cv::Mat img,std::string amba_path);
         
         //if off is None
-        amba_preds.insert(onnx_preds.begin(),0);
+        amba_preds.insert(amba_preds.begin(),0);
             
         for(int i=0;i<opencv_preds.size();i++){
             combine_preds[i]=w1*opencv_preds[i]+w2*amba_preds[i];
