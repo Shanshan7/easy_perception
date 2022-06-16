@@ -27,20 +27,20 @@ public:
     
 private:
     /* 模型信息，在编译之前要自定义修改 */
-    static int   netInNum  ;                                           //输入层个数
-    static char  netInName[NET_IN_MAX][STRING_MAX] ; //输入层名
-    static int   netOutNum ;                                           //输出层个数
-    static char  netOutName[NET_OUT_MAX][STRING_MAX] ;          //输出层名
-    static char  netFile[STRING_MAX] ;       //模型路径
+    int   netInNum  ;                                           //输入层个数
+    char  netInName[NET_IN_MAX][STRING_MAX] ; //输入层名
+    int   netOutNum ;                                           //输出层个数
+    char  netOutName[NET_OUT_MAX][STRING_MAX] ;          //输出层名
+    char  netFile[STRING_MAX] ;       //模型路径
 
     /* vproc.bin路径，在编译之前要自定义修改 */
-    static char VPROC_BIN_PATH[STRING_MAX] ;
+    char VPROC_BIN_PATH[STRING_MAX] ;
 
-    static int             fdCavalry ; // cavalry设备句柄，不要改
-    static uint8_t         verbose  ;
-    static int             nnCnt     ;  // 算子计数器，退出安霸环境时需要
-    static int             fdFlag    ;  // cavalry设备句柄
-    static struct net_mem  stBinMem  ;// vproc.bin
+    int             fdCavalry ; // cavalry设备句柄，不要改
+    uint8_t         verbose  ;
+    int             nnCnt     ;  // 算子计数器，退出安霸环境时需要
+    int             fdFlag    ;  // cavalry设备句柄
+    struct net_mem  stBinMem  ;// vproc.bin
 
     std::string amba_path;
     std::string json_path="/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/hyp.json";
