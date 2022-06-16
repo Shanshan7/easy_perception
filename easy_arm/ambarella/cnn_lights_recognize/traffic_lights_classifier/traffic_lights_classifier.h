@@ -7,10 +7,11 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <vector>
 #include <fstream>
+#include <numeric>
 
+#include "json/json.h"
+#include "amba_inference.h"
 #include "common/data_struct.h"
-
-
 
 
 class TrafficLightsClassifier
@@ -22,7 +23,7 @@ public:
     double * red_green_yellow(const cv::Mat &rgb_image);
     std::vector<cv::Vec3f> hough_circles(cv::Mat gray);
     double ** combine_circles(std::vector<cv::Vec3f> circles,cv::Mat image);
-    std::vector<TrafficLightsParams> traffic_lights_result(cv::Mat image,const std::vector<float> traffic_lights_locations,bool amba=true,bool opencv=true);
+    TrafficLightsParams traffic_lights_result(cv::Mat image,const std::vector<float> traffic_lights_locations,bool amba=true,bool opencv=true);
 //    vector<float> onnx_pred(cv::Mat image,string onnx_path);
     
 

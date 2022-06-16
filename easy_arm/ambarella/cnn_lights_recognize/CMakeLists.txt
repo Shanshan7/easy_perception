@@ -43,9 +43,9 @@ link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights
 
 #include MOT headers
 include_directories(${PROJECT_SOURCE_DIR}/)
-include_directories(${PROJECT_SOURCE_DIR}/traffic_lights_classifier)
-include_directories(${PROJECT_SOURCE_DIR}/common)
-include_directories(${PROJECT_SOURCE_DIR}/amba_inference)
+include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/traffic_lights_classifier)
+include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/common)
+include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/amba_inference)
 include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/json/include)
 
 #collect image acquisition files
@@ -58,7 +58,11 @@ include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lig
 # 	)
 
 file(GLOB AMBASRCS
-    "${PROJECT_SOURCE_DIR}/amba_inference/*.cpp"
+    "/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/amba_inference/*.cpp"
+)
+
+file(GLOB TRAFFICSRCS
+    "/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/traffic_lights_classifier/*.cpp"
 )
 
 aux_source_directory(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/json/src SRC_DIR)
@@ -66,9 +70,10 @@ add_executable(test_traffic_lights_classifier ${SRC_DIR})
 
 target_sources(test_traffic_lights_classifier
         PRIVATE
-        "${PROJECT_SOURCE_DIR}/test_traffic_lights_classifier.cpp"
+        "/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/test_traffic_lights_classifier.cpp"
         # "${PROJECT_SOURCE_DIR}/demo.cpp"
         ${AMBASRCS}
+        ${TRAFFICSRCS}
         )
 
 # link libraries

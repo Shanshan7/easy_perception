@@ -1,11 +1,15 @@
 #pragma once
 #include <unistd.h>
-#include <opencv2/core.hpp>
+#include <iostream>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <string.h>
+
 #include "net.h"
-#include <iostream>
+#include "json/json.h"
 
 class Amba_Inference
 {

@@ -4,12 +4,12 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 #include <vector>
-#include "traffic_lights_classifier/traffic_lights_classifier.h"
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <cstring>
 
+#include "traffic_lights_classifier.h"
 
 
 int main()
@@ -84,9 +84,9 @@ int main()
             std::cout<<"frame:";
             std::cout<<i<<std::endl;
 
-            std::vector<TrafficLightsParams> result=traffic_lights_classifier.traffic_lights_result(frame, boxes[i],false,true);
+            TrafficLightsParams result=traffic_lights_classifier.traffic_lights_result(frame, boxes[i],false,true);
             
-            std::string text = std::to_string(result[0].traffic_lights_type);
+            std::string text = std::to_string(result.traffic_lights_type);
 
             std::cout<<"target_ID:";
             std::cout<<text<<std::endl;

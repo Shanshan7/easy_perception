@@ -1,22 +1,11 @@
 #include "traffic_lights_classifier.h"
-#include <iostream>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/opencv.hpp>
-#include <vector>
-#include "json/json.h"
-#include <fstream>
-#include <numeric>
-#include "amba_inference.h"
-
 
 
 TrafficLightsClassifier::TrafficLightsClassifier()
 {
     traffic_lights_results.clear();
 
-    std::ifstream in(json_path, ios::binary);
+    std::ifstream in(json_path, std::ios::binary);
     Json::Reader reader;
     Json::Value root;
 //
@@ -179,8 +168,8 @@ std::vector<cv::Vec3f> TrafficLightsClassifier::hough_circles(cv::Mat gray){
 //    return vector<float>(predict);
 //}
 
-std::vector<TrafficLightsParams> TrafficLightsClassifier::traffic_lights_result(cv::Mat image,const std::vector<float> traffic_lights_locations,bool bin,bool opencv){
-    cv::Mat res_img,gray,rgb_image_roi,onnx_img;
+TrafficLightsParams TrafficLightsClassifier::traffic_lights_result(cv::Mat image,const std::vector<float> traffic_lights_locations,bool amba,bool opencv){
+    cv::Mat res_img,gray,rgb_image_roi,amba_img;
     rgb_image_roi = image(cv::Rect(traffic_lights_locations[0], traffic_lights_locations[1], traffic_lights_locations[2], \
         traffic_lights_locations[3]));
 
@@ -189,7 +178,7 @@ std::vector<TrafficLightsParams> TrafficLightsClassifier::traffic_lights_result(
 
     int label_value;
     
-    if(!opencv&!bin){
+    if(!opencv&!amba){
         std::cout<<"No module used!"<<std::endl;
         exit(-1);
     }
@@ -209,9 +198,9 @@ std::vector<TrafficLightsParams> TrafficLightsClassifier::traffic_lights_result(
     }
   
     if(amba){
-        resize(rgb_image_roi,onnx_img,cv::Size(amba_shape,amba_shape));
-        AmbaInference AmbaInference;
-        std::vector<float> amba_preds=AmbaInference.amba_pred(cv::Mat img,std::string amba_path);
+        resize(rgb_image_roi,amba_img,cv::Size(amba_shape,amba_shape));
+        Amba_Inference AmbaInference;
+        std::vector<float> amba_preds=AmbaInference.amba_pred(amba_img,amba_path);
         
         //if off is None
         amba_preds.insert(amba_preds.begin(),0);
@@ -235,8 +224,16 @@ std::vector<TrafficLightsParams> TrafficLightsClassifier::traffic_lights_result(
     TRAFFIC_LIGHTS_TYPE label=TRAFFIC_LIGHTS_TYPE(label_value);
     int target_id =0;
     
-    vector<TrafficLightsParams> res={{target_id,label,traffic_lights_locations}};
-    return res;
+    TrafficLightsParams traffic_lights_parma;
+    traffic_lights_parma.target_id = target_id;
+    traffic_lights_parma.traffic_lights_type = label;
+    traffic_lights_parma.traffic_lights_location[0] = traffic_lights_locations[0];
+    traffic_lights_parma.traffic_lights_location[1] = traffic_lights_locations[1];
+    traffic_lights_parma.traffic_lights_location[2] = traffic_lights_locations[2];
+    traffic_lights_parma.traffic_lights_location[3] = traffic_lights_locations[3];
+
+    // std::vector<TrafficLightsParams> res={{target_id,label,traffic_lights_locations}};
+    return traffic_lights_parma;
 }
 
 

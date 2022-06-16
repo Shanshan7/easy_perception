@@ -1,17 +1,4 @@
-#include <unistd.h>
-#include <iostream>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/opencv.hpp>
-#include <vector>
-#include <string.h>
-#include "net.h"
 #include "amba_inference.h"
-#include "json/json.h"
-
-using namespace cv;
-using namespace std;
 
 Amba_Inference::Amba_Inference()
 {
@@ -32,7 +19,7 @@ Amba_Inference::Amba_Inference()
     struct net_mem  stBinMem  = {0};// vproc.bin
 
 
-    std::ifstream in(json_path, ios::binary);
+    std::ifstream in(json_path, std::ios::binary);
     Json::Reader reader;
     Json::Value root;
 //
@@ -248,7 +235,7 @@ int Amba_Inference::Init(NET_INFO_ST* pstNet)
 * 返回值 ：成功：0
 *         失败：错误码
 *************************************************************************/
-void Amba_Inference::PostProcess(NET_INFO_ST* pstNet, vector<float>& output)
+void Amba_Inference::PostProcess(NET_INFO_ST* pstNet, std::vector<float>& output)
 {
     float thresh = 0.f;
     int type = 0;
@@ -279,9 +266,9 @@ void Amba_Inference::PostProcess(NET_INFO_ST* pstNet, vector<float>& output)
 * 输  出 ：pstImage -图像数据
 * 返回值 ：无
 *************************************************************************/
-void Amba_Inference::LoadImgFile(IN Mat& img, OUT IMAGE_INFO_ST* pstImage)
+void Amba_Inference::LoadImgFile(IN cv::Mat& img, OUT IMAGE_INFO_ST* pstImage)
 {
-    Mat resizeImg, cvtImg;
+    cv::Mat resizeImg, cvtImg;
     int w = img.cols % 2 == 0 ? img.cols : (img.cols - 1);
     int h = img.rows % 2 == 0 ? img.rows : (img.rows - 1);
     int stride = ALIGN64(w);
@@ -333,7 +320,7 @@ void Amba_Inference::LoadImgFile(IN Mat& img, OUT IMAGE_INFO_ST* pstImage)
 * 返回值 ：成功：0
 *         失败：错误码
 *************************************************************************/
-int Amba_Inference::Net(IN Mat& img, OUT vector<float>& output)
+int Amba_Inference::Net(IN cv::Mat& img, OUT std::vector<float>& output)
 {
     unsigned long size = MAX_SIZE * MAX_SIZE *3;
     void* virt = NULL;
@@ -398,7 +385,7 @@ void Amba_Inference::usage()
 
 std::vector<float> Amba_Inference::amba_pred(cv::Mat img,std::string amba_path)
 {
-    vector<float> output;
+    std::vector<float> output;
 
 //    if (argc != 2) {
 //        usage();
