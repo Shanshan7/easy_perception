@@ -7,6 +7,8 @@
 #include "person_Features.h"
 #include "utils.h"
 #include <json/json.h>
+#include "hz_playplay.h"
+#include <windows.h>
 
 
 class H3CProcess
@@ -25,8 +27,9 @@ public:
     int startEvent();
 
     int stopEvent();
-
     void getResult();
+    void playvideo();
+    void initplaySdklog();
     //void getResult1();
     
     //void outputResult();
@@ -40,6 +43,7 @@ public:
         bool face_compare;
 
     } alconfig;
+    
     
 private:
     LONG lUserID;

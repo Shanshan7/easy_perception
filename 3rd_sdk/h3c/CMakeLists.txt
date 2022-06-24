@@ -15,6 +15,7 @@ set(CMAKE_BUILD_TYPE Release)
 #include MOT headers
 include_directories(${PROJECT_SOURCE_DIR}/)
 include_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2)
+include_directories(${PROJECT_SOURCE_DIR}/HZ_playplay)
 include_directories(${PROJECT_SOURCE_DIR}/json/include)
 
 #collect source files
@@ -29,6 +30,7 @@ file(GLOB H3C_PROCESS_SRCS
 #link cal_traj.so
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
      link_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2/Lib/win64)
+     link_directories(${PROJECT_SOURCE_DIR}/HZ_playplay/Lib)
 else(CMAKE_SYSTEM_NAME MATCHES "Linux")
     link_directories(${PROJECT_SOURCE_DIR}/NetSDK_V2/Lib/linux64)   
 endif()
@@ -37,7 +39,7 @@ add_executable(test_web "")
 
 target_sources(test_web
         PRIVATE
-        "${PROJECT_SOURCE_DIR}/test_socket.cpp"
+        "${PROJECT_SOURCE_DIR}/test_h3c_json.cpp"
         ${H3C_PROCESS_SRCS}
         )
 
@@ -46,6 +48,7 @@ target_link_libraries(test_web
                       idm_alarm
                       idm_live
                       idm_netsdk
+                      hz_playplay
                       idm_pdsp
                       idm_transfile
                       idm_vod

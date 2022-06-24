@@ -13,7 +13,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "D:/fudao/shixi/easy_perception/3rd_sdk/h3c/json/src/json_value.cpp" "CMakeFiles/test_web.dir/json/src/json_value.cpp.obj" "gcc" "CMakeFiles/test_web.dir/json/src/json_value.cpp.obj.d"
   "D:/fudao/shixi/easy_perception/3rd_sdk/h3c/json/src/json_writer.cpp" "CMakeFiles/test_web.dir/json/src/json_writer.cpp.obj" "gcc" "CMakeFiles/test_web.dir/json/src/json_writer.cpp.obj.d"
   "D:/fudao/shixi/easy_perception/3rd_sdk/h3c/outputCsv.cpp" "CMakeFiles/test_web.dir/outputCsv.cpp.obj" "gcc" "CMakeFiles/test_web.dir/outputCsv.cpp.obj.d"
-  "D:/fudao/shixi/easy_perception/3rd_sdk/h3c/test_socket.cpp" "CMakeFiles/test_web.dir/test_socket.cpp.obj" "gcc" "CMakeFiles/test_web.dir/test_socket.cpp.obj.d"
+  "D:/fudao/shixi/easy_perception/3rd_sdk/h3c/test_h3c_json.cpp" "CMakeFiles/test_web.dir/test_h3c_json.cpp.obj" "gcc" "CMakeFiles/test_web.dir/test_h3c_json.cpp.obj.d"
   "D:/fudao/shixi/easy_perception/3rd_sdk/h3c/utils.cpp" "CMakeFiles/test_web.dir/utils.cpp.obj" "gcc" "CMakeFiles/test_web.dir/utils.cpp.obj.d"
   )
 

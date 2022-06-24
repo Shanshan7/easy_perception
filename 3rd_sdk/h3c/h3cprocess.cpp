@@ -14,6 +14,9 @@
 
 static std::string result = "";
 std::mutex mutex; // lock
+void *sumUserData = NULL;
+int32_t channelID = 0;
+int32_t *channelid=&channelID;
 
 // define snap picture
 std::string person_snap_path;
@@ -21,6 +24,89 @@ std::string person_snap_scene_path;
 
 std::ofstream outFile;
 std::ofstream outFile1;
+//???????+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+int32_t play_chid = -1;
+// ??????????
+long login_handle = -1;
+// ?????????
+long play_handle = -1;
+
+// ???????????????
+void __stdcall nsk_datacallback(LONG lStreamHandle, ULONG ulDataType, UCHAR *pu8Buf, ULONG u32BufLen, VOID* pCbUser)
+{
+    
+    PLAY_InputData(channelID, pu8Buf, u32BufLen);
+}
+bool start_netsdk(const char *ip, int32_t port, const char *uname, const char *upsw)
+{
+     // 登录
+    IDM_DEV_USER_LOGIN_INFO_S loginInfo = { 0 };
+    ::memcpy_s(loginInfo.szTargetIP, sizeof(loginInfo.szTargetIP), ip, strlen(ip));
+    loginInfo.usPort = port;
+    ::memcpy_s(loginInfo.szUsername, sizeof(loginInfo.szUsername), uname, strlen(uname));
+    ::memcpy_s(loginInfo.szPassword, sizeof(loginInfo.szPassword), upsw, strlen(upsw));
+    loginInfo.pfLoginCallBack = NULL/*Login_Callback_Proc*/;
+    loginInfo.pUserData = sumUserData/*this*/;
+
+    if (-1 != login_handle)
+    {
+        IDM_DEV_Logout(login_handle);
+        login_handle = -1;
+    }
+
+    IDM_DEV_DEVICE_INFO_S devInfo = { 0 };
+    long retvalue = IDM_DEV_Login(loginInfo, &devInfo, &login_handle);
+    if (retvalue != IDM_SUCCESS)
+    {
+        // 网络库登录失败
+        std::cout<<"login faild";
+        return false;
+    }
+    else{
+        std::cout<<"login success";
+
+    }
+    // 预览拉视频流
+    IDM_DEV_PREVIEW_INFO_S sPreviewInfo;
+    ::memset(&sPreviewInfo, 0, sizeof(IDM_DEV_PREVIEW_INFO_S));
+    sPreviewInfo.ulChannel = 0;     // IPC通道号默认0
+    sPreviewInfo.ulStreamType = 0;  // 主码流0
+    sPreviewInfo.ulLinkMode = 0;    // TCP拉流0
+    std::string result1="";
+    long retvalue1= IDM_DEV_RealPlay(login_handle, sPreviewInfo, nsk_datacallback, loginInfo.pUserData, &play_handle);
+     if (retvalue1 != IDM_SUCCESS)
+    {
+        std::cout<<"push faild";
+        return false;
+    }
+    else{
+        std::cout<<"push success";
+
+    }
+    return 0;
+}
+bool start_playsdk(HWND hwnd)
+{
+    
+    play_chid = PLAY_GetFreeChID(channelid);
+    std::cout<<"play_child is "<<play_chid<<std::endl;
+    if(play_chid < 0) return false;
+    
+    bool xuanranfalge=PLAY_RenderPrivateData(channelID, PRIDATA_TARGET,true);
+     if (xuanranfalge != true)
+    {
+        std::cout<<"xuanran faild";
+    }
+    else{
+        std::cout<<"xuanran success";
+    }
+    bool playflag = PLAY_StartPlay(channelID, hwnd);
+    std::cout<<"播放结果是"<<playflag<<std::endl;
+    return playflag;
+}
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 VOID CALLBACK My_Alarm_Callback(
     LONG lUserID,
@@ -134,9 +220,9 @@ H3CProcess::H3CProcess()
 {
     
     outFile.open("data.csv",std::ios::out);
-    outFile<<"ץ��ʱ��"<<','<<"�Ա�"<<','<<"�۾�"<<','<<"ñ��"<<','<<"����"<<','<<std::endl;
+    outFile<<"??????"<<','<<"???"<<','<<"???"<<','<<"???"<<','<<"????"<<','<<std::endl;
     outFile1.open("Face_recognition.csv",std::ios::out);
-    outFile1<<"ץ��ʱ��"<<','<<"����"<<','<<"�Ա�"<<','<<"����"<<','<<"��������"<<','<<"֤������"<<','<<"֤����"<<','<<"�豸ID"<<','<<"�豸IP"<<std::endl;
+    outFile1<<"??????"<<','<<"????"<<','<<"???"<<','<<"????"<<','<<"????????"<<','<<"???????"<<','<<"?????"<<','<<"?��ID"<<','<<"?��IP"<<std::endl;
     // timer = new QTimer(this);
     cameraIP = "192.168.13.227";
     cameraUser = "admin";
@@ -161,31 +247,30 @@ H3CProcess::~H3CProcess()
     // timer->deleteLater();
 
     stopEvent();
-    //閫€鍑虹櫥锟�????
+    //????出登�?????
     IDM_DEV_Logout(lUserID);
 
-    //娓呯悊锟�????
+    //清理�?????
     IDM_DEV_Cleanup();
 
     saveConfig();
 }
-
 int H3CProcess::loginCamera()
 {
-    IDM_DEV_Init();//鍒濓�??锟藉寲锟�????
+    IDM_DEV_Init();//初�???�化�?????
 
     IDM_DEV_SaveLogToFile(3, 0, "/home/edge/To_H3C/log");
 
     void *userData = NULL;
     IDM_DEV_SetExceptionCallback(My_Exception_Callback, (void *)userData);
 
-    //寮€锟�???锟�???绾块噸锟�????
+    //????�????�????线重�?????
     IDM_DEV_RECONNECT_INFO_S stReconnectInfo = { 0 };
     stReconnectInfo.ucEnable = 1;
-    stReconnectInfo.uiInterval = 3000; //3锟�???
+    stReconnectInfo.uiInterval = 3000; //3�????
     IDM_DEV_SetReconnect(stReconnectInfo);
 
-    //鐧诲�?
+    //�??????
     IDM_DEV_DEVICE_INFO_S devInfo = { 0 };
     IDM_DEV_USER_LOGIN_INFO_S loginInfo = { 0 };
     strncpy(loginInfo.szTargetIP, this->cameraIP.c_str(), sizeof(loginInfo.szTargetIP) - 1);
@@ -200,8 +285,8 @@ int H3CProcess::loginCamera()
         IDM_DEV_Cleanup();
         return -1;
     }
-    void *sumUserData = NULL;
-    //娉ㄥ唽鍥炶皟
+    
+    //注册回调
     ret = IDM_DEV_SetAlarmCallback(0, My_Alarm_Callback, sumUserData);
     if (ret != IDM_SUCCESS)
     {
@@ -210,6 +295,8 @@ int H3CProcess::loginCamera()
         IDM_DEV_Cleanup();
         return -1;
     }
+    long result =-1;
+    return result == IDM_SUCCESS;
     return 0;
 }
 
@@ -461,8 +548,7 @@ int H3CProcess::saveConfig()
     root["cameraUser"] = this->cameraUser;
     root["cameraPassword"] = this->cameraPassword;
     root["urlPath"] = this->urlPath;
-
-    //杈撳嚭鍒版枃锟�???  
+    //输�??到文�?????  
     std::ofstream os;
     os.open(this->save_path, std::ios::out );
     if (!os.is_open())
@@ -471,6 +557,74 @@ int H3CProcess::saveConfig()
     os.close();
 
     return 0;
+}
+LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	// 在这里处理所有窗口消息
+	switch (msg)
+	{
+	case WM_DESTROY:
+		// 当窗口销毁时退出应用程序
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hWnd, msg, wParam, lParam);
+	}
+	return 0;
+};
+void H3CProcess::playvideo()
+{
+    std::cout<<"ok"<<std::endl;  
+    WNDCLASS wc = {};
+    HINSTANCE hInstance;
+	//WNDCLASSEX wc = { sizeof(WNDCLASSEX) };
+	wc.style = CS_VREDRAW | CS_HREDRAW;
+	wc.lpfnWndProc = WndProc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = hInstance;
+	wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wc.hbrBackground = CreateSolidBrush(RGB(0, 0,0));
+	wc.lpszMenuName = nullptr;
+	wc.lpszClassName = TEXT("MainWindow");
+	RegisterClass(&wc);
+
+	// Create the window
+	HWND hWnd = CreateWindowEx(0, wc.lpszClassName, TEXT("标题"), WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, nullptr, nullptr);
+    
+	
+    bool retcode1 = start_playsdk(hWnd);
+    start_netsdk("192.168.13.236", 9000, "admin", "edge2021");
+    ShowWindow(hWnd, SW_SHOWNA);
+    MSG msg;   //消息机制
+	while (GetMessage(&msg, NULL, 0, 0))    //消息循环
+	{
+		TranslateMessage(&msg);   //将传来的消息翻译
+		DispatchMessage(&msg);    //
+	}
+    std::cout<<retcode1<<std::endl;
+    
+}
+void H3CProcess::initplaySdklog(){
+    PLAY_SetPrintLogLevel(LLEVEL_DEBUG);
+    std::cout<<"playsdklog is ok"<<std::endl;
+    PLAY_SetLogCallback([](PSK_LOG_LEVEL loglevel,const char *logText, void *userData){
+        if(logText == nullptr)
+        {
+            std::cout<<"logtext is null"<<std::endl;
+            return;
+        }
+        std::ofstream outFileplayvideo;
+        outFileplayvideo.open("play_video1.txt",std::ios::app);
+        std::string videolog=logText;
+        outFileplayvideo<<videolog<<std::endl;
+        outFileplayvideo.close();
+        }
+        ,nullptr
+        );
+    
 }
 
 

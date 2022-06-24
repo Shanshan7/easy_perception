@@ -1,0 +1,122 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.12"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "cnn_runtime",
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "cnn_runtime",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "cnn_lpr",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "cnn_lpr",
+					"targetIndexes" : 
+					[
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "amba_arm"
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "cnn_runtime",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "cnn_lpr",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "cnn_runtime::@ff218b2fa3d30619d0f0",
+					"jsonFile" : "target-cnn_runtime-Debug-e61def7fcfd171ffed5b.json",
+					"name" : "cnn_runtime",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "test_lpr::@38dfa83845e049566718",
+					"jsonFile" : "target-test_lpr-Debug-c470d45d1a2114961223.json",
+					"name" : "test_lpr",
+					"projectIndex" : 2
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)",
+		"source" : "D:/fudao/shixi/easy_perception/easy_arm/ambarella"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 0
+	}
+}

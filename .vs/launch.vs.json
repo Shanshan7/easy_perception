@@ -1,0 +1,12 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "3rd_sdk\\h3c\\CMakeLists.txt",
+      "projectTarget": "(SSC_json) test_web.exe",
+      "name": "(SSC_json) test_web.exe"
+    }
+  ]
+}

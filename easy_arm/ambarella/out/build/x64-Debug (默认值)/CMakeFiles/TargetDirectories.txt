@@ -1,0 +1,17 @@
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/CMakeFiles/install/local.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/CMakeFiles/install.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/CMakeFiles/edit_cache.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/CMakeFiles/rebuild_cache.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/CMakeFiles/list_install_components.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/cnn_runtime/CMakeFiles/rebuild_cache.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/cnn_runtime/CMakeFiles/cnn_runtime.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/cnn_runtime/CMakeFiles/install/local.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/cnn_runtime/CMakeFiles/install.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/cnn_runtime/CMakeFiles/edit_cache.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/cnn_runtime/CMakeFiles/list_install_components.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/cnn_lpr/CMakeFiles/install/local.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/cnn_lpr/CMakeFiles/install.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/cnn_lpr/CMakeFiles/edit_cache.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/cnn_lpr/CMakeFiles/test_lpr.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/cnn_lpr/CMakeFiles/rebuild_cache.dir
+D:/fudao/shixi/easy_perception/easy_arm/ambarella/out/build/x64-Debug (默认值)/cnn_lpr/CMakeFiles/list_install_components.dir

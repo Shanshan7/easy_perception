@@ -1,0 +1,36 @@
+﻿D:\VS\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1044,5): warning MSB8027: 名为 CMakeCXXCompilerId.cpp 的两个或更多文件将生成到同一位置的输出。这会导致错误的生成结果。   调用的文件是 build\cmakefiles\3.20.3\compileridcxx\CMakeCXXCompilerId.cpp, out\build\x64-debug (默认值)\cmakefiles\3.17.20032601-msvc_2\compileridcxx\CMakeCXXCompilerId.cpp。
+D:\VS\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1044,5): warning MSB8027: 名为 CMakeCCompilerId.c 的两个或更多文件将生成到同一位置的输出。这会导致错误的生成结果。   调用的文件是 build\cmakefiles\3.20.3\compileridc\CMakeCCompilerId.c, out\build\x64-debug (默认值)\cmakefiles\3.17.20032601-msvc_2\compileridc\CMakeCCompilerId.c。
+D:\VS\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1044,5): warning MSB8027: 名为 test_h3c_json.cpp 的两个或更多文件将生成到同一位置的输出。这会导致错误的生成结果。   调用的文件是 tests\test_h3c_json.cpp, test_h3c_json.cpp。
+  h3cprocess.cpp
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\h3cprocess.h(5,10): fatal error C1083: 无法打开包括文件: “unistd.h”: No such file or directory
+  json_reader.cpp
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\json\src\json_reader.cpp(1,10): fatal error C1083: 无法打开包括文件: “json/reader.h”: No such file or directory
+  json_value.cpp
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\json\src\json_value.cpp(2,10): fatal error C1083: 无法打开包括文件: “json/value.h”: No such file or directory
+  json_writer.cpp
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\json\src\json_writer.cpp(1,10): fatal error C1083: 无法打开包括文件: “json/writer.h”: No such file or directory
+  outputCsv.cpp
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\outputCsv.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\person_Features.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\h3cprocess.h(5,10): fatal error C1083: 无法打开包括文件: “unistd.h”: No such file or directory
+  web_socket_linux.cpp
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\socket_server\web_socket_linux.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\socket_server\web_socket_linux.cpp(4,10): fatal error C1083: 无法打开包括文件: “sys/socket.h”: No such file or directory
+  test_h3c_json.cpp
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\tests\test_h3c_json.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\tests\test_h3c_json.cpp(3,10): fatal error C1083: 无法打开包括文件: “h3cprocess.h”: No such file or directory
+  test_socket_local.cpp
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\tests\test_socket_local.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\tests\test_socket_local.cpp(5,10): fatal error C1083: 无法打开包括文件: “json/json.h”: No such file or directory
+  test_web_service.cpp
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\tests\test_web_service.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\tests\test_web_service.cpp(5,10): fatal error C1083: 无法打开包括文件: “json/json.h”: No such file or directory
+  test_h3c_json.cpp
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\test_h3c_json.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\h3cprocess.h(5,10): fatal error C1083: 无法打开包括文件: “unistd.h”: No such file or directory
+  test_socket.cpp
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\test_socket.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\test_socket.cpp(5,10): fatal error C1083: 无法打开包括文件: “json/json.h”: No such file or directory
+  utils.cpp
+D:\fudao\shixi\easy_perception\3rd_sdk\h3c\utils.h(4,10): fatal error C1083: 无法打开包括文件: “idm_netsdk.h”: No such file or directory
+  正在生成代码...
