@@ -66,7 +66,7 @@ int main(int argc, char **argv)
     while (true)
     {
         printf("Listening ... \n");
-        std::string ret = ""; // ·µ»ØHttp Response
+        std::string ret = ""; // è¿”å›Http Response
         sockaddr_in addrClient;
         int nClientAddrLen = sizeof(addrClient);
         SOCKET socketClient = accept(socketServer, (sockaddr*)&addrClient, &nClientAddrLen);
@@ -84,14 +84,14 @@ int main(int argc, char **argv)
         }
         // else
         // {
-        //     ret = buffer;// Èç¹û½ÓÊÕ³É¹¦£¬Ôò·µ»Ø½ÓÊÕµÄÊı¾İÄÚÈİ
+        //     ret = buffer;// å¦‚æœæ¥æ”¶æˆåŠŸï¼Œåˆ™è¿”å›æ¥æ”¶çš„æ•°æ®å†…å®¹
 		// 	char *p;
 		// 	char *delims= {"\n"} ;
 		// 	p=strtok(buffer,"\n");
 		// 	int i = 0;
 		// 	while(p!=NULL) {
 		// 		if(i == 13){
-		// 			printf("word: %s\n",p); //¶Ô»ñÈ¡µÄÊı¾İ½øĞĞ·Ö¸î£¬»ñÈ¡Ã¿Ò»ĞĞµÄÊı¾İ 
+		// 			printf("word: %s\n",p); //å¯¹è·å–çš„æ•°æ®è¿›è¡Œåˆ†å‰²ï¼Œè·å–æ¯ä¸€è¡Œçš„æ•°æ® 
 		// 			ret = p;
 		// 		}
 		// 		i++;
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
   
 // int main(int argc, char* argv[])  
 // {  
-//     //³õÊ¼»¯WSA  
+//     //åˆå§‹åŒ–WSA  
 //     WORD sockVersion = MAKEWORD(2,2);  
 //     WSADATA wsaData;  
 //     if(WSAStartup(sockVersion, &wsaData)!=0)  
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 //         return 0;  
 //     }  
   
-//     //´´½¨Ì×½Ó×Ö  
+//     //åˆ›å»ºå¥—æ¥å­—  
 //     SOCKET slisten = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);  
 //     if(slisten == INVALID_SOCKET)  
 //     {  
@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 //         return 0;  
 //     }  
   
-//     //°ó¶¨IPºÍ¶Ë¿Ú  
+//     //ç»‘å®šIPå’Œç«¯å£  
 //     sockaddr_in sin;  
 //     sin.sin_family = AF_INET;  
 //     sin.sin_port = htons(5000);  
@@ -149,14 +149,14 @@ int main(int argc, char **argv)
 //         printf("bind error !");  
 //     }  
   
-//     //¿ªÊ¼¼àÌı  
+//     //å¼€å§‹ç›‘å¬  
 //     if(listen(slisten, 5) == SOCKET_ERROR)  
 //     {  
 //         printf("listen error !");  
 //         return 0;  
 //     }  
   
-//     //Ñ­»·½ÓÊÕÊı¾İ  
+//     //å¾ªç¯æ¥æ”¶æ•°æ®  
 //     SOCKET sClient;  
 //     sockaddr_in remoteAddr;  
 //     int nAddrlen = sizeof(remoteAddr);  
@@ -172,7 +172,7 @@ int main(int argc, char **argv)
 //         }  
 //         printf("Accept a connection: %s \r\n", inet_ntoa(remoteAddr.sin_addr));  
           
-//         //½ÓÊÕÊı¾İ  
+//         //æ¥æ”¶æ•°æ®  
 //         int ret = recv(sClient, revData, 255, 0);         
 //         if(ret > 0)  
 //         {  
@@ -180,8 +180,8 @@ int main(int argc, char **argv)
 //             printf(revData);  
 //         }  
   
-//         //·¢ËÍÊı¾İ  
-//         const char * sendData = "Hi£¬TCP Client£¡\n";  
+//         //å‘é€æ•°æ®  
+//         const char * sendData = "Hiï¼ŒTCP Clientï¼\n";  
 //         send(sClient, sendData, strlen(sendData), 0);  
 //         closesocket(sClient);  
 //     }  

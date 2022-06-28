@@ -34,38 +34,13 @@ long play_handle = -1;
 // ???????????????
 void __stdcall nsk_datacallback(LONG lStreamHandle, ULONG ulDataType, UCHAR *pu8Buf, ULONG u32BufLen, VOID* pCbUser)
 {
+    std::ofstream file("record.hzv",std::ios::binary|std::ios::app);
+    file.write((const char*)pu8Buf,u32BufLen);
     
     PLAY_InputData(channelID, pu8Buf, u32BufLen);
 }
-bool start_netsdk(const char *ip, int32_t port, const char *uname, const char *upsw)
+bool H3CProcess:: start_netsdk()
 {
-     // 登录
-    IDM_DEV_USER_LOGIN_INFO_S loginInfo = { 0 };
-    ::memcpy_s(loginInfo.szTargetIP, sizeof(loginInfo.szTargetIP), ip, strlen(ip));
-    loginInfo.usPort = port;
-    ::memcpy_s(loginInfo.szUsername, sizeof(loginInfo.szUsername), uname, strlen(uname));
-    ::memcpy_s(loginInfo.szPassword, sizeof(loginInfo.szPassword), upsw, strlen(upsw));
-    loginInfo.pfLoginCallBack = NULL/*Login_Callback_Proc*/;
-    loginInfo.pUserData = sumUserData/*this*/;
-
-    if (-1 != login_handle)
-    {
-        IDM_DEV_Logout(login_handle);
-        login_handle = -1;
-    }
-
-    IDM_DEV_DEVICE_INFO_S devInfo = { 0 };
-    long retvalue = IDM_DEV_Login(loginInfo, &devInfo, &login_handle);
-    if (retvalue != IDM_SUCCESS)
-    {
-        // 网络库登录失败
-        std::cout<<"login faild";
-        return false;
-    }
-    else{
-        std::cout<<"login success";
-
-    }
     // 预览拉视频流
     IDM_DEV_PREVIEW_INFO_S sPreviewInfo;
     ::memset(&sPreviewInfo, 0, sizeof(IDM_DEV_PREVIEW_INFO_S));
@@ -73,7 +48,7 @@ bool start_netsdk(const char *ip, int32_t port, const char *uname, const char *u
     sPreviewInfo.ulStreamType = 0;  // 主码流0
     sPreviewInfo.ulLinkMode = 0;    // TCP拉流0
     std::string result1="";
-    long retvalue1= IDM_DEV_RealPlay(login_handle, sPreviewInfo, nsk_datacallback, loginInfo.pUserData, &play_handle);
+    long retvalue1= IDM_DEV_RealPlay(lUserID, sPreviewInfo, nsk_datacallback, sumUserData, &play_handle);
      if (retvalue1 != IDM_SUCCESS)
     {
         std::cout<<"push faild";
@@ -85,7 +60,7 @@ bool start_netsdk(const char *ip, int32_t port, const char *uname, const char *u
     }
     return 0;
 }
-bool start_playsdk(HWND hwnd)
+bool H3CProcess::start_playsdk(HWND hwnd)
 {
     
     play_chid = PLAY_GetFreeChID(channelid);
@@ -596,7 +571,7 @@ void H3CProcess::playvideo()
     
 	
     bool retcode1 = start_playsdk(hWnd);
-    start_netsdk("192.168.13.236", 9000, "admin", "edge2021");
+    start_netsdk();
     ShowWindow(hWnd, SW_SHOWNA);
     MSG msg;   //消息机制
 	while (GetMessage(&msg, NULL, 0, 0))    //消息循环

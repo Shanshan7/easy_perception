@@ -28,12 +28,13 @@ public:
 
     int stopEvent();
     void getResult();
-    void playvideo();
-    void initplaySdklog();
-    //void getResult1();
-    
-    //void outputResult();
 
+
+
+    void playvideo();//播放视频
+    void initplaySdklog();//输出视频播放日志
+    bool start_netsdk();//推流
+    bool start_playsdk(HWND hwnd);//窗口播放
 public:
     struct InformationSaveAndOutput infor_Zs;
     struct Alconfig
@@ -54,8 +55,11 @@ private:
     std::string cameraPassword;
     std::string urlPath;
     std::string save_path;
+    int32_t play_chid = -1;
 
-    // QTimer *timer;
+    long login_handle = -1;
+
+    long play_handle = -1;
 
 private:
     int loadConfig();
