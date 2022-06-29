@@ -22,6 +22,9 @@ public:
     void PostProcess(NET_INFO_ST* pstNet, std::vector<float>& output);
     void LoadImgFile(IN cv::Mat& img, OUT IMAGE_INFO_ST* pstImage);
     void usage();
+    int get_input_pitch(net_input_cfg* pstNetIn);
+    cv::Size get_input_size(net_input_cfg* pstNetIn);
+    void LoadAndPreprocess(IN cv::Mat& img,OUT struct net_input_cfg* pstNetIn);
     int Net(IN cv::Mat& img, OUT std::vector<float>& output);
     std::vector<float> amba_pred(cv::Mat img,std::string amba_path);
     

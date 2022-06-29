@@ -15,10 +15,14 @@
 
 int main()
 {
-    
     std::string img_path="/sdcard/yellow.jpeg";
+    
     cv::Mat img;
+
+    std::cout<<"image start!"<<std::endl;
     img=cv::imread(img_path);
+    std::cout<<"image end!"<<std::endl;
+
     TrafficLightsClassifier traffic_lights_classifier;
     TrafficLightsParams result=traffic_lights_classifier.traffic_lights_result(img,{0,0,1000,1000},true,true);
             

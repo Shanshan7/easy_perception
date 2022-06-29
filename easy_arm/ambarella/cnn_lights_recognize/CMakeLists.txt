@@ -17,7 +17,7 @@ set(SDK_DIR /home/lpj/Downloads/unisinsight_amba_sdk_1.0.3)#sdk目录
 project(cnn_lights_recognize)
 
 #amba_sdk
-# include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # include_directories(${THIRD_DIR}/amba_sdk/include)
 # include_directories(${THIRD_DIR}/amba_sdk/include/7X22)
@@ -39,28 +39,28 @@ link_directories(${SDK_DIR}/lib/opencv/lib)
 # link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/tbb/lib)
 
 include_directories(${SDK_DIR}/lib/tbb/include)
-link_directories(${SDK_DIR}/lib/tbb/lib)
+link_directories(${SDK_DIR}/lib/tbb/usr/lib)
 
 #libpng
 # include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libpng/include)
 # link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libpng/lib)
 
 include_directories(${SDK_DIR}/lib/libpng/include)
-link_directories(${SDK_DIR}/lib/libpng/lib)
+link_directories(${SDK_DIR}/lib/libpng/usr/lib)
 
 #libjpeg
 # include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libjpeg-turbo/include)
 # link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libjpeg-turbo/lib)
 
 include_directories(${SDK_DIR}/lib/libjpeg-turbo/include)
-link_directories(${SDK_DIR}/lib/libjpeg-turbo/lib)
+link_directories(${SDK_DIR}/lib/libjpeg-turbo/usr/lib)
 
 #zlib
 # include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/zlib/include)
 # link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/zlib/lib)
 
 include_directories(${SDK_DIR}/lib/zlib/include)
-link_directories(${SDK_DIR}/lib/zlib/lib)
+link_directories(${SDK_DIR}/lib/zlib/usr/lib)
 
 #include MOT headers
 include_directories(${PROJECT_SOURCE_DIR}/)
@@ -78,6 +78,7 @@ include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lig
 #     "${PROJECT_SOURCE_DIR}/*.cpp"
 # 	)
 
+
 file(GLOB AMBASRCS
     "/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/amba_inference/*.cpp"
 )
@@ -91,7 +92,7 @@ add_executable(test_traffic_lights_classifier ${SRC_DIR})
 
 target_sources(test_traffic_lights_classifier
         PRIVATE
-        "/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/test_traffic_lights_classifier.cpp"
+        "${PROJECT_SOURCE_DIR}/test_traffic_lights_classifier.cpp"
         # "${PROJECT_SOURCE_DIR}/demo.cpp"
         ${AMBASRCS}
         ${TRAFFICSRCS}
@@ -102,13 +103,13 @@ target_link_libraries(test_traffic_lights_classifier
                       opencv_core
                       opencv_imgcodecs
                       opencv_imgproc
-                      opencv_videoio
                       nnctrl
                       cavalry_mem
                       vproc
                       tbb
                       png
                       jpeg
-                      z)
+                      z
+                      )
 
 

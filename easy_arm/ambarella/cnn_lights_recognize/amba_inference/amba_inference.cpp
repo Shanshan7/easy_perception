@@ -24,7 +24,7 @@ Amba_Inference::Amba_Inference()
     Json::Value root;
 //
     if(reader.parse(in, root))
-    { char VPROC_BIN_PATH[STRING_MAX] = "/usr/local/vproc/vproc.bin";
+    { 
         amba_path=root["amba_path"].asString();
     }
 
@@ -309,14 +309,14 @@ void Amba_Inference::LoadImgFile(IN cv::Mat& img, OUT IMAGE_INFO_ST* pstImage)
     cavalry_mem_sync_cache(stride*h*3/2, (long unsigned int)pstImage->addrPhys.addr1, 1, 0);//同步 cached 的 CV 内存
 }
 
-int get_input_pitch(net_input_cfg* pstNetIn)
+int Amba_Inference::get_input_pitch(net_input_cfg* pstNetIn)
 {
     int pitch = pstNetIn->in_desc[0].dim.pitch;
     // std::cout << "input --pitch: " << pitch << "--" << std::endl;
     return pitch;
 }
 
-cv::Size get_input_size(net_input_cfg* pstNetIn)
+cv::Size Amba_Inference::get_input_size(net_input_cfg* pstNetIn)
 {
     // int channel = nnctrl_ctx->net.net_in.in_desc[0].dim.depth;
     int height = pstNetIn->in_desc[0].dim.height;
@@ -326,7 +326,7 @@ cv::Size get_input_size(net_input_cfg* pstNetIn)
     return dst_size;
 }
 
-void LoadAndPreprocess(IN cv::Mat& img,OUT struct net_input_cfg* pstNetIn){
+void Amba_Inference::LoadAndPreprocess(IN cv::Mat& img,OUT struct net_input_cfg* pstNetIn){
     if(img.empty()){
         return;
     }
@@ -400,7 +400,7 @@ int Amba_Inference::Net(IN cv::Mat& img, OUT std::vector<float>& output)
         // LoadImgFile(img, &stImage);
 
         std::cout<<"PreProcess start!"<<std::endl;
-        
+
         // if(PreProcess(&stImage, &stNet.stNetIn) < 0) {
         //     printf("[%s|%d] PreProcess failed!", __FUNCTION__, __LINE__);
         //     break;            
@@ -458,7 +458,13 @@ std::vector<float> Amba_Inference::amba_pred(cv::Mat img,std::string amba_path)
     }
 
     /* 模型加载运行 */
+
+    std::cout<<"Net start!"<<std::endl;
     Net(img, output);
+    std::cout<<"Net end!"<<std::endl;
+    std::cout<<output[0]<<std::endl;
+    std::cout<<output[1]<<std::endl;
+    std::cout<<output[2]<<std::endl;
 
     return output;
 }

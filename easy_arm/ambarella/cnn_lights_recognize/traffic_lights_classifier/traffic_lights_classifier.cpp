@@ -183,7 +183,12 @@ TrafficLightsParams TrafficLightsClassifier::traffic_lights_result(cv::Mat image
         exit(-1);
     }
 
+    
+
     if(opencv){
+
+        std::cout<<"opencv start!"<<std::endl;
+
         resize(rgb_image_roi,res_img,cv::Size(opencv_shape,opencv_shape));
         cvtColor(res_img, gray, cv::COLOR_RGBA2GRAY);
         std::vector<cv::Vec3f> circles;
@@ -194,10 +199,15 @@ TrafficLightsParams TrafficLightsClassifier::traffic_lights_result(cv::Mat image
             opencv_preds=estimate_label(result);
         }
 
-
+        std::cout<<"opencv end!"<<std::endl;
     }
+
+    
   
     if(amba){
+
+        std::cout<<"amba start!"<<std::endl;
+
         resize(rgb_image_roi,amba_img,cv::Size(amba_shape,amba_shape));
         Amba_Inference AmbaInference;
         std::vector<float> amba_preds=AmbaInference.amba_pred(amba_img,amba_path);
@@ -209,6 +219,8 @@ TrafficLightsParams TrafficLightsClassifier::traffic_lights_result(cv::Mat image
             combine_preds[i]=w1*opencv_preds[i]+w2*amba_preds[i];
         }
         label_value=max_element(combine_preds.begin(),combine_preds.end()) - combine_preds.begin()-1;
+
+        std::cout<<"amba end!"<<std::endl;
     }
     
     else{
