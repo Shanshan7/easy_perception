@@ -11,35 +11,56 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_C_COMPILER ${TOOLS_CHAIN_DIR}/bin/aarch64-linux-gnu-gcc)
 set(CMAKE_CXX_COMPILER ${TOOLS_CHAIN_DIR}/bin/aarch64-linux-gnu-g++)
 
+set(SDK_DIR /home/lpj/Downloads/unisinsight_amba_sdk_1.0.3)#sdk目录
+
 #2.project name
 project(cnn_lights_recognize)
 
 #amba_sdk
 # include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/amba_sdk/include)
-include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/amba_sdk/include/7X22)
 
-link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/amba_sdk/lib/7X22)
+# include_directories(${THIRD_DIR}/amba_sdk/include)
+# include_directories(${THIRD_DIR}/amba_sdk/include/7X22)
+include_directories(${SDK_DIR}/include)
+include_directories(${SDK_DIR}/include/7X22)
+
+# link_directories(${THIRD_DIR}/amba_sdk/lib/7X22)
+link_directories(${SDK_DIR}/lib/7X22)
 
 # opencv
-include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/opencv/include)
-link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/opencv/lib)
+# include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/opencv/include)
+# link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/opencv/lib)
+
+include_directories(${SDK_DIR}/lib/opencv/include)
+link_directories(${SDK_DIR}/lib/opencv/lib)
 
 #tbb
-include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/tbb/include)
-link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/tbb/lib)
+# include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/tbb/include)
+# link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/tbb/lib)
+
+include_directories(${SDK_DIR}/lib/tbb/include)
+link_directories(${SDK_DIR}/lib/tbb/lib)
 
 #libpng
-include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libpng/include)
-link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libpng/lib)
+# include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libpng/include)
+# link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libpng/lib)
+
+include_directories(${SDK_DIR}/lib/libpng/include)
+link_directories(${SDK_DIR}/lib/libpng/lib)
 
 #libjpeg
-include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libjpeg-turbo/include)
-link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libjpeg-turbo/lib)
+# include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libjpeg-turbo/include)
+# link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/libjpeg-turbo/lib)
+
+include_directories(${SDK_DIR}/lib/libjpeg-turbo/include)
+link_directories(${SDK_DIR}/lib/libjpeg-turbo/lib)
 
 #zlib
-include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/zlib/include)
-link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/zlib/lib)
+# include_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/zlib/include)
+# link_directories(/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/3rd_party/zlib/lib)
+
+include_directories(${SDK_DIR}/lib/zlib/include)
+link_directories(${SDK_DIR}/lib/zlib/lib)
 
 #include MOT headers
 include_directories(${PROJECT_SOURCE_DIR}/)

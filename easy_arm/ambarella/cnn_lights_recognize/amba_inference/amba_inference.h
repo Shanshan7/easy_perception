@@ -43,5 +43,5 @@ private:
     struct net_mem  stBinMem  ;// vproc.bin
 
     std::string amba_path;
-    std::string json_path="/home/lpj/Desktop/easy_perception/easy_arm/ambarella/cnn_lights_recognize/hyp.json";
+    std::string json_path="/sdcard/hyp.json";
 };

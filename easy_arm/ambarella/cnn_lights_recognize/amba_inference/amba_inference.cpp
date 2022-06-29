@@ -3,14 +3,14 @@
 Amba_Inference::Amba_Inference()
 {
     /* 模型信息，在编译之前要自定义修改 */
-    int   netInNum  = 2;                                           //输入层个数
-    char  netInName[NET_IN_MAX][STRING_MAX] = {"data", "data_uv"}; //输入层名
+    int   netInNum  = 1;                                           //输入层个数
+    char  netInName[NET_IN_MAX][STRING_MAX] = {"input.1"}; //输入层名
     int   netOutNum = 1;                                           //输出层个数
-    char  netOutName[NET_OUT_MAX][STRING_MAX] = {"prob"};          //输出层名
-    char  netFile[STRING_MAX] = "cavalry_googlenet_yuv.bin";       //模型路径
+    char  netOutName[NET_OUT_MAX][STRING_MAX] = {"198"};          //输出层名
+    char  netFile[STRING_MAX] = "traffic_light_cls.bin";       //模型路径
 
     /* vproc.bin路径，在编译之前要自定义修改 */
-     char VPROC_BIN_PATH[STRING_MAX] = "/usr/local/vproc/vproc.bin";
+    char VPROC_BIN_PATH[STRING_MAX] = "/usr/local/vproc/vproc.bin";
 
     int             fdCavalry = -1; // cavalry设备句柄，不要改
     uint8_t         verbose  = 0;
@@ -24,7 +24,7 @@ Amba_Inference::Amba_Inference()
     Json::Value root;
 //
     if(reader.parse(in, root))
-    {
+    { char VPROC_BIN_PATH[STRING_MAX] = "/usr/local/vproc/vproc.bin";
         amba_path=root["amba_path"].asString();
     }
 
@@ -42,10 +42,7 @@ Amba_Inference::~Amba_Inference()
 }
 
 
-/************************************************************************
-* 函数名: AmbaEntry
-* 功  能 ：初始化，只需要运行一次
-* 返回值 ：成功：0
+/**************************************************** char VPROC_BIN_PATH[STRING_MAX] = "/usr/local/vproc/vproc.bin";
 *         失败：错误码
 *************************************************************************/
 int Amba_Inference::AmbaEntry()
@@ -312,6 +309,56 @@ void Amba_Inference::LoadImgFile(IN cv::Mat& img, OUT IMAGE_INFO_ST* pstImage)
     cavalry_mem_sync_cache(stride*h*3/2, (long unsigned int)pstImage->addrPhys.addr1, 1, 0);//同步 cached 的 CV 内存
 }
 
+int get_input_pitch(net_input_cfg* pstNetIn)
+{
+    int pitch = pstNetIn->in_desc[0].dim.pitch;
+    // std::cout << "input --pitch: " << pitch << "--" << std::endl;
+    return pitch;
+}
+
+cv::Size get_input_size(net_input_cfg* pstNetIn)
+{
+    // int channel = nnctrl_ctx->net.net_in.in_desc[0].dim.depth;
+    int height = pstNetIn->in_desc[0].dim.height;
+    int width = pstNetIn->in_desc[0].dim.width;
+    // std::cout << "input --height: " << height << "--width: " << width << std::endl;
+    cv::Size dst_size(width, height);
+    return dst_size;
+}
+
+void LoadAndPreprocess(IN cv::Mat& img,OUT struct net_input_cfg* pstNetIn){
+    if(img.empty()){
+        return;
+    }
+
+    cv::Mat resizeImg;
+    cv::Size dst_size = get_input_size(pstNetIn);
+    int w = 224;
+    int h = 224;
+
+    int width = pstNetIn->in_desc[0].dim.width;
+
+    int pitch =pstNetIn->in_desc[0].dim.pitch / 1;
+    cv::resize(img, resizeImg, cv::Size(w, h));
+    
+    std::vector<cv::Mat> channel_s;
+
+    cv::split(resizeImg, channel_s);
+
+    for (int i=0; i<3; i++)
+    {
+        for (int h=0; h< dst_size.height; h++)
+        {
+            memcpy(pstNetIn->in_desc[0].virt + i * dst_size.height * pitch + h * pitch, 
+                   channel_s[2-i].data + h * dst_size.width, dst_size.width);
+        }
+    }
+
+    // sycn address
+    cavalry_mem_sync_cache(pstNetIn->in_desc[0].size, pstNetIn->in_desc[0].addr, 1, 0);
+    
+}
+
 /************************************************************************
 * 函数名 Net
 * 功  能 ：模型加载+运行
@@ -325,7 +372,7 @@ int Amba_Inference::Net(IN cv::Mat& img, OUT std::vector<float>& output)
     unsigned long size = MAX_SIZE * MAX_SIZE *3;
     void* virt = NULL;
     unsigned long phys = 0;
-    IMAGE_INFO_ST stImage = {0};
+    IMAGE_INFO_ST stImage = {0};    
     NET_INFO_ST stNet = {0};
 
     /* 资源未初始化时只初始化一次 */
@@ -336,10 +383,12 @@ int Amba_Inference::Net(IN cv::Mat& img, OUT std::vector<float>& output)
     }
 
     do {
+        std::cout<<"Init start!"<<std::endl;
         if(Init(&stNet) != 0) {
             printf("[%s|%d] Init failed!\n", __FUNCTION__, __LINE__);
             break;
         }
+        std::cout<<"cavalry_mem_alloc start!"<<std::endl;
 
         if(cavalry_mem_alloc(&size, &phys, &virt, 1) < 0) {
             printf("[%s|%d] cavalry_mem_alloc failed!", __FUNCTION__, __LINE__);
@@ -348,19 +397,28 @@ int Amba_Inference::Net(IN cv::Mat& img, OUT std::vector<float>& output)
         stImage.addrPhys.addr1 = (void *)phys;
         stImage.addrVirt.addr1    = virt;
         
-        LoadImgFile(img, &stImage);
+        // LoadImgFile(img, &stImage);
+
+        std::cout<<"PreProcess start!"<<std::endl;
         
-        if(PreProcess(&stImage, &stNet.stNetIn) < 0) {
-            printf("[%s|%d] PreProcess failed!", __FUNCTION__, __LINE__);
-            break;
-        }
+        // if(PreProcess(&stImage, &stNet.stNetIn) < 0) {
+        //     printf("[%s|%d] PreProcess failed!", __FUNCTION__, __LINE__);
+        //     break;            
+        // }
+
+        LoadAndPreprocess(img,&stNet.stNetIn);
+
+        std::cout<<"Inference start!"<<std::endl;
 
         if(Inference(&stNet) < 0) {
             printf("[%s|%d] Inference failed!", __FUNCTION__, __LINE__);
-            break;
+            break;             
         }
+
+        std::cout<<"PostProcess start!"<<std::endl;
         
         PostProcess(&stNet, output);
+        std::cout<<"PostProcess end!"<<std::endl;
     } while (0);
 
     if(virt) {
