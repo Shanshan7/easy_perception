@@ -76,5 +76,6 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "valarray": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "${workspaceFolder}/easy_arm/ambarella/cnn_lights_recognize"
 }

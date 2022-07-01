@@ -1,12 +1,12 @@
 {
-    "algo_describe": "边辕视觉红绿灯检测",
+    "algo_describe": "边辕TLR",
     "algo_type": 47,
     "algo_name": "TLR",
     "product_type": 1,
     "publish_time": "2022-04-11 17:18:47",
     "vendor_type": 5,
     "manufacturer": "边辕",
-    "version": "0.0.1",
+    "version": "22.07.01",
     "model_id": 123123,
     "model_name": "开放平台写入",
     "apply_product": {

@@ -7,6 +7,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "ialg_open_app.h"
+#include "ctx.h"
 
 class Image
 {

@@ -1,8 +1,6 @@
-#1.cmake verson
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.5)
 
 set(TOOLS_CHAIN_DIR /usr/local/linaro-aarch64-2020.09-gcc10.2-linux5.4) # 交叉工具链所在目录
-set(AMBARELLA_DIR /home/edge/cv2x_linux_sdk_3.0/ambarella)
 
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_FIND_ROOT_PATH ${TOOLS_CHAIN_DIR})
@@ -12,8 +10,9 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_C_COMPILER ${TOOLS_CHAIN_DIR}/bin/aarch64-linux-gnu-gcc)
 set(CMAKE_CXX_COMPILER ${TOOLS_CHAIN_DIR}/bin/aarch64-linux-gnu-g++)
 
-project(cnn_lights_recognize)
+project(demo_app)
 
+# traffic lights
 include_directories(${PROJECT_SOURCE_DIR}/common)
 include_directories(${PROJECT_SOURCE_DIR}/traffic_lights_classifier)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -21,12 +20,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 # opencv
 include_directories(${PROJECT_SOURCE_DIR}/3rd_party/opencv/include)
 link_directories(${PROJECT_SOURCE_DIR}/3rd_party/opencv/lib)
-
-# third_party
-link_directories(${AMBARELLA_DIR}/prebuild/oss/armv8-a/libjpeg-turbo/usr/lib)
-link_directories(${AMBARELLA_DIR}/prebuild/oss/armv8-a/libpng/usr/lib)
-link_directories(${AMBARELLA_DIR}/prebuild/oss/armv8-a/zlib/usr/lib)
-link_directories(${AMBARELLA_DIR}/prebuild/oss/armv8-a/tbb/usr/lib) 
 
 set(SRC_FILES
     ialg_error_code.h
@@ -45,7 +38,7 @@ set(LIGHTSREC_SRCS
     ${PROJECT_SOURCE_DIR}/traffic_lights_classifier/traffic_lights_classifier.cpp
 )
 
-set(LIB_NAME "tlr")
+set(LIB_NAME "example")
 set(LIB_FULL_NAME "lib${LIB_NAME}.so")
 
 add_library(${LIB_NAME} SHARED
@@ -57,12 +50,13 @@ target_link_libraries(${LIB_NAME}
                       opencv_core
                       opencv_imgcodecs
                       opencv_imgproc
-                      tbb
-                      jpeg
-                      png
-                      z)
+                      )
 
-set(PACK_DIR_NAME "EdgeTLR")
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+set(PACK_DIR_NAME "pkgName")
 
 add_custom_command(TARGET ${LIB_NAME}
     POST_BUILD
@@ -74,6 +68,7 @@ add_custom_command(TARGET ${LIB_NAME}
     COMMAND mkdir -p ${PACK_DIR_NAME}/model
 
     COMMAND cp -rf ${LIB_FULL_NAME} ${PACK_DIR_NAME}/lib/
+    COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/lib/* ${PACK_DIR_NAME}/lib/
     COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/conf/* ${PACK_DIR_NAME}/conf/
     COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/model/* ${PACK_DIR_NAME}/model/
 

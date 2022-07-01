@@ -30,9 +30,18 @@ void Image::IALG_to_mat(const IALG_IMAGE_INFO_S *pstImage, cv::Mat &output_mat)
         int nCnt0 = image_height*image_width;
         memcpy(YuvI.data, pstImage->pPlanar[0], nCnt0*sizeof(uchar));
         int nCnt1 = (image_height/2)*image_width;
-        memcpy(&(YuvI.data[nCnt0]), pstImage->pPlanar[1], nCnt1*sizeof(uchar));		
+        memcpy(&(YuvI.data[nCnt0]), pstImage->pPlanar[1], nCnt1*sizeof(uchar));
+
+        // int bufLen = YUV_DATA_H * image_width;
+        // unsigned char* pYuvBuf = new unsigned char[bufLen];
+        // FILE* pFileOut = fopen("/usr/app/bin/result.yuv", "wb");
+        // memcpy(pYuvBuf, YuvI.data, bufLen*sizeof(unsigned char));
+        // fwrite(pYuvBuf, bufLen*sizeof(unsigned char), 1, pFileOut);
+        // fclose(pFileOut);
+        // delete[] pYuvBuf;
+
         output_mat = cv::Mat(image_height, image_width, CV_8UC3);
-        cv::cvtColor(YuvI, output_mat, cv::COLOR_YUV2BGR_I420); 
+        cv::cvtColor(YuvI, output_mat, cv::COLOR_YUV2BGR_NV12);
     }
     else if (enImageFormat == IALG_IMAGE_FORMAT_E::IALG_PIX_FMT_NV21)
     {

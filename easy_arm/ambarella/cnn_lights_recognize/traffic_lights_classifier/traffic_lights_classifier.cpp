@@ -1,3 +1,4 @@
+#include "ctx.h"
 #include "traffic_lights_classifier.h"
 
 
@@ -13,6 +14,7 @@ TrafficLightsClassifier:: ~TrafficLightsClassifier()
 
 void TrafficLightsClassifier::red_green_yellow(const cv::Mat &rgb_image, const std::vector<float> traffic_lights_locations, const int32_t f_threshold)
 {
+    auto &ctx = Detail::Ctx::instance();
     cv::Mat rgb_image_roi, rgb_image_resize, hsv_image;
     rgb_image_roi = rgb_image(cv::Rect(traffic_lights_locations[0], traffic_lights_locations[1], traffic_lights_locations[2], \
                                         traffic_lights_locations[3]));
@@ -46,6 +48,7 @@ void TrafficLightsClassifier::red_green_yellow(const cv::Mat &rgb_image, const s
     cv::Scalar red_max_2 = cv::Scalar(180, 255, 255);
     cv::inRange(hsv_image, red_min_2, red_max_2, red_mask_2);
     int sum_red = cv::countNonZero(red_mask_1) + cv::countNonZero(red_mask_2);
+    // ctx.log()(0, "CCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
 
     int sum_all = sum_green + sum_red + sum_yellow;
 
@@ -54,29 +57,30 @@ void TrafficLightsClassifier::red_green_yellow(const cv::Mat &rgb_image, const s
     traffic_lights_params.traffic_lights_location[1] = traffic_lights_locations[1];
     traffic_lights_params.traffic_lights_location[2] = traffic_lights_locations[2];
     traffic_lights_params.traffic_lights_location[3] = traffic_lights_locations[3];
+    ctx.log()(0, "f_threshold: %d", f_threshold);
 
     if(sum_all > f_threshold)
     {
         if(sum_red >= sum_yellow && sum_red >= sum_green)
         {
             traffic_lights_params.traffic_lights_type = E_TRAFFIC_LIGHTS_TYPE_RED;
-            std::cout << "light type: Red" << std::endl;
+            ctx.log()(0, "light type: Red");
         }
         else if (sum_yellow >= sum_green)
         {
             traffic_lights_params.traffic_lights_type = E_TRAFFIC_LIGHTS_TYPE_GREEN;
-            std::cout << "light type: yellow" << std::endl;
+            ctx.log()(0, "light type: Green");
         }
         else
         {
             traffic_lights_params.traffic_lights_type = E_TRAFFIC_LIGHTS_TYPE_YELLOW;
-            std::cout << "light type: green" << std::endl;
+            ctx.log()(0, "light type: Yellow");
         }
     }
     else
     {
         traffic_lights_params.traffic_lights_type = E_TRAFFIC_LIGHTS_TYPE_DONT_KNOWN;
-        std::cout << "light type: DontKnown" << std::endl;
+        ctx.log()(0, "light type: DontKnown");
     }
     this->traffic_lights_results.push_back(traffic_lights_params);
 }

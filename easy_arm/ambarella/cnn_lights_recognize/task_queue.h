@@ -36,7 +36,6 @@ namespace Detail
         void start()
         {
             auto th = std::thread([&]() {
-                std::cout << "start" << std::endl;
                 while (!m_close)
                 {
                     std::unique_lock<std::mutex> ul(m_mtx);
@@ -68,7 +67,7 @@ namespace Detail
                         task();
                     }
                 }
-                std::cout << "end" << std::endl;
+
             });
             m_th.swap(th);
         }

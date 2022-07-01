@@ -6,7 +6,6 @@
 
 #include "json11.hpp"
 #include "image.h"
-#include "traffic_lights_classifier.h"
 
 #include <memory>
 #include <iostream>
@@ -22,9 +21,9 @@
             1. IALG_SetLogFunc
             2. IALG_StartupEngine
                IALG_GetCapability
-               IALG_AnalyzeImage_V1
-      
-               a. IALG_CreateChannel
+               IALG_AnalyzeImage_V1 图片流分析所用
+               以下是视频流的调用：
+               a. IALG_CreateChannel 
                     IALG_PutFrame
                     IALG_SetChannelConfig
                b. IALG_ReleaseChannel
@@ -38,10 +37,15 @@
 static const int MAX_SUPPORT_CHANNEL = 3;
 static Detail::ChannelManager *gpt_chnManager{ nullptr };
 auto &ctx = Detail::Ctx::instance();
+// LOG_FUNC_CB IALG_PrintLog = NULL;
+// Image image_process;
 
 int32_t IALG_SetLogFunc(const LOG_FUNC_CB pfnCb)
 {
+    // IALG_PrintLog = pfnCb;
+    // IALG_PrintLog(IALG_ERROR, "Set log callback function successfully.");
     ctx.registerLogFunc(pfnCb);
+    ctx.log()(0, "[%s:%d] complete init", __func__, __LINE__);
     return IALG_OK;
 }
 
@@ -90,8 +94,6 @@ int32_t IALG_GetCapability(IALG_Capability_S *const pAmpCap)
     return IALG_OK;
 }
 
-
-
 /*****************************************************************************************************
 * @Name   IALG_CreateChannel
 * @Brief  : 申请通道资源
@@ -117,8 +119,6 @@ int32_t IALG_ReleaseChannel(int32_t iChannelNo)
     return IALG_OK;
 }
 
-
-
 /*****************************************************************************************************
 * @Name   IALG_AnalyzeImage_V1
 * @Brief  : 视频流特征
@@ -129,6 +129,7 @@ int32_t IALG_ReleaseChannel(int32_t iChannelNo)
 ******************************************************************************************************/
 int32_t IALG_AnalyzeImage_V1(const IALG_IMAGE_INFO_S *pstImgInfo, const char *pcConfigJson, IALG_FREE_IMAGE_INFO_MEM pfnFreeMem, void *pPrivateData)
 {
+    IALG_IMAGE_FORMAT_E enImageFormat = pstImgInfo->enImageFormat;
     // pstImgInfo->enImageFormat;//图片格式
     // pstImgInfo->uiWidth;//图片宽
     // pstImgInfo->uiHeight;//图片高
@@ -143,75 +144,17 @@ int32_t IALG_AnalyzeImage_V1(const IALG_IMAGE_INFO_S *pstImgInfo, const char *pc
     // pstImgInfo->ulFrameRate;//帧率
     // pstImgInfo->uiPoolId;//缓冲池ID，-1-非缓冲池图像内存块
 
-    Image image_process;
-    TrafficLightsClassifier traffic_lights_classifier;
-
-    std::string err;
-    auto js = json11::Json::parse(pcConfigJson, err);
-    std::vector<std::vector<float>> dect_region_vector; 
-    json11::Json::array dect_region_array = js["dect_region"].array_items(); 
-    dect_region_vector.resize(dect_region_array.size()); 
-    for (int i = 0; i < dect_region_array.size(); i++) 
-    {
-        json11::Json::array tmp = dect_region_array[i].array_items();  
-        dect_region_vector[i].resize(tmp.size());  
-        for (int j = 0; j < tmp.size(); j++) 
-        { 
-            dect_region_vector[i][j] = tmp[j].int_value();  
-        }
-    } 
-    int32_t f_threshold = js["threshold"].int_value();
-
-    cv::Mat input_image;
-    image_process.IALG_to_mat(pstImgInfo, input_image);
-
-    for (int i = 0; i < dect_region_vector.size(); i++)
-    {
-        traffic_lights_classifier.red_green_yellow(input_image, dect_region_vector[i], f_threshold);
-    }
-
     // 以上传入的关于图像的信息,可按需使用,参数说明和注意事项详见<<华智解析平台多算法SDK开放接口描述>>
 
-    ctx.log()(0, "[%s:%d] async analyze image", __func__, __LINE__);//根据需要选择数据做计算
+    ctx.log()(3, "[%s:%d] async analyze image", __func__, __LINE__);//根据需要选择数据做计算
+    cv::Mat input_image;
+    image_process.IALG_to_mat(pstImgInfo, input_image);
 
     if (ctx.addTask([=]() {
         // 此处为算法实现
         // 推入数据队列后立即返回，
         // 算法内部的数据处理由另外的线程完成
-
-        // 根据分析结果填充结果字段
-        json11::Json::array resultJson_array;
-        for (int k = 0; k < traffic_lights_classifier.traffic_lights_results.size(); k++)
-        {
-            json11::Json resultJson_object = json11::Json::object{
-                {"target_id", traffic_lights_classifier.traffic_lights_results[k].target_id},
-                {"target_type", traffic_lights_classifier.traffic_lights_results[k].traffic_lights_type},
-                {"target_rect_height", traffic_lights_classifier.traffic_lights_results[k].traffic_lights_location[2]},
-                {"target_rect_width", traffic_lights_classifier.traffic_lights_results[k].traffic_lights_location[3]},
-                {"target_rect_x", traffic_lights_classifier.traffic_lights_results[k].traffic_lights_location[0]},
-                {"target_rect_y", traffic_lights_classifier.traffic_lights_results[k].traffic_lights_location[1]},
-            };
-            resultJson_array.push_back(resultJson_object);
-        }
-        
-        json11::Json resultJson(resultJson_array);
-        auto jsonstr = resultJson.dump();
-
         auto spResult = std::make_shared<IALG_REG_RST_S>();
-        spResult->pcResultJson = const_cast<char *>(jsonstr.c_str());
-
-        // IALG_OBJ_IMAGE_S ImageInfo;
-        // ImageInfo.uiLftX = 100;
-        // ImageInfo.uiLftY = 200;
-        // ImageInfo.uiWidth = 300;
-        // ImageInfo.uiHeight = 400;
-
-        // auto &objInfo = spResult->stObjInfo;
-        // objInfo.pstObjImageInfo = &ImageInfo;
-        // objInfo.uiObjImageNum = 1;
-        // objInfo.uiObjID = ++objId;
-        // objInfo.enObjType = IALG_IMAGE_OBJ;
-
         // 此处根据具体分析结论,填充spResult
         ctx.pushOaResult(-1, spResult.get(), pstImgInfo, pPrivateData);//将分析结果spResult通过注册的回调推给算法引擎
 
@@ -240,6 +183,7 @@ int32_t IALG_AnalyzeImage_V1(const IALG_IMAGE_INFO_S *pstImgInfo, const char *pc
 ******************************************************************************************************/
 int32_t IALG_SetChannelConfig(int32_t iChannelNo, const char *pcConfigJson)
 {
+    ctx.log()(0, "[%s:%d] start init", __func__, __LINE__);
     return gpt_chnManager->channalHandle(iChannelNo, [=](Detail::AlgoChannel &chn) {
         return chn.setConfig(pcConfigJson);
     });
@@ -256,6 +200,7 @@ int32_t IALG_SetChannelConfig(int32_t iChannelNo, const char *pcConfigJson)
 ******************************************************************************************************/
 int32_t IALG_PutFrame(int32_t iChannelNo, const IALG_IMAGE_INFO_S *pstImgInfo, IALG_FREE_IMAGE_INFO_MEM pfnFreeMem, void *pPrivateData)
 {
+    ctx.log()(0, "[%s:%d] start init", __func__, __LINE__);
     return gpt_chnManager->channalHandle(iChannelNo, [=](Detail::AlgoChannel &chn) {
         return chn.putFrame(pstImgInfo, pfnFreeMem, pPrivateData);
     });
@@ -269,6 +214,7 @@ int32_t IALG_PutFrame(int32_t iChannelNo, const IALG_IMAGE_INFO_S *pstImgInfo, I
 ******************************************************************************************************/
 int32_t IALG_ShutdownEngine(int32_t iMode)
 {
+    ctx.log()(0, "[%s:%d] start init", __func__, __LINE__);
     // 去初始化操作,IALG_StartupEngine()的反操作
     if (gpt_chnManager)
     {
