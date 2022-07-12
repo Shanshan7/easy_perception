@@ -248,29 +248,29 @@ outputCsv.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\test_web.dir\build.make CMakeFiles/test_web.dir/outputCsv.cpp.s
 .PHONY : outputCsv.cpp.s
 
-test_h3c_json.obj: test_h3c_json.cpp.obj
-.PHONY : test_h3c_json.obj
+test_socket.obj: test_socket.cpp.obj
+.PHONY : test_socket.obj
 
 # target to build an object file
-test_h3c_json.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\test_web.dir\build.make CMakeFiles/test_web.dir/test_h3c_json.cpp.obj
-.PHONY : test_h3c_json.cpp.obj
+test_socket.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\test_web.dir\build.make CMakeFiles/test_web.dir/test_socket.cpp.obj
+.PHONY : test_socket.cpp.obj
 
-test_h3c_json.i: test_h3c_json.cpp.i
-.PHONY : test_h3c_json.i
+test_socket.i: test_socket.cpp.i
+.PHONY : test_socket.i
 
 # target to preprocess a source file
-test_h3c_json.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\test_web.dir\build.make CMakeFiles/test_web.dir/test_h3c_json.cpp.i
-.PHONY : test_h3c_json.cpp.i
+test_socket.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\test_web.dir\build.make CMakeFiles/test_web.dir/test_socket.cpp.i
+.PHONY : test_socket.cpp.i
 
-test_h3c_json.s: test_h3c_json.cpp.s
-.PHONY : test_h3c_json.s
+test_socket.s: test_socket.cpp.s
+.PHONY : test_socket.s
 
 # target to generate assembly for a file
-test_h3c_json.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\test_web.dir\build.make CMakeFiles/test_web.dir/test_h3c_json.cpp.s
-.PHONY : test_h3c_json.cpp.s
+test_socket.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\test_web.dir\build.make CMakeFiles/test_web.dir/test_socket.cpp.s
+.PHONY : test_socket.cpp.s
 
 utils.obj: utils.cpp.obj
 .PHONY : utils.obj
@@ -320,9 +320,9 @@ help:
 	@echo ... outputCsv.obj
 	@echo ... outputCsv.i
 	@echo ... outputCsv.s
-	@echo ... test_h3c_json.obj
-	@echo ... test_h3c_json.i
-	@echo ... test_h3c_json.s
+	@echo ... test_socket.obj
+	@echo ... test_socket.i
+	@echo ... test_socket.s
 	@echo ... utils.obj
 	@echo ... utils.i
 	@echo ... utils.s

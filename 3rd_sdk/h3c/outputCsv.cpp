@@ -2,6 +2,7 @@
 
 void outputCsv(InformationSaveAndOutput edge)
 {
+   std::cout<<"解析开始了 is "<<edge.ones.ageGroup<<std::endl;  
             std::ofstream outFile;
             std::ofstream outFile1;
             std::ofstream outFile2;
@@ -104,15 +105,20 @@ void outputCsv(InformationSaveAndOutput edge)
             default:
                 break;
             }
+
             switch (edge.ones.ageGroup)
             {
+            
             case 1:ageGroup="婴幼儿";  break;
             case 2:ageGroup="儿童";  break;
             case 3:ageGroup="少年";  break;
             case 4:ageGroup="青少年";  break;
             case 5:ageGroup="青年";  break;
             case 6:ageGroup="壮年";  break;
-            case 7:ageGroup="中年";  break;
+            case 7:ageGroup="中年"; 
+            std::cout<<"解析开始了"<<std::endl;
+            std::cout<<edge.ones.ageGroup; 
+            break;
             case 8:ageGroup="中老年";  break;
             case 9:ageGroup="老年";  break;
             case 99:ageGroup="其他";  break;    

@@ -21,6 +21,8 @@ public:
     void getFacesnapResult( struct InformationSaveAndOutput infor_Zs,Json::Value  root);
     void getFaceCompareResult( struct InformationSaveAndOutput infor_Zs,Json::Value  root);
     void getPersonAttributeResult( struct InformationSaveAndOutput infor_Zs,Json::Value  root);
+    void getVehicleResult(struct InformationSaveAndOutput infor_Zs,Json::Value  root);
+    void getUnvehicleResult(struct InformationSaveAndOutput infor_Zs,Json::Value  root);
 
     int loginCamera();
 
@@ -29,6 +31,7 @@ public:
     int stopEvent();
     void getResult();
     void playvideo();
+    bool start_netsdk();
     void initplaySdklog();
     //void getResult1();
     
@@ -38,9 +41,11 @@ public:
     struct InformationSaveAndOutput infor_Zs;
     struct Alconfig
     {
-        bool face_snap;
-        bool person_attribute;
-        bool face_compare;
+        std::string   face_snap;
+        std::string   person_attribute;
+        std::string   face_compare;
+        std::string   veihicle;
+        std::string   unveihicle; 
 
     } alconfig;
     
@@ -55,11 +60,13 @@ private:
     std::string urlPath;
     std::string save_path;
 
+
     // QTimer *timer;
 
 private:
     int loadConfig();
     int saveConfig();
+    void algorithmflag();
 };
 
 #endif // H3CPROCESS_H

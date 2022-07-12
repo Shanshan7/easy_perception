@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学生成绩管理系统登陆界面</title>
+    <meta charset="UTF-8">
+    <script src="./vue.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- cdn引入ElementUI样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!--导入vue�?�?-->
+    <script src="https://cdn.staticfile.org/vue-router/2.7.0/vue-router.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="axios.min.js"></script>
+    <style>
+        .el-input-group__append{
+            background-color: #ec5d5d;
+            color: white;
+        }
+    </style>
+</head>
+<body >
+<div id="app" style="padding: 150px 450px">
+    <el-button @click="btn()">post-start</el-button>
+    <el-button @click="btn_stop()">post-stop</el-button>
+    <el-button @click="get_btn()">get</el-button>
+    </div>
+
+</div>
+</body>
+<script>
+    const App=new Vue({
+        el:"#app",
+        data:{
+            message:""
+        },
+        methods:{
+            btn(){
+                axios.post('http://127.0.0.1:5000',{
+                  motor_vehicle_attribute:true
+                }).then((res)=>{
+                    console.log(res.data);
+                })
+
+            },
+            btn_stop(){
+                axios.post('http://127.0.0.1:5000',{
+                   motor_vehicle_attribute:false
+                }).then((res)=>{
+                    console.log(res.data);
+                })
+
+            },
+            get_btn(){
+                axios.get('http://127.0.0.1:5000').then((res)=>{
+                    console.log(res.data);
+                })
+
+            }
+        },
+        mounted(){},
+        created(){}
+    })
+</script>
+
+</html>

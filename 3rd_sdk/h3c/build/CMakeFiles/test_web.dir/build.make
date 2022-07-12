@@ -68,20 +68,20 @@ include CMakeFiles/test_web.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/test_web.dir/flags.make
 
-CMakeFiles/test_web.dir/test_h3c_json.cpp.obj: CMakeFiles/test_web.dir/flags.make
-CMakeFiles/test_web.dir/test_h3c_json.cpp.obj: CMakeFiles/test_web.dir/includes_CXX.rsp
-CMakeFiles/test_web.dir/test_h3c_json.cpp.obj: ../test_h3c_json.cpp
-CMakeFiles/test_web.dir/test_h3c_json.cpp.obj: CMakeFiles/test_web.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\fudao\shixi\easy_perception\3rd_sdk\h3c\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test_web.dir/test_h3c_json.cpp.obj"
-	D:\fudao\MinGW64\MinGW64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_web.dir/test_h3c_json.cpp.obj -MF CMakeFiles\test_web.dir\test_h3c_json.cpp.obj.d -o CMakeFiles\test_web.dir\test_h3c_json.cpp.obj -c D:\fudao\shixi\easy_perception\3rd_sdk\h3c\test_h3c_json.cpp
+CMakeFiles/test_web.dir/test_socket.cpp.obj: CMakeFiles/test_web.dir/flags.make
+CMakeFiles/test_web.dir/test_socket.cpp.obj: CMakeFiles/test_web.dir/includes_CXX.rsp
+CMakeFiles/test_web.dir/test_socket.cpp.obj: ../test_socket.cpp
+CMakeFiles/test_web.dir/test_socket.cpp.obj: CMakeFiles/test_web.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\fudao\shixi\easy_perception\3rd_sdk\h3c\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test_web.dir/test_socket.cpp.obj"
+	D:\fudao\MinGW64\MinGW64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_web.dir/test_socket.cpp.obj -MF CMakeFiles\test_web.dir\test_socket.cpp.obj.d -o CMakeFiles\test_web.dir\test_socket.cpp.obj -c D:\fudao\shixi\easy_perception\3rd_sdk\h3c\test_socket.cpp
 
-CMakeFiles/test_web.dir/test_h3c_json.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_web.dir/test_h3c_json.cpp.i"
-	D:\fudao\MinGW64\MinGW64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\fudao\shixi\easy_perception\3rd_sdk\h3c\test_h3c_json.cpp > CMakeFiles\test_web.dir\test_h3c_json.cpp.i
+CMakeFiles/test_web.dir/test_socket.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_web.dir/test_socket.cpp.i"
+	D:\fudao\MinGW64\MinGW64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\fudao\shixi\easy_perception\3rd_sdk\h3c\test_socket.cpp > CMakeFiles\test_web.dir\test_socket.cpp.i
 
-CMakeFiles/test_web.dir/test_h3c_json.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_web.dir/test_h3c_json.cpp.s"
-	D:\fudao\MinGW64\MinGW64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\fudao\shixi\easy_perception\3rd_sdk\h3c\test_h3c_json.cpp -o CMakeFiles\test_web.dir\test_h3c_json.cpp.s
+CMakeFiles/test_web.dir/test_socket.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_web.dir/test_socket.cpp.s"
+	D:\fudao\MinGW64\MinGW64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\fudao\shixi\easy_perception\3rd_sdk\h3c\test_socket.cpp -o CMakeFiles\test_web.dir\test_socket.cpp.s
 
 CMakeFiles/test_web.dir/h3cprocess.cpp.obj: CMakeFiles/test_web.dir/flags.make
 CMakeFiles/test_web.dir/h3cprocess.cpp.obj: CMakeFiles/test_web.dir/includes_CXX.rsp
@@ -175,7 +175,7 @@ CMakeFiles/test_web.dir/utils.cpp.s: cmake_force
 
 # Object files for target test_web
 test_web_OBJECTS = \
-"CMakeFiles/test_web.dir/test_h3c_json.cpp.obj" \
+"CMakeFiles/test_web.dir/test_socket.cpp.obj" \
 "CMakeFiles/test_web.dir/h3cprocess.cpp.obj" \
 "CMakeFiles/test_web.dir/json/src/json_reader.cpp.obj" \
 "CMakeFiles/test_web.dir/json/src/json_value.cpp.obj" \
@@ -186,7 +186,7 @@ test_web_OBJECTS = \
 # External object files for target test_web
 test_web_EXTERNAL_OBJECTS =
 
-test_web.exe: CMakeFiles/test_web.dir/test_h3c_json.cpp.obj
+test_web.exe: CMakeFiles/test_web.dir/test_socket.cpp.obj
 test_web.exe: CMakeFiles/test_web.dir/h3cprocess.cpp.obj
 test_web.exe: CMakeFiles/test_web.dir/json/src/json_reader.cpp.obj
 test_web.exe: CMakeFiles/test_web.dir/json/src/json_value.cpp.obj

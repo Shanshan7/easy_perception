@@ -45,8 +45,14 @@ void http_request_message(char *buffer, std::map<std::string, bool> &task_respon
 				{
 					task_response_id["person_attribute"] = root["person_attribute"].asBool();
 				}
-				else if (root.isMember("face_attribute")) {
+			    if (root.isMember("face_attribute")) {
 					task_response_id["face_attribute"] = root["face_attribute"].asBool();
+				}
+				if (root.isMember("motor_vehicle_attribute")) {
+					task_response_id["motor_vehicle_attribute"] = root["motor_vehicle_attribute"].asBool();
+				}
+				if (root.isMember("motor_vehicle_attribute")) {
+					task_response_id["nomotor_vehicle_attribute"] = root["nomotor_vehicle_attribute"].asBool();
 				}
 				std::cout << "Reading Complete!" << std::endl;
 			}

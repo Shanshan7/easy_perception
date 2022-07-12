@@ -39,7 +39,7 @@ add_executable(test_web "")
 
 target_sources(test_web
         PRIVATE
-        "${PROJECT_SOURCE_DIR}/test_h3c_json.cpp"
+        "${PROJECT_SOURCE_DIR}/test_socket.cpp"
         ${H3C_PROCESS_SRCS}
         )
 
